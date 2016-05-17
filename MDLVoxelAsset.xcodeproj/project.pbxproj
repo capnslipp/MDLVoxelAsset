@@ -10,6 +10,8 @@
 		FA2685861CEA9A71003B86C8 /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FA2685851CEA9A71003B86C8 /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA26858D1CEA9A72003B86C8 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
 		FA2685921CEA9A72003B86C8 /* MDLVoxelAssetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2685911CEA9A72003B86C8 /* MDLVoxelAssetTests.m */; };
+		FA64893B1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */; };
+		FA64893C1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m in Sources */ = {isa = PBXBuildFile; fileRef = FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +31,8 @@
 		FA26858C1CEA9A72003B86C8 /* MDLVoxelAssetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MDLVoxelAssetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA2685911CEA9A72003B86C8 /* MDLVoxelAssetTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MDLVoxelAssetTests.m; sourceTree = "<group>"; };
 		FA2685931CEA9A72003B86C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData.h; sourceTree = "<group>"; };
+		FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +77,8 @@
 			children = (
 				FA2685851CEA9A71003B86C8 /* MDLVoxelAsset.h */,
 				FA2685871CEA9A71003B86C8 /* Info.plist */,
+				FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */,
+				FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */,
 			);
 			path = MDLVoxelAsset;
 			sourceTree = "<group>";
@@ -94,6 +100,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA2685861CEA9A71003B86C8 /* MDLVoxelAsset.h in Headers */,
+				FA64893B1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +200,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA64893C1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
