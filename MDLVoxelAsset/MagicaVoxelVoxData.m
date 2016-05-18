@@ -21,15 +21,15 @@ typedef union _MagicNumber {
 static const char kValidMagicNumber_string[] = "VOX ";
 static const MagicNumber kValidMagicNumber = { .ptr = (uint8_t const *)&kValidMagicNumber_string };
 
-static const size_t kMagicNumber_Offset = 0;
+static const ptrdiff_t kMagicNumber_Offset = 0;
 static const size_t kMagicNumber_Size = 4;
-static const size_t kVersionNumber_Offset = kMagicNumber_Offset + kMagicNumber_Size;
+static const ptrdiff_t kVersionNumber_Offset = kMagicNumber_Offset + kMagicNumber_Size;
 static const size_t kVersionNumber_Size = 4;
-static const size_t kChunkId_ChunkOffset = 0;
+static const ptrdiff_t kChunkId_ChunkOffset = 0;
 static const size_t kChunkId_Size = 4;
-static const size_t kChunkContentsSize_ChunkOffset = kChunkId_ChunkOffset + kChunkId_Size;
+static const ptrdiff_t kChunkContentsSize_ChunkOffset = kChunkId_ChunkOffset + kChunkId_Size;
 static const size_t kChunkContentsSize_Size = 4;
-static const size_t kChunkChildrenTotalSize_ChunkOffset = kChunkContentsSize_ChunkOffset + kChunkContentsSize_Size;
+static const ptrdiff_t kChunkChildrenTotalSize_ChunkOffset = kChunkContentsSize_ChunkOffset + kChunkContentsSize_Size;
 static const size_t kChunkChildrenTotalSize_Size = 4;
 
 typedef union _ChunkId {
