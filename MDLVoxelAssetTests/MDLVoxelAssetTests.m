@@ -51,6 +51,9 @@
 	
 	MagicaVoxelVoxData *data = [MagicaVoxelVoxData dataWithContentsOfFile:testVoxFilePath];
 	XCTAssertTrue(data.valid);
+	
+	XCTAssertEqual(data.versionNumber, 150);
+	
 	NSLog(@"data: %@", data.description);
 }
 

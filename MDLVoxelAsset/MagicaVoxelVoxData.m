@@ -10,13 +10,16 @@
 
 typedef MagicaVoxelVoxData ThisClass;
 
-typedef struct _MagicNumber {
-	const uint8_t data[4];
-	const uint8_t *dataPtr;
-} MagicNumber;
+typedef uint8_t FourCharDataArray[4];
 
-static const unsigned char kValidMagicNumber_string[] = "VOX ";
-static const MagicNumber kValidMagicNumber = { .data = 'V','O','X',' ', .dataPtr = (const uint8_t *)&kValidMagicNumber_string };
+typedef union _MagicNumber {
+	FourCharDataArray const *array;
+	uint8_t const *ptr;
+	FourCharCode const *fourCharCode;
+} __attribute__((aligned(16))) MagicNumber;
+
+static const char kValidMagicNumber_string[] = "VOX ";
+static const MagicNumber kValidMagicNumber = { .ptr = (uint8_t const *)&kValidMagicNumber_string };
 
 static const size_t kMagicNumber_Offset = 0;
 static const size_t kMagicNumber_Size = 4;
@@ -29,19 +32,20 @@ static const size_t kChunkContentsSize_Size = 4;
 static const size_t kChunkChildrenTotalSize_ChunkOffset = kChunkContentsSize_ChunkOffset + kChunkContentsSize_Size;
 static const size_t kChunkChildrenTotalSize_Size = 4;
 
-typedef struct _ChunkId {
-	const uint8_t data[4];
-	const uint8_t *dataPtr;
-} ChunkId;
+typedef union _ChunkId {
+	FourCharDataArray const *array;
+	uint8_t const *ptr;
+	FourCharCode const *fourCharCode;
+} __attribute__((aligned(16))) ChunkId;
 
 static const char kMainChunkId_string[] = "MAIN";
-static const ChunkId kMainChunkId = { .data = 'M','A','I','N', .dataPtr = (const uint8_t *)&kMainChunkId_string };
+static const ChunkId kMainChunkId = { .ptr = (uint8_t const *)&kMainChunkId_string };
 static const char kSizeChunkId_string[] = "SIZE";
-static const ChunkId kSizeChunkId = { .data = 'S','I','Z','E', .dataPtr = (const uint8_t *)&kSizeChunkId_string };
+static const ChunkId kSizeChunkId = { .ptr = (uint8_t const *)&kSizeChunkId_string };
 static const char kVoxelChunkId_string[] = "XYZI";
-static const ChunkId kVoxelChunkId = { .data = 'X','Y','Z','I', .dataPtr = (const uint8_t *)&kVoxelChunkId_string };
+static const ChunkId kVoxelChunkId = { .ptr = (uint8_t const *)&kVoxelChunkId_string };
 static const char kPaletteChunkId_string[] = "RGBA";
-static const ChunkId kPaletteChunkId = { .data = 'R','G','B','A', .dataPtr = (const uint8_t *)&kPaletteChunkId_string };
+static const ChunkId kPaletteChunkId = { .ptr = (uint8_t const *)&kPaletteChunkId_string };
 
 
 
@@ -82,7 +86,7 @@ static const ChunkId kPaletteChunkId = { .data = 'R','G','B','A', .dataPtr = (co
 	if (_data.length < (kVersionNumber_Offset + kVersionNumber_Size)) // @tmp: Assuming no chunks; need to be improved considerably.
 		return NO;
 	
-	if (memcmp(self.magicNumber.dataPtr, kValidMagicNumber.dataPtr, kMagicNumber_Size) != 0)
+	if (*self.magicNumber.fourCharCode != *kValidMagicNumber.fourCharCode)
 		return NO;
 	
 	return YES; // @tmp: Should actually do some checks plz.
@@ -91,13 +95,13 @@ static const ChunkId kPaletteChunkId = { .data = 'R','G','B','A', .dataPtr = (co
 - (MagicNumber)magicNumber;
 {
 	return (MagicNumber){
-		.dataPtr = (const uint8_t *)&_data.bytes[kMagicNumber_Offset]
+		.ptr = (uint8_t const *)&_data.bytes[kMagicNumber_Offset]
 	};
 }
 
 - (int32_t)versionNumber;
 {
-	return *(const int32_t *)&_data.bytes[kVersionNumber_Offset];
+	return *(int32_t const *)&_data.bytes[kVersionNumber_Offset];
 }
 
 
