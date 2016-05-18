@@ -15,7 +15,7 @@
 
 @property (nonatomic, assign, readonly, getter=isValid) BOOL valid;
 
-- (int32_t)versionNumber;
+- (uint32_t)versionNumber;
 
 #pragma mark NSData-Mirroring Interface
 
