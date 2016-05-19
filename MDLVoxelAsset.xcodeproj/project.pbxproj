@@ -13,6 +13,16 @@
 		FA64893B1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */; };
 		FA64893C1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m in Sources */ = {isa = PBXBuildFile; fileRef = FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */; };
 		FA64893E1CEAF99B00B6AEB1 /* chr_sword.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */; };
+		FA6EECAF1CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */; };
+		FA6EECB01CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */; };
+		FA6EECB11CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */; };
+		FA6EECB21CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECA81CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.m */; };
+		FA6EECB31CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA91CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h */; };
+		FA6EECB41CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAA1CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m */; };
+		FA6EECB51CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAB1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h */; };
+		FA6EECB61CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAC1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m */; };
+		FA6EECB71CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */; };
+		FA6EECB81CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +45,16 @@
 		FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData.h; sourceTree = "<group>"; };
 		FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData.m; sourceTree = "<group>"; };
 		FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = chr_sword.vox; sourceTree = "<group>"; };
+		FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_ChunkHandle.h; sourceTree = "<group>"; };
+		FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_ChunkHandle.m; sourceTree = "<group>"; };
+		FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_ChunkIdent.h; sourceTree = "<group>"; };
+		FA6EECA81CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_ChunkIdent.m; sourceTree = "<group>"; };
+		FA6EECA91CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_PaletteChunkContentsHandle.h; sourceTree = "<group>"; };
+		FA6EECAA1CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_PaletteChunkContentsHandle.m; sourceTree = "<group>"; };
+		FA6EECAB1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_SizeChunkContentsHandle.h; sourceTree = "<group>"; };
+		FA6EECAC1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_SizeChunkContentsHandle.m; sourceTree = "<group>"; };
+		FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_VoxelChunkContentsHandle.h; sourceTree = "<group>"; };
+		FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_VoxelChunkContentsHandle.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +101,7 @@
 				FA2685871CEA9A71003B86C8 /* Info.plist */,
 				FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */,
 				FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */,
+				FA6EECA41CEE59E600818C92 /* MagicaVoxelVoxData */,
 			);
 			path = MDLVoxelAsset;
 			sourceTree = "<group>";
@@ -95,6 +116,23 @@
 			path = MDLVoxelAssetTests;
 			sourceTree = "<group>";
 		};
+		FA6EECA41CEE59E600818C92 /* MagicaVoxelVoxData */ = {
+			isa = PBXGroup;
+			children = (
+				FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */,
+				FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */,
+				FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */,
+				FA6EECA81CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.m */,
+				FA6EECA91CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h */,
+				FA6EECAA1CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m */,
+				FA6EECAB1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h */,
+				FA6EECAC1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m */,
+				FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */,
+				FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */,
+			);
+			path = MagicaVoxelVoxData;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -102,8 +140,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA6EECB11CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h in Headers */,
 				FA2685861CEA9A71003B86C8 /* MDLVoxelAsset.h in Headers */,
+				FA6EECB51CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h in Headers */,
+				FA6EECAF1CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h in Headers */,
+				FA6EECB71CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */,
 				FA64893B1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h in Headers */,
+				FA6EECB31CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +247,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA6EECB01CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */,
+				FA6EECB81CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */,
 				FA64893C1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m in Sources */,
+				FA6EECB41CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m in Sources */,
+				FA6EECB61CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */,
+				FA6EECB21CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -37,36 +37,7 @@ static const ptrdiff_t kChunkContentsOrChildren_Offset = kChunkChildrenTotalSize
 static const size_t kChunkPadding_MaxSize = 1;
 
 
-typedef union _ChunkIdent {
-	FourCharDataArray const *array;
-	uint8_t const *ptr;
-	FourCharCode const *fourCharCode;
-} ChunkIdent; // @todo: Rename ChunkIdDataPtr?
-
-NSString *NSStringFromChunkIdent(ChunkIdent ident) {
-	return [NSString stringWithFormat:@"%c%c%c%c", (*ident.array)[0], (*ident.array)[1], (*ident.array)[2], (*ident.array)[3]];
-}
-
-/// A fairly dumb “struct-ish” metadata & data-pointer store, as a Obj-C object for easier memory management & polymorphism.
-@interface ChunkHandle : NSObject  {
-	@public
-	ChunkIdent ident;
-	uint32_t const *contentsSize;
-	uint32_t const *childrenTotalSize;
-	id contents;
-	NSMutableDictionary<NSString *, ChunkHandle *> *childrenChunks;
-}
-@end
-@implementation ChunkHandle
-
-/// The total size of the chunk.  Calculated as:
-///		The size of the ID (4 bytes) + the contents-size field (4 bytes) + the children-total-size field (4 bytes) + the size of the contents + the size of the children.
-- (size_t)totalSize {
-	return sizeof(*ident.fourCharCode) + sizeof(*contentsSize) + sizeof(*childrenTotalSize) + *contentsSize + *childrenTotalSize;
-}
-
-@end
-
+#import "MagicaVoxelVoxData_ChunkIdent.h"
 
 static const char kMainChunkIdent_string[] = "MAIN";
 static const ChunkIdent kMainChunkIdent = { .ptr = (uint8_t const *)&kMainChunkIdent_string };
@@ -78,56 +49,23 @@ static const char kPaletteChunkIdent_string[] = "RGBA";
 static const ChunkIdent kPaletteChunkIdent = { .ptr = (uint8_t const *)&kPaletteChunkIdent_string };
 
 
-typedef uint32_t XYZSizeDataArray[3];
-
-/// A fairly dumb “struct-ish” metadata & data-pointer store, as a Obj-C object for easier memory management & polymorphism.
-@interface SizeChunkContentsHandle : NSObject  {
-	@public
-	XYZSizeDataArray const *xyzSize;
-}
-@end
-@implementation SizeChunkContentsHandle
-@end
+#import "MagicaVoxelVoxData_SizeChunkContentsHandle.h"
 
 
 static const ptrdiff_t kVoxelChunkVoxels_Offset = 4;
 static const size_t kVoxelChunk_VoxelSize = 4;
 
-typedef uint8_t XYZCoordsDataArray[3];
-typedef struct _VoxelChunkContentsHandle_Voxel {
-	XYZCoordsDataArray const xyzCoords;
-	uint8_t const colorIndex;
-} VoxelChunkContentsHandle_Voxel;
-
-/// A fairly dumb “struct-ish” metadata & data-pointer store, as a Obj-C object for easier memory management & polymorphism.
-@interface VoxelChunkContentsHandle : NSObject  {
-	@public
-	uint32_t const *numVoxels;
-	VoxelChunkContentsHandle_Voxel *voxels_array;
-}
-@end
-@implementation VoxelChunkContentsHandle
-@end
+#import "MagicaVoxelVoxData_VoxelChunkContentsHandle.h"
 
 
 static const size_t kPaletteChunk_ColorSize = 4;
 static const size_t kPaletteChunk_PaletteSize = kPaletteChunk_ColorSize * 256;
 static const size_t kPaletteChunk_ChildrenTotalSize = 0;
 
-typedef uint8_t RGBAValuesDataArray[4];
-typedef struct _PaletteChunkContentsHandle_Color {
-	RGBAValuesDataArray const rgbaValues;
-} PaletteChunkContentsHandle_Color;
+#import "MagicaVoxelVoxData_PaletteChunkContentsHandle.h"
 
-/// A fairly dumb “struct-ish” metadata & data-pointer store, as a Obj-C object for easier memory management & polymorphism.
-@interface PaletteChunkContentsHandle : NSObject  {
-	@public
-	PaletteChunkContentsHandle_Color *colors_array;
-}
-@end
-@implementation PaletteChunkContentsHandle
-@end
 
+#import "MagicaVoxelVoxData_ChunkHandle.h"
 
 static const RGBAValuesDataArray kDefaultPaletteRGBAValues[256] = {
 	{ 0xFF, 0xFF, 0xFF, 0xFF }, { 0xFF, 0xFF, 0xCC, 0xFF }, { 0xFF, 0xFF, 0x99, 0xFF }, { 0xFF, 0xFF, 0x66, 0xFF }, { 0xFF, 0xFF, 0x33, 0xFF }, { 0xFF, 0xFF, 0x00, 0xFF }, { 0xFF, 0xCC, 0xFF, 0xFF }, { 0xFF, 0xCC, 0xCC, 0xFF },
@@ -197,14 +135,13 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	static dispatch_once_t sOnceToken;
     dispatch_once(&sOnceToken, ^{
 		kDefaultPaletteContents = [PaletteChunkContentsHandle new];
-		kDefaultPaletteContents->colors_array = (PaletteChunkContentsHandle_Color *)(uint8_t const (*)[4])&kDefaultPaletteRGBAValues;
+		kDefaultPaletteContents.colors_array = (PaletteChunkContentsHandle_Color *)(uint8_t const (*)[4])&kDefaultPaletteRGBAValues;
 		
 		kDefaultPaletteChunk = [ChunkHandle new];
-		kDefaultPaletteChunk->ident = kPaletteChunkIdent;
-		kDefaultPaletteChunk->contentsSize = (uint32_t const *)&kPaletteChunk_PaletteSize;
-		kDefaultPaletteChunk->childrenTotalSize = (uint32_t const *)&kPaletteChunk_ChildrenTotalSize;
-        kDefaultPaletteChunk->contents = [kDefaultPaletteContents retain];
-		kDefaultPaletteChunk->childrenChunks = nil;
+		kDefaultPaletteChunk.ident = kPaletteChunkIdent;
+		kDefaultPaletteChunk.contentsSize = (uint32_t const *)&kPaletteChunk_PaletteSize;
+		kDefaultPaletteChunk.childrenTotalSize = (uint32_t const *)&kPaletteChunk_ChildrenTotalSize;
+        kDefaultPaletteChunk.contents = [kDefaultPaletteContents retain];
     });
 	
 }
@@ -281,37 +218,34 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (ChunkHandle *)parseChunkDataAtOffset:(ptrdiff_t)baseOffset withContentsParser:(ChunkContentsParserB)contentsParser childParser:(ChunkChildParserB)childParser
 {
 	ChunkHandle *chunk = [ChunkHandle new];
-	chunk->ident = (ChunkIdent){
+	chunk.ident = (ChunkIdent){
 		.ptr = (uint8_t const *)&_data.bytes[baseOffset + kChunkIdent_ChunkOffset]
 	};
-	chunk->contentsSize = (uint32_t const *)&_data.bytes[baseOffset + kChunkContentsSize_ChunkOffset];
-	chunk->childrenTotalSize = (uint32_t const *)&_data.bytes[baseOffset + kChunkChildrenTotalSize_ChunkOffset];
+	chunk.contentsSize = (uint32_t const *)&_data.bytes[baseOffset + kChunkContentsSize_ChunkOffset];
+	chunk.childrenTotalSize = (uint32_t const *)&_data.bytes[baseOffset + kChunkChildrenTotalSize_ChunkOffset];
 	
 	NSLog(@"Parsing chunk ID %@, with contents sized %d, and children sized %d.",
-		NSStringFromChunkIdent(chunk->ident), *chunk->contentsSize, *chunk->childrenTotalSize
+		NSStringFromChunkIdent(chunk.ident), *chunk.contentsSize, *chunk.childrenTotalSize
 	);
 	
-	uint32_t contentsSize = *chunk->contentsSize;
+	uint32_t contentsSize = *chunk.contentsSize;
 	if (contentsSize == 0) {
-		chunk->contents = nil;
+		chunk.contents = nil;
 	} else {
 		ptrdiff_t const contentsOffset = baseOffset + kChunkContentsOrChildren_Offset;
-		chunk->contents = contentsParser(chunk->ident, contentsOffset, contentsSize);
+		chunk.contents = contentsParser(chunk.ident, contentsOffset, contentsSize);
 	}
 	
-	uint32_t childrenTotalSize = *chunk->childrenTotalSize;
-	if (childrenTotalSize == 0) {
-		chunk->childrenChunks = nil;
-	} else {
+	uint32_t childrenTotalSize = *chunk.childrenTotalSize;
+	if (childrenTotalSize > 0) {
 		ptrdiff_t const childrenOffset = baseOffset + kChunkContentsOrChildren_Offset;
-		chunk->childrenChunks = [NSMutableDictionary<NSString *, ChunkHandle *> new];
 		
 		ptrdiff_t childOffset = childrenOffset;
 		size_t childrenRemainingSize = childrenTotalSize;
 		do {
 			ptrdiff_t endOffset;
-			ChunkHandle *childChunk = childParser(chunk->ident, childOffset, childrenRemainingSize, &endOffset);
-			chunk->childrenChunks[NSStringFromChunkIdent(childChunk->ident)] = childChunk;
+			ChunkHandle *childChunk = childParser(chunk.ident, childOffset, childrenRemainingSize, &endOffset);
+			chunk.childrenChunks[NSStringFromChunkIdent(childChunk.ident)] = childChunk;
 			
 			size_t childrenSizeParsedThusFar = endOffset - childrenOffset;
 			if (!(childrenSizeParsedThusFar + kChunkPadding_MaxSize < childrenTotalSize))
@@ -329,22 +263,22 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (SizeChunkContentsHandle *)parseSizeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	SizeChunkContentsHandle *handle = [SizeChunkContentsHandle new];
-	handle->xyzSize = (uint32_t const (*)[3])&_data.bytes[offset];
+	handle.xyzSize = (uint32_t const (*)[3])&_data.bytes[offset];
 	return handle;
 }
 
 - (VoxelChunkContentsHandle *)parseVoxelContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	VoxelChunkContentsHandle *handle = [VoxelChunkContentsHandle new];
-	handle->numVoxels = (uint32_t const *)&_data.bytes[offset];
-	handle->voxels_array = (VoxelChunkContentsHandle_Voxel *)(uint8_t const (*)[4])&_data.bytes[offset + kVoxelChunkVoxels_Offset];
+	handle.numVoxels = (uint32_t const *)&_data.bytes[offset];
+	handle.voxels_array = (VoxelChunkContentsHandle_Voxel *)(uint8_t const (*)[4])&_data.bytes[offset + kVoxelChunkVoxels_Offset];
 	return handle;
 }
 
 - (PaletteChunkContentsHandle *)parsePaletteContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	PaletteChunkContentsHandle *handle = [PaletteChunkContentsHandle new];
-	handle->colors_array = (PaletteChunkContentsHandle_Color *)(uint8_t const (*)[4])&_data.bytes[offset];
+	handle.colors_array = (PaletteChunkContentsHandle_Color *)(uint8_t const (*)[4])&_data.bytes[offset];
 	return handle;
 }
 
