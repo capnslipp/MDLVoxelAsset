@@ -36,14 +36,14 @@ static const size_t kChunkChildrenTotalSize_Size = 4;
 static const ptrdiff_t kChunkContentsOrChildren_Offset = kChunkChildrenTotalSize_ChunkOffset + kChunkChildrenTotalSize_Size;
 static const size_t kChunkPadding_MaxSize = 1;
 
-typedef union _ChunkId {
+typedef union _ChunkIdent {
 	FourCharDataArray const *array;
 	uint8_t const *ptr;
 	FourCharCode const *fourCharCode;
-} ChunkId; // @todo: Rename ChunkIdDataPtr?
+} ChunkIdent; // @todo: Rename ChunkIdDataPtr?
 
 typedef struct _ChunkHandle {
-	ChunkId id;
+	ChunkIdent ident;
 	uint32_t const *contentsSize;
 	uint32_t const *childrenTotalSize;
 	NSValue *contents;
@@ -57,13 +57,13 @@ size_t getChunkTotalSize(ChunkHandle chunk) {
 }
 
 static const char kMainChunkId_string[] = "MAIN";
-static const ChunkId kMainChunkId = { .ptr = (uint8_t const *)&kMainChunkId_string };
+static const ChunkIdent kMainChunkIdent = { .ptr = (uint8_t const *)&kMainChunkId_string };
 static const char kSizeChunkId_string[] = "SIZE";
-static const ChunkId kSizeChunkId = { .ptr = (uint8_t const *)&kSizeChunkId_string };
+static const ChunkIdent kSizeChunkIdent = { .ptr = (uint8_t const *)&kSizeChunkId_string };
 static const char kVoxelChunkId_string[] = "XYZI";
-static const ChunkId kVoxelChunkId = { .ptr = (uint8_t const *)&kVoxelChunkId_string };
+static const ChunkIdent kVoxelChunkIdent = { .ptr = (uint8_t const *)&kVoxelChunkId_string };
 static const char kPaletteChunkId_string[] = "RGBA";
-static const ChunkId kPaletteChunkId = { .ptr = (uint8_t const *)&kPaletteChunkId_string };
+static const ChunkIdent kPaletteChunkIdent = { .ptr = (uint8_t const *)&kPaletteChunkId_string };
 
 typedef uint32_t XYZSizeDataArray[3];
 typedef struct _SizeChunkContentsHandle {
@@ -136,9 +136,9 @@ static ChunkHandle kDefaultPaletteChunk = (ChunkHandle){
 	.childrenChunks = nil,
 };
 
-typedef void(^ChunkContentsParserB)(ChunkId id, ptrdiff_t startOffset, uint32_t size);
+typedef void(^ChunkContentsParserB)(ChunkIdent ident, ptrdiff_t startOffset, uint32_t size);
 /// @return: endOffset; potentially the `startOffset` of the next chunk.
-typedef ptrdiff_t(^ChunkChildParserB)(ChunkId parentId, ptrdiff_t startOffset, uint32_t remainingSizeAllowance);
+typedef ptrdiff_t(^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t startOffset, uint32_t remainingSizeAllowance);
 
 
 
@@ -168,7 +168,7 @@ typedef ptrdiff_t(^ChunkChildParserB)(ChunkId parentId, ptrdiff_t startOffset, u
 		for (uint colorI = 0; colorI < 256; ++colorI)
 			kDefaultPaletteContents.colors_array[colorI] = (PaletteChunkContentsHandle_Color){ &kDefaultPaletteRGBAValues[colorI] };
 		
-		kDefaultPaletteChunk.id = kPaletteChunkId;
+		kDefaultPaletteChunk.ident = kPaletteChunkIdent;
         kDefaultPaletteChunk.contents = [[NSValue alloc] initWithBytes:&kDefaultPaletteContents objCType:@encode(PaletteChunkContentsHandle)];
     });
 	
@@ -204,32 +204,32 @@ typedef ptrdiff_t(^ChunkChildParserB)(ChunkId parentId, ptrdiff_t startOffset, u
 	// @fixme: This may cause retain cycles of `chunkParser`.  The solution I've found to prevent this is the `__weak` attribute, which isn't allowed in MRC.
 	__block ChunkHandle (^chunkParser)(ptrdiff_t) = ^(ptrdiff_t startOffset)
 	{
-		ChunkContentsParserB contentsParser = ^(ChunkId id, ptrdiff_t contentsStartOffset, uint32_t size)
+		ChunkContentsParserB contentsParser = ^(ChunkIdent ident, ptrdiff_t contentsStartOffset, uint32_t size)
 		{
 			NSData *contentsData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[contentsStartOffset] length:size freeWhenDone:NO];
 			NSLog(@"Parsing contents of size %d for chunk ID %@:\n\t%@",
 				size,
-				[NSString stringWithFormat:@"%c%c%c%c", (*id.array)[0], (*id.array)[1], (*id.array)[2], (*id.array)[3]],
+				[NSString stringWithFormat:@"%c%c%c%c", (*ident.array)[0], (*ident.array)[1], (*ident.array)[2], (*ident.array)[3]],
 				contentsData
 			);
 			
-			if (*id.fourCharCode == *kSizeChunkId.fourCharCode)
+			if (*ident.fourCharCode == *kSizeChunkIdent.fourCharCode)
 				[self parseSizeContentsDataAtOffset:contentsStartOffset withDataSize:size];
-			else if (*id.fourCharCode == *kVoxelChunkId.fourCharCode)
+			else if (*ident.fourCharCode == *kVoxelChunkIdent.fourCharCode)
 				[self parseVoxelContentsDataAtOffset:contentsStartOffset withDataSize:size];
-			else if (*id.fourCharCode == *kPaletteChunkId.fourCharCode)
+			else if (*ident.fourCharCode == *kPaletteChunkIdent.fourCharCode)
 				[self parsePaletteContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else
 				@throw [NSException exceptionWithName: NSInvalidArgumentException
-					reason: [NSString stringWithFormat:@"Unknown chunk ID %c%c%c%c.", (*id.array)[0], (*id.array)[1], (*id.array)[2], (*id.array)[3]]
+					reason: [NSString stringWithFormat:@"Unknown chunk ID %c%c%c%c.", (*ident.array)[0], (*ident.array)[1], (*ident.array)[2], (*ident.array)[3]]
 					userInfo: nil
 				];
 		};
-		ChunkChildParserB childParser = ^(ChunkId parentId, ptrdiff_t childStartOffset, uint32_t remainingSizeAllowance)
+		ChunkChildParserB childParser = ^(ChunkIdent parentIdent, ptrdiff_t childStartOffset, uint32_t remainingSizeAllowance)
 		{
 			NSData *childData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[childStartOffset] length:remainingSizeAllowance freeWhenDone:NO];
 			NSLog(@"Parsing child of chunk ID %@:\n\t%@",
-				[NSString stringWithFormat:@"%c%c%c%c", (*parentId.array)[0], (*parentId.array)[1], (*parentId.array)[2], (*parentId.array)[3]],
+				[NSString stringWithFormat:@"%c%c%c%c", (*parentIdent.array)[0], (*parentIdent.array)[1], (*parentIdent.array)[2], (*parentIdent.array)[3]],
 				childData
 			);
 			
@@ -245,7 +245,7 @@ typedef ptrdiff_t(^ChunkChildParserB)(ChunkId parentId, ptrdiff_t startOffset, u
 - (ChunkHandle)parseChunkDataAtOffset:(ptrdiff_t)baseOffset withContentsParser:(ChunkContentsParserB)contentsParser childParser:(ChunkChildParserB)childParser
 {
 	ChunkHandle chunk = (ChunkHandle){
-		.id = (ChunkId){
+		.ident = (ChunkIdent){
 			.ptr = (uint8_t const *)&_data.bytes[baseOffset + kChunkId_ChunkOffset]
 		},
 		.contentsSize = (uint32_t const *)&_data.bytes[baseOffset + kChunkContentsSize_ChunkOffset],
@@ -253,7 +253,7 @@ typedef ptrdiff_t(^ChunkChildParserB)(ChunkId parentId, ptrdiff_t startOffset, u
 	};
 	
 	NSLog(@"Parsing chunk ID %@, with contents sized %d, and children sized %d.",
-		[NSString stringWithFormat:@"%c%c%c%c", (*chunk.id.array)[0], (*chunk.id.array)[1], (*chunk.id.array)[2], (*chunk.id.array)[3]],
+		[NSString stringWithFormat:@"%c%c%c%c", (*chunk.ident.array)[0], (*chunk.ident.array)[1], (*chunk.ident.array)[2], (*chunk.ident.array)[3]],
 		*chunk.contentsSize,
 		*chunk.childrenTotalSize
 	);
@@ -265,7 +265,7 @@ typedef ptrdiff_t(^ChunkChildParserB)(ChunkId parentId, ptrdiff_t startOffset, u
 		ptrdiff_t const contentsOffset = baseOffset + kChunkContentsOrChildren_Offset;
 		chunk.contents = &_data.bytes[contentsOffset];
 		
-		contentsParser(chunk.id, contentsOffset, contentsSize);
+		contentsParser(chunk.ident, contentsOffset, contentsSize);
 	}
 	
 	uint32_t childrenTotalSize = *chunk.childrenTotalSize;
@@ -278,7 +278,7 @@ typedef ptrdiff_t(^ChunkChildParserB)(ChunkId parentId, ptrdiff_t startOffset, u
 		ptrdiff_t childOffset = childrenOffset;
 		size_t childrenRemainingSize = childrenTotalSize;
 		do {
-			ptrdiff_t endOffset = childParser(chunk.id, childOffset, childrenRemainingSize);
+			ptrdiff_t endOffset = childParser(chunk.ident, childOffset, childrenRemainingSize);
 			size_t childrenSizeParsedThusFar = endOffset - childrenOffset;
 			
 			if (!(childrenSizeParsedThusFar + kChunkPadding_MaxSize < childrenTotalSize))
