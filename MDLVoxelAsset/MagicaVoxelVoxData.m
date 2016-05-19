@@ -27,9 +27,9 @@ static const ptrdiff_t kVersionNumber_Offset = kMagicNumber_Offset + kMagicNumbe
 static const size_t kVersionNumber_Size = 4;
 static const ptrdiff_t kRootChunk_Offset = kVersionNumber_Offset + kVersionNumber_Size;
 
-static const ptrdiff_t kChunkId_ChunkOffset = 0;
-static const size_t kChunkId_Size = 4;
-static const ptrdiff_t kChunkContentsSize_ChunkOffset = kChunkId_ChunkOffset + kChunkId_Size;
+static const ptrdiff_t kChunkIdent_ChunkOffset = 0;
+static const size_t kChunkIdent_Size = 4;
+static const ptrdiff_t kChunkContentsSize_ChunkOffset = kChunkIdent_ChunkOffset + kChunkIdent_Size;
 static const size_t kChunkContentsSize_Size = 4;
 static const ptrdiff_t kChunkChildrenTotalSize_ChunkOffset = kChunkContentsSize_ChunkOffset + kChunkContentsSize_Size;
 static const size_t kChunkChildrenTotalSize_Size = 4;
@@ -68,14 +68,14 @@ NSString *NSStringFromChunkIdent(ChunkIdent ident) {
 @end
 
 
-static const char kMainChunkId_string[] = "MAIN";
-static const ChunkIdent kMainChunkIdent = { .ptr = (uint8_t const *)&kMainChunkId_string };
-static const char kSizeChunkId_string[] = "SIZE";
-static const ChunkIdent kSizeChunkIdent = { .ptr = (uint8_t const *)&kSizeChunkId_string };
-static const char kVoxelChunkId_string[] = "XYZI";
-static const ChunkIdent kVoxelChunkIdent = { .ptr = (uint8_t const *)&kVoxelChunkId_string };
-static const char kPaletteChunkId_string[] = "RGBA";
-static const ChunkIdent kPaletteChunkIdent = { .ptr = (uint8_t const *)&kPaletteChunkId_string };
+static const char kMainChunkIdent_string[] = "MAIN";
+static const ChunkIdent kMainChunkIdent = { .ptr = (uint8_t const *)&kMainChunkIdent_string };
+static const char kSizeChunkIdent_string[] = "SIZE";
+static const ChunkIdent kSizeChunkIdent = { .ptr = (uint8_t const *)&kSizeChunkIdent_string };
+static const char kVoxelChunkIdent_string[] = "XYZI";
+static const ChunkIdent kVoxelChunkIdent = { .ptr = (uint8_t const *)&kVoxelChunkIdent_string };
+static const char kPaletteChunkIdent_string[] = "RGBA";
+static const ChunkIdent kPaletteChunkIdent = { .ptr = (uint8_t const *)&kPaletteChunkIdent_string };
 
 
 typedef uint32_t XYZSizeDataArray[3];
@@ -282,7 +282,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	ChunkHandle *chunk = [ChunkHandle new];
 	chunk->ident = (ChunkIdent){
-		.ptr = (uint8_t const *)&_data.bytes[baseOffset + kChunkId_ChunkOffset]
+		.ptr = (uint8_t const *)&_data.bytes[baseOffset + kChunkIdent_ChunkOffset]
 	};
 	chunk->contentsSize = (uint32_t const *)&_data.bytes[baseOffset + kChunkContentsSize_ChunkOffset];
 	chunk->childrenTotalSize = (uint32_t const *)&_data.bytes[baseOffset + kChunkChildrenTotalSize_ChunkOffset];
