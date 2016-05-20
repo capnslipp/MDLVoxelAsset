@@ -8,6 +8,23 @@
 
 
 
+#pragma mark Constants
+
+typedef struct _MagicaVoxelVoxData_XYZDimensions {
+	uint32_t const x, y, z;
+} MagicaVoxelVoxData_XYZDimensions;
+
+typedef struct _MagicaVoxelVoxData_PaletteColor {
+	uint8_t const r, g, b, a;
+} MagicaVoxelVoxData_PaletteColor;
+
+typedef struct _MagicaVoxelVoxData_Voxel {
+	uint8_t const x, y, z;
+	uint8_t const colorIndex;
+} MagicaVoxelVoxData_Voxel;
+
+
+
 #pragma clang assume_nonnull begin
 
 
@@ -15,7 +32,15 @@
 
 @property (nonatomic, assign, readonly, getter=isValid) BOOL valid;
 
-- (uint32_t)versionNumber;
+@property (nonatomic, assign, readonly) uint32_t versionNumber;
+
+@property (nonatomic, assign, readonly) MagicaVoxelVoxData_XYZDimensions dimensions;
+
+@property (nonatomic, assign, readonly) MagicaVoxelVoxData_PaletteColor *paletteColors_array;
+@property (nonatomic, assign, readonly) NSUInteger paletteColors_count;
+
+@property (nonatomic, assign, nullable) MagicaVoxelVoxData_Voxel *voxels_array;
+@property (nonatomic, assign, readonly) NSUInteger voxels_count;
 
 #pragma mark NSData-Mirroring Interface
 

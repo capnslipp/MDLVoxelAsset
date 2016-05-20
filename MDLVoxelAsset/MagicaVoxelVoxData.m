@@ -138,6 +138,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			initWithData: [NSData dataWithBytesNoCopy:&kDefaultPaletteData.contents length:sizeof(kDefaultPaletteData.contents)]
 			offset: 0
 		];
+		kDefaultPaletteChunk.contentsHandle = kDefaultPaletteContents;
     });
 	
 }
@@ -268,6 +269,62 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 
 - (uint32_t)versionNumber; {
 	return *_versionNumber_ptr;
+}
+
+- (MagicaVoxelVoxData_XYZDimensions)dimensions
+{
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kSizeChunkIdent_string)];
+	if (!chunkHandle)
+		return (MagicaVoxelVoxData_XYZDimensions){ 0, 0, 0 };
+	
+	SizeChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+	if (!chunkContents)
+		return (MagicaVoxelVoxData_XYZDimensions){ 0, 0, 0 };
+	
+	return *(MagicaVoxelVoxData_XYZDimensions *)*chunkContents.xyzSize_ptr;
+}
+
+- (MagicaVoxelVoxData_PaletteColor *)paletteColors_array
+{
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kPaletteChunkIdent_string)];
+	if (!chunkHandle)
+		chunkHandle = kDefaultPaletteChunk;
+	
+	PaletteChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+	if (!chunkContents)
+		return NULL;
+	
+	return (MagicaVoxelVoxData_PaletteColor *)chunkContents.colors_array;
+}
+
+- (NSUInteger)paletteColors_count {
+	return kPaletteChunk_PaletteSize / kPaletteChunk_ColorSize;
+}
+
+- (MagicaVoxelVoxData_Voxel *)voxels_array
+{
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)];
+	if (!chunkHandle)
+		return NULL;
+	
+	VoxelChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+	if (!chunkContents)
+		return NULL;
+	
+	return (MagicaVoxelVoxData_Voxel *)chunkContents.voxels_array;
+}
+
+- (NSUInteger)voxels_count
+{
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)];
+	if (!chunkHandle)
+		return 0;
+	
+	VoxelChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+	if (!chunkContents)
+		return 0;
+	
+	return chunkContents.numVoxels;
 }
 
 - (BOOL)isValid
