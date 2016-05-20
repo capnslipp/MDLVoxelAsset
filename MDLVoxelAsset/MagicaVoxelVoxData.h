@@ -7,8 +7,8 @@
 #import <Foundation/Foundation.h>
 
 
-#pragma clang assume_nonnull begin
 
+#pragma clang assume_nonnull begin
 
 
 @interface MagicaVoxelVoxData : NSObject <NSCopying, NSMutableCopying, NSSecureCoding>
@@ -61,7 +61,6 @@
 - (nullable instancetype)initWithBase64EncodedData:(NSData *)base64Data options:(NSDataBase64DecodingOptions)options NS_AVAILABLE(10_9, 7_0);
 - (NSData *)base64EncodedDataWithOptions:(NSDataBase64EncodingOptions)options NS_AVAILABLE(10_9, 7_0);
 @end
-
 
 
 #pragma clang assume_nonnull end
