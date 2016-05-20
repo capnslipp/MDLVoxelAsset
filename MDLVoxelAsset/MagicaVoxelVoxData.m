@@ -298,7 +298,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 }
 
 - (NSUInteger)paletteColors_count {
-	return kPaletteChunk_PaletteSize / kPaletteChunk_ColorSize;
+	return 255; // last color is unused
 }
 
 - (MagicaVoxelVoxData_Voxel *)voxels_array
