@@ -77,8 +77,10 @@ class GameViewController: UIViewController
 		}
 		
 		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path!))
+		let voxelPaletteIndices = asset.voxelPaletteIndices as! [Int]
+		let paletteColors = asset.paletteColors as [UIColor]
 		
-		//NSMutableDictionary *coloredParticles = self.coloredCubeParticles;
+		var coloredBoxes = Dictionary<UIColor, SCNBox>()
 		
 		// Create voxel grid from MDLAsset
 		let grid:MDLVoxelArray = asset.voxelArray
@@ -97,19 +99,23 @@ class GameViewController: UIViewController
 		{
 			let position:vector_float3 = grid.spatialLocationOfIndex(voxelsIndices[i]);
 			
-			//// Create the voxel node and set its properties, reusing same-colored particle geometry
-			//SCNGeometry *coloredBox = [self getOrCreateParticleForColor:color shape:ParticleShapeCube creationBlock:^SCNGeometry *{
-			//	SCNBox *newParticle = [particle copy];
-			//	
-			//	SCNMaterial *material = [SCNMaterial material];
-			//	material.diffuse.contents = color;
-			//	material.selfIllumination.contents = @"character.scnassets/textures/max_ambiant.png";
-			//	newParticle.firstMaterial = material;
-			//	
-			//	return newParticle;
-			//}];
+			let colorIndex = voxelPaletteIndices[i]
+			let color = paletteColors[colorIndex]
 			
-			let voxelNode = SCNNode(geometry: box)
+			// Create the voxel node and set its properties, reusing same-colored particle geometry
+			
+			var coloredBox:SCNBox? = coloredBoxes[color]
+			if (coloredBox == nil) {
+				coloredBox = (box.copy() as! SCNBox)
+				
+				let material = SCNMaterial()
+				material.diffuse.contents = color
+				coloredBox!.firstMaterial = material
+				
+				coloredBoxes[color] = coloredBox
+			}
+			
+			let voxelNode = SCNNode(geometry: coloredBox)
 			voxelNode.position = SCNVector3(position)
 			
 			// Add voxel node to the scene

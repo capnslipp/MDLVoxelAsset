@@ -6,6 +6,8 @@
 
 #import <ModelIO/ModelIO.h>
 
+@class UIColor;
+
 
 
 @interface MDLVoxelAsset : MDLAsset
@@ -13,6 +15,10 @@
 - (instancetype)initWithURL:(NSURL *)URL;
 
 @property (nonatomic, retain) MDLVoxelArray *voxelArray;
+
+@property (nonatomic, retain) NSArray<NSValue*> *voxelPaletteIndices;
+
+@property (nonatomic, retain) NSArray<UIColor*> *paletteColors;
 
 + (BOOL)canImportFileExtension:(NSString *)extension;
 
