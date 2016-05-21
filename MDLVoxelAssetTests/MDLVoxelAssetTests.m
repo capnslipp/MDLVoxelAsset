@@ -6,7 +6,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import "MagicaVoxelVoxData.h"
+#import "../MDLVoxelAsset.h"
 
 
 
@@ -78,12 +78,13 @@
 	NSLog(@"data: %@", data.description);
 }
 
-- (void)testPerformanceExample
+- (void)testMDLVoxelAsset
 {
-	// This is an example of a performance test case.
-	[self measureBlock:^{
-		// Put the code you want to measure the time of here.
-	}];
+	NSString *testVoxFilePath = [self.testBundle pathForResource:@"chr_sword" ofType:@"vox"];
+	
+	MDLVoxelAsset *asset = [[MDLVoxelAsset alloc] initWithURL:[NSURL fileURLWithPath:testVoxFilePath]];
+	
+	NSLog(@"asset: %@", asset.description);
 }
 
 

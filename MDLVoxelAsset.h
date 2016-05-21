@@ -17,4 +17,5 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <MDLVoxelAsset/PublicHeader.h>
 
 
-#import <MDLVoxelAsset/MDLVoxelAsset.h>
+#import "MDLVoxelAsset/MagicaVoxelVoxData.h"
+#import "MDLVoxelAsset/MDLVoxelAsset.h"
