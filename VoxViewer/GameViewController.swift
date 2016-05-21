@@ -90,7 +90,7 @@ class GameViewController: UIViewController
 		let baseNode = SCNNode();
 		
 		// Create the voxel node geometry
-		let box = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.1);
+		let box = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.0);
 		
 		// Traverse the NSData voxel array and for each ijk index, create a voxel node positioned at its spatial location
 		let count = grid.count
