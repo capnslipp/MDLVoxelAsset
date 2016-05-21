@@ -16,6 +16,8 @@
 		FA0ADEF11CF00A280054DCAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEEF1CF00A280054DCAA /* LaunchScreen.storyboard */; };
 		FA0ADEF91CF00DC30054DCAA /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
 		FA0ADEFA1CF00DE80054DCAA /* chr_sword.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */; };
+		FA0ADEFC1CF032590054DCAA /* rgbw_cmyk.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFB1CF032590054DCAA /* rgbw_cmyk.vox */; };
+		FA0ADEFD1CF032600054DCAA /* rgbw_cmyk.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFB1CF032590054DCAA /* rgbw_cmyk.vox */; };
 		FA2685861CEA9A71003B86C8 /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FA2685851CEA9A71003B86C8 /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA26858D1CEA9A72003B86C8 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
 		FA2685921CEA9A72003B86C8 /* MDLVoxelAssetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2685911CEA9A72003B86C8 /* MDLVoxelAssetTests.m */; };
@@ -62,6 +64,7 @@
 		FA0ADEF01CF00A280054DCAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA0ADEF21CF00A280054DCAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA0ADEF61CF00CCA0054DCAA /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		FA0ADEFB1CF032590054DCAA /* rgbw_cmyk.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = rgbw_cmyk.vox; sourceTree = "<group>"; };
 		FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MDLVoxelAsset.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA2685851CEA9A71003B86C8 /* MDLVoxelAsset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDLVoxelAsset.h; sourceTree = "<group>"; };
 		FA2685871CEA9A71003B86C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -161,6 +164,7 @@
 		FA2685901CEA9A72003B86C8 /* MDLVoxelAssetTests */ = {
 			isa = PBXGroup;
 			children = (
+				FA0ADEFB1CF032590054DCAA /* rgbw_cmyk.vox */,
 				FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */,
 				FA2685911CEA9A72003B86C8 /* MDLVoxelAssetTests.m */,
 				FA2685931CEA9A72003B86C8 /* Info.plist */,
@@ -307,6 +311,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA0ADEF11CF00A280054DCAA /* LaunchScreen.storyboard in Resources */,
+				FA0ADEFD1CF032600054DCAA /* rgbw_cmyk.vox in Resources */,
 				FA0ADEEE1CF00A280054DCAA /* Assets.xcassets in Resources */,
 				FA0ADEEC1CF00A280054DCAA /* Main.storyboard in Resources */,
 				FA0ADEFA1CF00DE80054DCAA /* chr_sword.vox in Resources */,
@@ -325,6 +330,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA64893E1CEAF99B00B6AEB1 /* chr_sword.vox in Resources */,
+				FA0ADEFC1CF032590054DCAA /* rgbw_cmyk.vox in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

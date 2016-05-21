@@ -17,7 +17,7 @@
 	NSData *_voxelsData;
 	
 	MDLVoxelArray *_voxelArray;
-	NSArray<NSValue*> *_voxelPaletteIndices;
+	NSArray<NSArray<NSArray<NSNumber*>*>*> *_voxelPaletteIndices;
 	NSArray<UIColor*> *_paletteColors;
 }
 
@@ -52,13 +52,24 @@
 		.minBounds = { 0, 0, 0 },
 		.maxBounds = { dimensions.x, dimensions.y, dimensions.z },
 	};
-	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:dimensions_aabbox voxelExtent:1.0f];
+	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:dimensions_aabbox voxelExtent:1.0f];	
 	
-	
-	NSMutableArray<NSValue*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:voxelCount];
+	NSNumber *zeroPaletteIndex = @(0);
+	NSMutableArray<NSMutableArray<NSMutableArray<NSNumber*>*>*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:(dimensions.x + 1)];
+	for (int xI = 0; xI <= dimensions.x; ++xI) {
+		[(voxelPaletteIndices[xI] = [[NSMutableArray alloc] initWithCapacity:(dimensions.y + 1)]) release];
+		for (int yI = 0; yI <= dimensions.y; ++yI) {
+			[(voxelPaletteIndices[xI][yI] = [[NSMutableArray alloc] initWithCapacity:(dimensions.z + 1)]) release];
+			for (int zI = 0; zI <= dimensions.z; ++zI)
+				voxelPaletteIndices[xI][yI][zI] = zeroPaletteIndex;
+		}
+	}
+	//NSMutableArray<NSValue*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:voxelCount];
 	for (int vI = 0; vI < voxelCount; ++vI) {
 		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
-		voxelPaletteIndices[vI] = @(voxVoxel->colorIndex);
+		MDLVoxelIndex voxelIndex = voxels[vI];
+		voxelPaletteIndices[voxelIndex.x][voxelIndex.y][voxelIndex.z] = @(voxVoxel->colorIndex);
+		//voxelPaletteIndices[vI] = @(voxVoxel->colorIndex);
 	}
 	_voxelPaletteIndices = voxelPaletteIndices;
 	
@@ -68,15 +79,15 @@
 	
 	NSMutableArray<UIColor*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(paletteColorCount + 1)];
 	paletteColors[0] = UIColor.clearColor;
-	for (int pI = 0; pI < paletteColorCount; ++pI) {
-		MagicaVoxelVoxData_PaletteColor *voxColor = &mvvoxPaletteColors[pI];
+	for (int pI = 1; pI <= paletteColorCount; ++pI) {
+		MagicaVoxelVoxData_PaletteColor *voxColor = &mvvoxPaletteColors[pI - 1];
 		UIColor *color = [[UIColor alloc]
 			initWithRed: voxColor->r / 255.f
 			green: voxColor->g / 255.f
 			blue: voxColor->b / 255.f
 			alpha: voxColor->a / 255.f
 		];
-		[(paletteColors[pI + 1] = color) release];
+		[(paletteColors[pI] = color) release];
 	}
 	
 	_paletteColors = paletteColors;

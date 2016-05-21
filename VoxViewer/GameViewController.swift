@@ -43,7 +43,7 @@ class GameViewController: UIViewController
 		scene.rootNode.addChildNode(ambientLightNode)
 		
 		// create and add the .vox node
-		let ship = createVoxelModel(named: "chr_sword.vox")
+		let ship = createVoxelModel(named: "chr_sword")
 		scene.rootNode.addChildNode(ship)
 		
 		//// animate the 3d object
@@ -77,7 +77,7 @@ class GameViewController: UIViewController
 		}
 		
 		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path!))
-		let voxelPaletteIndices = asset.voxelPaletteIndices as! [Int]
+		let voxelPaletteIndices = asset.voxelPaletteIndices as Array<Array<Array<NSNumber>>>
 		let paletteColors = asset.paletteColors as [UIColor]
 		
 		var coloredBoxes = Dictionary<UIColor, SCNBox>()
@@ -97,9 +97,11 @@ class GameViewController: UIViewController
 		let voxelsIndices = UnsafePointer<MDLVoxelIndex>(voxelData.bytes)
 		for i in 0..<count
 		{
-			let position:vector_float3 = grid.spatialLocationOfIndex(voxelsIndices[i]);
+			let voxelIndex = voxelsIndices[i];
 			
-			let colorIndex = voxelPaletteIndices[i]
+			let position:vector_float3 = grid.spatialLocationOfIndex(voxelIndex);
+			
+			let colorIndex = voxelPaletteIndices[Int(voxelIndex.x)][Int(voxelIndex.y)][Int(voxelIndex.z)].integerValue
 			let color = paletteColors[colorIndex]
 			
 			// Create the voxel node and set its properties, reusing same-colored particle geometry

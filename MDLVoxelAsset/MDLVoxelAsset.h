@@ -16,7 +16,7 @@
 
 @property (nonatomic, retain) MDLVoxelArray *voxelArray;
 
-@property (nonatomic, retain) NSArray<NSValue*> *voxelPaletteIndices;
+@property (nonatomic, retain) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
 
 @property (nonatomic, retain) NSArray<UIColor*> *paletteColors;
 
