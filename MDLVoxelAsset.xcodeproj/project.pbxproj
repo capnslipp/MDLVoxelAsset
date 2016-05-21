@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		FA0ADEDC1CEFAC660054DCAA /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA0ADEDD1CEFAC660054DCAA /* MDLVoxelAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0ADEDB1CEFAC660054DCAA /* MDLVoxelAsset.m */; };
+		FA0ADEE51CF00A280054DCAA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0ADEE41CF00A280054DCAA /* AppDelegate.swift */; };
+		FA0ADEE91CF00A280054DCAA /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0ADEE81CF00A280054DCAA /* GameViewController.swift */; };
+		FA0ADEEC1CF00A280054DCAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEEA1CF00A280054DCAA /* Main.storyboard */; };
+		FA0ADEEE1CF00A280054DCAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEED1CF00A280054DCAA /* Assets.xcassets */; };
+		FA0ADEF11CF00A280054DCAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEEF1CF00A280054DCAA /* LaunchScreen.storyboard */; };
+		FA0ADEF91CF00DC30054DCAA /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
+		FA0ADEFA1CF00DE80054DCAA /* chr_sword.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */; };
 		FA2685861CEA9A71003B86C8 /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FA2685851CEA9A71003B86C8 /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA26858D1CEA9A72003B86C8 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
 		FA2685921CEA9A72003B86C8 /* MDLVoxelAssetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2685911CEA9A72003B86C8 /* MDLVoxelAssetTests.m */; };
@@ -28,6 +35,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		FA0ADEF71CF00DBD0054DCAA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FA2685811CEA9A71003B86C8;
+			remoteInfo = MDLVoxelAsset;
+		};
 		FA26858E1CEA9A72003B86C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
@@ -40,6 +54,14 @@
 /* Begin PBXFileReference section */
 		FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLVoxelAsset.h; sourceTree = "<group>"; };
 		FA0ADEDB1CEFAC660054DCAA /* MDLVoxelAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MDLVoxelAsset.m; sourceTree = "<group>"; };
+		FA0ADEE21CF00A270054DCAA /* VoxViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoxViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA0ADEE41CF00A280054DCAA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		FA0ADEE81CF00A280054DCAA /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		FA0ADEEB1CF00A280054DCAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		FA0ADEED1CF00A280054DCAA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FA0ADEF01CF00A280054DCAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		FA0ADEF21CF00A280054DCAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA0ADEF61CF00CCA0054DCAA /* module.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MDLVoxelAsset.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA2685851CEA9A71003B86C8 /* MDLVoxelAsset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDLVoxelAsset.h; sourceTree = "<group>"; };
 		FA2685871CEA9A71003B86C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -62,6 +84,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		FA0ADEDF1CF00A270054DCAA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA0ADEF91CF00DC30054DCAA /* MDLVoxelAsset.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA26857E1CEA9A71003B86C8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -80,12 +110,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FA0ADEE31CF00A280054DCAA /* VoxViewer */ = {
+			isa = PBXGroup;
+			children = (
+				FA0ADEE41CF00A280054DCAA /* AppDelegate.swift */,
+				FA0ADEE81CF00A280054DCAA /* GameViewController.swift */,
+				FA0ADEEA1CF00A280054DCAA /* Main.storyboard */,
+				FA0ADEED1CF00A280054DCAA /* Assets.xcassets */,
+				FA0ADEEF1CF00A280054DCAA /* LaunchScreen.storyboard */,
+				FA0ADEF21CF00A280054DCAA /* Info.plist */,
+			);
+			path = VoxViewer;
+			sourceTree = "<group>";
+		};
 		FA2685781CEA9A71003B86C8 = {
 			isa = PBXGroup;
 			children = (
 				FA2685851CEA9A71003B86C8 /* MDLVoxelAsset.h */,
 				FA2685841CEA9A71003B86C8 /* MDLVoxelAsset */,
 				FA2685901CEA9A72003B86C8 /* MDLVoxelAssetTests */,
+				FA0ADEE31CF00A280054DCAA /* VoxViewer */,
 				FA2685831CEA9A71003B86C8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -95,6 +139,7 @@
 			children = (
 				FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */,
 				FA26858C1CEA9A72003B86C8 /* MDLVoxelAssetTests.xctest */,
+				FA0ADEE21CF00A270054DCAA /* VoxViewer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,6 +147,7 @@
 		FA2685841CEA9A71003B86C8 /* MDLVoxelAsset */ = {
 			isa = PBXGroup;
 			children = (
+				FA0ADEF61CF00CCA0054DCAA /* module.modulemap */,
 				FA2685871CEA9A71003B86C8 /* Info.plist */,
 				FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */,
 				FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */,
@@ -160,6 +206,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		FA0ADEE11CF00A270054DCAA /* VoxViewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FA0ADEF31CF00A280054DCAA /* Build configuration list for PBXNativeTarget "VoxViewer" */;
+			buildPhases = (
+				FA0ADEDE1CF00A270054DCAA /* Sources */,
+				FA0ADEDF1CF00A270054DCAA /* Frameworks */,
+				FA0ADEE01CF00A270054DCAA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FA0ADEF81CF00DBD0054DCAA /* PBXTargetDependency */,
+			);
+			name = VoxViewer;
+			productName = VoxViewer;
+			productReference = FA0ADEE21CF00A270054DCAA /* VoxViewer.app */;
+			productType = "com.apple.product-type.application";
+		};
 		FA2685811CEA9A71003B86C8 /* MDLVoxelAsset */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FA2685961CEA9A72003B86C8 /* Build configuration list for PBXNativeTarget "MDLVoxelAsset" */;
@@ -202,9 +266,13 @@
 		FA2685791CEA9A71003B86C8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Cap'n Slipp";
 				TargetAttributes = {
+					FA0ADEE11CF00A270054DCAA = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					FA2685811CEA9A71003B86C8 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -219,6 +287,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = FA2685781CEA9A71003B86C8;
 			productRefGroup = FA2685831CEA9A71003B86C8 /* Products */;
@@ -227,11 +296,23 @@
 			targets = (
 				FA2685811CEA9A71003B86C8 /* MDLVoxelAsset */,
 				FA26858B1CEA9A71003B86C8 /* MDLVoxelAssetTests */,
+				FA0ADEE11CF00A270054DCAA /* VoxViewer */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		FA0ADEE01CF00A270054DCAA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA0ADEF11CF00A280054DCAA /* LaunchScreen.storyboard in Resources */,
+				FA0ADEEE1CF00A280054DCAA /* Assets.xcassets in Resources */,
+				FA0ADEEC1CF00A280054DCAA /* Main.storyboard in Resources */,
+				FA0ADEFA1CF00DE80054DCAA /* chr_sword.vox in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA2685801CEA9A71003B86C8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -250,6 +331,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		FA0ADEDE1CF00A270054DCAA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA0ADEE91CF00A280054DCAA /* GameViewController.swift in Sources */,
+				FA0ADEE51CF00A280054DCAA /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA26857D1CEA9A71003B86C8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -275,6 +365,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		FA0ADEF81CF00DBD0054DCAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FA2685811CEA9A71003B86C8 /* MDLVoxelAsset */;
+			targetProxy = FA0ADEF71CF00DBD0054DCAA /* PBXContainerItemProxy */;
+		};
 		FA26858F1CEA9A72003B86C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FA2685811CEA9A71003B86C8 /* MDLVoxelAsset */;
@@ -282,7 +377,52 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		FA0ADEEA1CF00A280054DCAA /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA0ADEEB1CF00A280054DCAA /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		FA0ADEEF1CF00A280054DCAA /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FA0ADEF01CF00A280054DCAA /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		FA0ADEF41CF00A280054DCAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = VoxViewer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FA0ADEF51CF00A280054DCAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				INFOPLIST_FILE = VoxViewer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		FA2685941CEA9A72003B86C8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -428,6 +568,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		FA0ADEF31CF00A280054DCAA /* Build configuration list for PBXNativeTarget "VoxViewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FA0ADEF41CF00A280054DCAA /* Debug */,
+				FA0ADEF51CF00A280054DCAA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		FA26857C1CEA9A71003B86C8 /* Build configuration list for PBXProject "MDLVoxelAsset" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

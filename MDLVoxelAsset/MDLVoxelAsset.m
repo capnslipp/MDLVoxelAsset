@@ -46,7 +46,7 @@
 	MagicaVoxelVoxData_XYZDimensions dimensions = _mvvoxData.dimensions;
 	MDLAxisAlignedBoundingBox dimensions_aabbox = {
 		.minBounds = { 0, 0, 0 },
-		.maxBounds = { dimensions.x, dimensions.y, dimensions.z }
+		.maxBounds = { dimensions.x, dimensions.y, dimensions.z },
 	};
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:dimensions_aabbox voxelExtent:1.0f];
 	
