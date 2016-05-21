@@ -12,4 +12,8 @@
 
 - (instancetype)initWithURL:(NSURL *)URL;
 
+@property (nonatomic, retain) MDLVoxelArray *voxelArray;
+
++ (BOOL)canImportFileExtension:(NSString *)extension;
+
 @end
