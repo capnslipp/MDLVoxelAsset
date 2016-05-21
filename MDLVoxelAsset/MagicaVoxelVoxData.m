@@ -179,10 +179,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	{
 		ChunkContentsParserB contentsParser = ^id (ChunkIdent ident, ptrdiff_t contentsStartOffset, uint32_t size)
 		{
-			NSData *contentsData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[contentsStartOffset] length:size freeWhenDone:NO];
-			NSLog(@"Parsing contents of size %d for chunk ID %@:\n\t%@",
-				size, NSStringFromChunkIdent(ident), contentsData
-			);
+			//NSData *contentsData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[contentsStartOffset] length:size freeWhenDone:NO];
+			//NSLog(@"Parsing contents of size %d for chunk ID %@:\n\t%@",
+			//	size, NSStringFromChunkIdent(ident), contentsData
+			//);
 			
 			if (*ident.fourCharCode == *kSizeChunkIdent.fourCharCode)
 				return [self parseSizeContentsDataAtOffset:contentsStartOffset withDataSize:size];
@@ -198,10 +198,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		};
 		ChunkChildParserB childParser = ^(ChunkIdent parentIdent, ptrdiff_t childStartOffset, uint32_t remainingSizeAllowance, ptrdiff_t *out_endOffset)
 		{
-			NSData *childData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[childStartOffset] length:remainingSizeAllowance freeWhenDone:NO];
-			NSLog(@"Parsing child of chunk ID %@:\n\t%@",
-				NSStringFromChunkIdent(parentIdent), childData
-			);
+			//NSData *childData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[childStartOffset] length:remainingSizeAllowance freeWhenDone:NO];
+			//NSLog(@"Parsing child of chunk ID %@:\n\t%@",
+			//	NSStringFromChunkIdent(parentIdent), childData
+			//);
 			
 			ChunkHandle *childChunk = chunkParser(childStartOffset);
 			
@@ -219,9 +219,9 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	ChunkHandle *chunk = [[ChunkHandle alloc] initWithData:_data offset:baseOffset];
 	
-	NSLog(@"Parsing chunk ID %@, with contents sized %d, and children sized %d.",
-		NSStringFromChunkIdent(chunk.ident), chunk.contentsSize, chunk.childrenTotalSize
-	);
+	//NSLog(@"Parsing chunk ID %@, with contents sized %d, and children sized %d.",
+	//	NSStringFromChunkIdent(chunk.ident), chunk.contentsSize, chunk.childrenTotalSize
+	//);
 	
 	uint32_t contentsSize = chunk.contentsSize;
 	if (contentsSize > 0)
