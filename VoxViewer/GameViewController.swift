@@ -93,12 +93,8 @@ class GameViewController: UIViewController
 		let box = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.0);
 		
 		// Traverse the NSData voxel array and for each ijk index, create a voxel node positioned at its spatial location
-		let count = grid.count
-		let voxelsIndices = UnsafePointer<MDLVoxelIndex>(voxelData.bytes)
-		for i in 0..<count
-		{
-			let voxelIndex = voxelsIndices[i];
-			
+		let voxelsIndices = UnsafeBufferPointer<MDLVoxelIndex>(start: UnsafePointer<MDLVoxelIndex>(voxelData.bytes), count: grid.count)
+		for voxelIndex in voxelsIndices {
 			let position:vector_float3 = grid.spatialLocationOfIndex(voxelIndex);
 			
 			let colorIndex = voxelPaletteIndices[Int(voxelIndex.x)][Int(voxelIndex.y)][Int(voxelIndex.z)].integerValue
