@@ -59,9 +59,9 @@
 	XCTAssertEqual(dimensions.y, 21);
 	XCTAssertEqual(dimensions.z, 20);
 	
-	XCTAssertEqual(data.paletteColors_count, 256);
-	MagicaVoxelVoxData_PaletteColor paletteColors_array[256];
-	memcpy(paletteColors_array, data.paletteColors_array, sizeof(MagicaVoxelVoxData_PaletteColor) * 256);
+	XCTAssertEqual(data.paletteColors_count, 255);
+	MagicaVoxelVoxData_PaletteColor paletteColors_array[255];
+	memcpy(paletteColors_array, data.paletteColors_array, sizeof(MagicaVoxelVoxData_PaletteColor) * 255);
 	XCTAssertEqual(paletteColors_array[0].r, (uint8_t)'\xFC');
 	XCTAssertEqual(paletteColors_array[0].g, (uint8_t)'\xFC');
 	XCTAssertEqual(paletteColors_array[0].b, (uint8_t)'\xFC');
