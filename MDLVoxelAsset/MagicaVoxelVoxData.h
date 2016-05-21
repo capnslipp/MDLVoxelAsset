@@ -30,6 +30,9 @@ typedef struct _MagicaVoxelVoxData_Voxel {
 
 @interface MagicaVoxelVoxData : NSObject <NSCopying, NSMutableCopying, NSSecureCoding>
 
+/// Shouldn't be necessary in normal usage, since `MagicaVoxelVoxData` implements `NSData`s API fully.  Present as a fail-safe.
+@property (nonatomic, retain, readonly) NSData *nsData;
+
 @property (nonatomic, assign, readonly, getter=isValid) BOOL valid;
 
 @property (nonatomic, assign, readonly) uint32_t versionNumber;

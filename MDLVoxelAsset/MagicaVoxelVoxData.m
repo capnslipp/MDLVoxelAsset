@@ -125,6 +125,9 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 
 @implementation MagicaVoxelVoxData
 
+@synthesize nsData=_data;
+
+
 + (void)initialize
 {
 	static dispatch_once_t sOnceToken;
