@@ -7,6 +7,7 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import simd
 import MDLVoxelAsset
 
 
@@ -20,31 +21,110 @@ class GameViewController: UIViewController
 		// create a new scene
 		let scene = SCNScene()
 		
+		
 		// create and add a camera to the scene
+		
 		let cameraNode = SCNNode()
-		cameraNode.camera = SCNCamera()
+		cameraNode.camera = {
+			let c = SCNCamera()
+			c.automaticallyAdjustsZRange = true
+			return c
+		}()
 		scene.rootNode.addChildNode(cameraNode)
 		
-		// place the camera
-		cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
 		
-		// create and add a light to the scene
-		let lightNode = SCNNode()
-		lightNode.light = SCNLight()
-		lightNode.light!.type = SCNLightTypeOmni
-		lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-		scene.rootNode.addChildNode(lightNode)
+		// floor
 		
-		// create and add an ambient light to the scene
-		let ambientLightNode = SCNNode()
-		ambientLightNode.light = SCNLight()
-		ambientLightNode.light!.type = SCNLightTypeAmbient
-		ambientLightNode.light!.color = UIColor.darkGrayColor()
-		scene.rootNode.addChildNode(ambientLightNode)
+		let floorNode = SCNNode(geometry: {
+			let f = SCNFloor()
+			f.reflectivity = 0
+			return f
+		}())
+		scene.rootNode.addChildNode(floorNode)
+		
 		
 		// create and add the .vox node
-		let ship = createVoxelModel(named: "chr_sword")
+		
+		let (ship, shipBounds) = createVoxelModel(named: "monu7")
+		let shipCenterpoint = SCNVector3(shipBounds.minBounds + (shipBounds.maxBounds - shipBounds.minBounds) * 0.5)
 		scene.rootNode.addChildNode(ship)
+		
+		
+		// place the camera
+		
+		cameraNode.eulerAngles = SCNVector3(0, 0, 0)
+		cameraNode.position = SCNVector3(
+			x: 0,
+			y: shipCenterpoint.y,
+			z: shipBounds.maxBounds.z + (shipBounds.maxBounds.z - shipBounds.minBounds.z) * 0.5 + 15
+		)
+		
+		
+		// create and add a light to the scene
+		
+		let lightNode = SCNNode()
+		lightNode.light = {
+			let l = SCNLight()
+			l.type = SCNLightTypeSpot
+			l.color = UIColor(hue: 60.0 / 360.0, saturation: 0.2, brightness: 1.0, alpha: 1.0)
+			l.spotOuterAngle = 135
+			l.spotInnerAngle = l.spotOuterAngle * 0.9
+			l.castsShadow = true
+			l.zNear = 1
+			l.zFar = {
+				let extents = (shipBounds.maxBounds - shipBounds.minBounds)
+				return sqrt(
+					pow(CGFloat(extents.x), 2) +
+					pow(CGFloat(extents.y), 2) +
+					pow(CGFloat(extents.z), 2)
+				)
+			}() * 2
+			return l
+		}()
+		lightNode.position = SCNVector3(x: shipBounds.maxBounds.x, y: shipBounds.maxBounds.y, z: shipBounds.maxBounds.z)
+		scene.rootNode.addChildNode(lightNode)
+		
+		if lightNode.constraints == nil {
+			lightNode.constraints = [SCNConstraint]()
+		}
+		lightNode.constraints!.append(SCNLookAtConstraint(target: ship))
+		
+		
+		// create and add an ambient light to the scene
+		
+		let ambientLightNode = SCNNode()
+		ambientLightNode.light = {
+			let l = SCNLight()
+			l.type = SCNLightTypeAmbient
+			l.color = UIColor(hue: 240.0 / 360.0, saturation: 1.0, brightness: 0.1, alpha: 1.0)
+			return l
+		}()
+		scene.rootNode.addChildNode(ambientLightNode)
+		
+		
+		// axis widget
+		
+		let axisSphere = SCNSphere(radius: 0.25)
+		let coloredSphereNode = {(position:SCNVector3, color:UIColor) -> SCNNode in
+			let s = (axisSphere.copy() as! SCNSphere)
+			s.firstMaterial = {
+				let material = SCNMaterial()
+				material.diffuse.contents = color
+				return material
+			}()
+			let n = SCNNode(geometry: s)
+			n.position = position
+			return n
+		}
+		let axisSphereNodes = [
+			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), UIColor.whiteColor()),
+			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), UIColor.redColor()),
+			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), UIColor.greenColor()),
+			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), UIColor.blueColor()),
+		]
+		for node in axisSphereNodes {
+			scene.rootNode.addChildNode(node)
+		}
 		
 		//// animate the 3d object
 		//ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
@@ -69,7 +149,7 @@ class GameViewController: UIViewController
 		scnView.addGestureRecognizer(tapGesture)
 	}
 	
-	func createVoxelModel(named name:String) -> SCNNode
+	func createVoxelModel(named name:String) -> (SCNNode, MDLAxisAlignedBoundingBox)
 	{
 		var path = NSBundle.mainBundle().pathForResource(name, ofType:"")
 		if (path == nil) {
@@ -88,6 +168,7 @@ class GameViewController: UIViewController
 		
 		// Create voxel parent node
 		let baseNode = SCNNode();
+		baseNode.eulerAngles = SCNVector3(GLKMathDegreesToRadians(-90), 0, 0) // Z+ is up in .vox; rotate to Y+:up
 		
 		// Create the voxel node geometry
 		let box = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.0);
@@ -120,7 +201,11 @@ class GameViewController: UIViewController
 			baseNode.addChildNode(voxelNode);
 		}
 		
-		return baseNode
+		let boundingBox = grid.boundingBox
+		let centerpoint = SCNVector3(boundingBox.minBounds + (boundingBox.maxBounds - boundingBox.minBounds) * 0.5)
+		baseNode.pivot = SCNMatrix4MakeTranslation(centerpoint.x, centerpoint.y, 0.0)
+		
+		return (baseNode.flattenedClone(), boundingBox)
 	}
 	
 	func handleTap(gestureRecognize: UIGestureRecognizer) {
