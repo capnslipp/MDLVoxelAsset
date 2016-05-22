@@ -14,7 +14,6 @@
 		FA0ADEEC1CF00A280054DCAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEEA1CF00A280054DCAA /* Main.storyboard */; };
 		FA0ADEEE1CF00A280054DCAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEED1CF00A280054DCAA /* Assets.xcassets */; };
 		FA0ADEF11CF00A280054DCAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEEF1CF00A280054DCAA /* LaunchScreen.storyboard */; };
-		FA0ADEF91CF00DC30054DCAA /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
 		FA0ADEFA1CF00DE80054DCAA /* chr_sword.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */; };
 		FA0ADEFC1CF032590054DCAA /* rgbw_cmyk.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFB1CF032590054DCAA /* rgbw_cmyk.vox */; };
 		FA0ADEFD1CF032600054DCAA /* rgbw_cmyk.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFB1CF032590054DCAA /* rgbw_cmyk.vox */; };
@@ -35,16 +34,11 @@
 		FA6EECB61CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAC1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m */; };
 		FA6EECB71CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */; };
 		FA6EECB81CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */; };
+		FAE7C4AC1CF13DD20075ED7D /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
+		FAE7C4AD1CF13DD20075ED7D /* MDLVoxelAsset.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		FA0ADEF71CF00DBD0054DCAA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FA2685811CEA9A71003B86C8;
-			remoteInfo = MDLVoxelAsset;
-		};
 		FA26858E1CEA9A72003B86C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
@@ -52,7 +46,28 @@
 			remoteGlobalIDString = FA2685811CEA9A71003B86C8;
 			remoteInfo = MDLVoxelAsset;
 		};
+		FAE7C4AE1CF13DD20075ED7D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FA2685811CEA9A71003B86C8;
+			remoteInfo = MDLVoxelAsset;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FAE7C4B01CF13DD20075ED7D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				FAE7C4AD1CF13DD20075ED7D /* MDLVoxelAsset.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDLVoxelAsset.h; sourceTree = "<group>"; };
@@ -92,7 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA0ADEF91CF00DC30054DCAA /* MDLVoxelAsset.framework in Frameworks */,
+				FAE7C4AC1CF13DD20075ED7D /* MDLVoxelAsset.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,11 +232,12 @@
 				FA0ADEDE1CF00A270054DCAA /* Sources */,
 				FA0ADEDF1CF00A270054DCAA /* Frameworks */,
 				FA0ADEE01CF00A270054DCAA /* Resources */,
+				FAE7C4B01CF13DD20075ED7D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				FA0ADEF81CF00DBD0054DCAA /* PBXTargetDependency */,
+				FAE7C4AF1CF13DD20075ED7D /* PBXTargetDependency */,
 			);
 			name = VoxViewer;
 			productName = VoxViewer;
@@ -373,15 +389,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		FA0ADEF81CF00DBD0054DCAA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = FA2685811CEA9A71003B86C8 /* MDLVoxelAsset */;
-			targetProxy = FA0ADEF71CF00DBD0054DCAA /* PBXContainerItemProxy */;
-		};
 		FA26858F1CEA9A72003B86C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FA2685811CEA9A71003B86C8 /* MDLVoxelAsset */;
 			targetProxy = FA26858E1CEA9A72003B86C8 /* PBXContainerItemProxy */;
+		};
+		FAE7C4AF1CF13DD20075ED7D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FA2685811CEA9A71003B86C8 /* MDLVoxelAsset */;
+			targetProxy = FAE7C4AE1CF13DD20075ED7D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -413,7 +429,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INFOPLIST_FILE = VoxViewer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -426,7 +442,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				INFOPLIST_FILE = VoxViewer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
