@@ -7,7 +7,14 @@
 #import "MDLVoxelAsset.h"
 
 #import "MagicaVoxelVoxData.h"
-#import <UIKit/UIColor.h>
+
+#if TARGET_OS_IPHONE
+	#import <UIKit/UIColor.h>
+	typedef UIColor Color;
+#else
+	#import <AppKit/NSColor.h>
+	typedef NSColor Color;
+#endif
 
 
 
@@ -18,7 +25,7 @@
 	
 	MDLVoxelArray *_voxelArray;
 	NSArray<NSArray<NSArray<NSNumber*>*>*> *_voxelPaletteIndices;
-	NSArray<UIColor*> *_paletteColors;
+	NSArray<Color*> *_paletteColors;
 }
 
 @synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors;
@@ -77,17 +84,16 @@
 	int paletteColorCount = _mvvoxData.paletteColors_count;
 	MagicaVoxelVoxData_PaletteColor *mvvoxPaletteColors = _mvvoxData.paletteColors_array;
 	
-	NSMutableArray<UIColor*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(paletteColorCount + 1)];
-	paletteColors[0] = UIColor.clearColor;
+	NSMutableArray<Color*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(paletteColorCount + 1)];
+	paletteColors[0] = [Color clearColor];
 	for (int pI = 1; pI <= paletteColorCount; ++pI) {
 		MagicaVoxelVoxData_PaletteColor *voxColor = &mvvoxPaletteColors[pI - 1];
-		UIColor *color = [[UIColor alloc]
-			initWithRed: voxColor->r / 255.f
+		paletteColors[pI] = [Color
+			colorWithRed: voxColor->r / 255.f
 			green: voxColor->g / 255.f
 			blue: voxColor->b / 255.f
 			alpha: voxColor->a / 255.f
 		];
-		[(paletteColors[pI] = color) release];
 	}
 	
 	_paletteColors = paletteColors;

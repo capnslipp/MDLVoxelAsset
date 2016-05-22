@@ -18,7 +18,14 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 #import <ModelIO/ModelIO.h>
 #import "MagicaVoxelVoxData.h"
 
-@class UIColor;
+#if TARGET_OS_IPHONE
+	@class UIColor;
+	typedef UIColor Color;
+#else
+	@class NSColor;
+	typedef NSColor Color;
+#endif
+
 
 
 
@@ -30,7 +37,7 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 @property (nonatomic, retain) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
 
-@property (nonatomic, retain) NSArray<UIColor*> *paletteColors;
+@property (nonatomic, retain) NSArray<Color*> *paletteColors;
 
 + (BOOL)canImportFileExtension:(NSString *)extension;
 

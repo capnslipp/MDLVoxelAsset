@@ -677,6 +677,10 @@
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
-        <viewController id="m6c-tG-KhH" customClass="GameViewController" customModule="VoxViewer" customModuleProvider="target"/>
+        <viewController id="m6c-tG-KhH" customClass="GameViewController" customModule="VoxViewer" customModuleProvider="target">
+            <connections>
+                <outlet property="gameView" destination="536" id="mGC-e9-650"/>
+            </connections>
+        </viewController>
     </objects>
 </document>

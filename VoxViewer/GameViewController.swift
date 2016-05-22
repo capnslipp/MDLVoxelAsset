@@ -141,7 +141,7 @@ class GameViewController: ViewController
 		cameraNode.position = SCNVector3(
 			x: 0,
 			y: shipCenterpoint.y,
-			z: shipBounds.maxBounds.z + (shipBounds.maxBounds.z - shipBounds.minBounds.z) * 0.5 + 15
+			z: CGFloat(shipBounds.maxBounds.z + (shipBounds.maxBounds.z - shipBounds.minBounds.z) * 0.5 + 15)
 		)
 		
 		
@@ -166,7 +166,7 @@ class GameViewController: ViewController
 			}() * 2
 			return l
 		}()
-		lightNode.position = SCNVector3(x: shipBounds.maxBounds.x, y: shipBounds.maxBounds.y, z: shipBounds.maxBounds.z)
+		lightNode.position = SCNVector3(x: CGFloat(shipBounds.maxBounds.x), y: CGFloat(shipBounds.maxBounds.y), z: CGFloat(shipBounds.maxBounds.z))
 		scene.rootNode.addChildNode(lightNode)
 		
 		if lightNode.constraints == nil {
@@ -330,27 +330,27 @@ class GameViewController: ViewController
 				SCNTransaction.commit()
 			}
 		}
-	#endif
-	
-	override func shouldAutorotate() -> Bool {
-		return true
-	}
-	
-	override func prefersStatusBarHidden() -> Bool {
-		return true
-	}
-	
-	override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-		if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-			return .AllButUpsideDown
-		} else {
-			return .All
+		
+		override func shouldAutorotate() -> Bool {
+			return true
 		}
-	}
-	
-	override func didReceiveMemoryWarning() {
-		super.didReceiveMemoryWarning()
-		// Release any cached data, images, etc that aren't in use.
-	}
+		
+		override func prefersStatusBarHidden() -> Bool {
+			return true
+		}
+		
+		override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+			if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+				return .AllButUpsideDown
+			} else {
+				return .All
+			}
+		}
+		
+		override func didReceiveMemoryWarning() {
+			super.didReceiveMemoryWarning()
+			// Release any cached data, images, etc that aren't in use.
+		}
+	#endif
 	
 }
