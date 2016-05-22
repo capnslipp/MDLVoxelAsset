@@ -102,7 +102,7 @@ static ChunkHandle *kDefaultPaletteChunk;
 
 typedef id (^ChunkContentsParserB)(ChunkIdent ident, ptrdiff_t startOffset, uint32_t size);
 /// @return: endOffset; potentially the `startOffset` of the next chunk.
-typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t startOffset, uint32_t remainingSizeAllowance, ptrdiff_t *out_endOffset);
+typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t startOffset, size_t remainingSizeAllowance, ptrdiff_t *out_endOffset);
 
 
 
@@ -196,7 +196,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 					userInfo: nil
 				];
 		};
-		ChunkChildParserB childParser = ^(ChunkIdent parentIdent, ptrdiff_t childStartOffset, uint32_t remainingSizeAllowance, ptrdiff_t *out_endOffset)
+		ChunkChildParserB childParser = ^(ChunkIdent parentIdent, ptrdiff_t childStartOffset, size_t remainingSizeAllowance, ptrdiff_t *out_endOffset)
 		{
 			//NSData *childData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[childStartOffset] length:remainingSizeAllowance freeWhenDone:NO];
 			//NSLog(@"Parsing child of chunk ID %@:\n\t%@",
