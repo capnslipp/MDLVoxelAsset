@@ -130,7 +130,7 @@ class GameViewController: ViewController
 		
 		// create and add the .vox node
 		
-		let (ship, shipBounds) = createVoxelModel(named: "monu7")
+		let (ship, shipBounds) = createVoxelModel(named: "chr_sword")
 		let shipCenterpoint = SCNVector3(shipBounds.minBounds + (shipBounds.maxBounds - shipBounds.minBounds) * 0.5)
 		scene.rootNode.addChildNode(ship)
 		
