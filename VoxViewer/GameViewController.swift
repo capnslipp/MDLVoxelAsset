@@ -4,20 +4,105 @@
 //	Created by Cap'n Slipp on 5/20/16.
 //	Copyright (c) 2016 Cap'n Slipp. All rights reserved.
 
-import UIKit
 import QuartzCore
 import SceneKit
 import simd
 import MDLVoxelAsset
 
 
+#if os(iOS)
+	import UIKit
+	typealias Color = UIColor
+	typealias ViewController = UIViewController
+#else
+	import AppKit
+	typealias Color = NSColor
+	typealias ViewController = NSViewController
+#endif
 
-class GameViewController: UIViewController
+
+// OS X:
+
+//class GameViewController: NSViewController {
+//    
+//    @IBOutlet weak var gameView: GameView!
+//    
+//    override func awakeFromNib(){
+//        super.awakeFromNib()
+//        
+//        // create a new scene
+//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+//        
+//        // create and add a camera to the scene
+//        let cameraNode = SCNNode()
+//        cameraNode.camera = SCNCamera()
+//        scene.rootNode.addChildNode(cameraNode)
+//        
+//        // place the camera
+//        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+//        
+//        // create and add a light to the scene
+//        let lightNode = SCNNode()
+//        lightNode.light = SCNLight()
+//        lightNode.light!.type = SCNLightTypeOmni
+//        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
+//        scene.rootNode.addChildNode(lightNode)
+//        
+//        // create and add an ambient light to the scene
+//        let ambientLightNode = SCNNode()
+//        ambientLightNode.light = SCNLight()
+//        ambientLightNode.light!.type = SCNLightTypeAmbient
+//        ambientLightNode.light!.color = NSColor.darkGrayColor()
+//        scene.rootNode.addChildNode(ambientLightNode)
+//        
+//        // retrieve the ship node
+//        let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+//        
+//        // animate the 3d object
+//        let animation = CABasicAnimation(keyPath: "rotation")
+//        animation.toValue = NSValue(SCNVector4: SCNVector4(x: CGFloat(0), y: CGFloat(1), z: CGFloat(0), w: CGFloat(M_PI)*2))
+//        animation.duration = 3
+//        animation.repeatCount = MAXFLOAT //repeat forever
+//        ship.addAnimation(animation, forKey: nil)
+//
+//        // set the scene to the view
+//        self.gameView!.scene = scene
+//        
+//        // allows the user to manipulate the camera
+//        self.gameView!.allowsCameraControl = true
+//        
+//        // show statistics such as fps and timing information
+//        self.gameView!.showsStatistics = true
+//        
+//        // configure the view
+//        self.gameView!.backgroundColor = NSColor.blackColor()
+//    }
+//
+//}
+
+
+
+class GameViewController: ViewController
 {
-	override func viewDidLoad()
+	@IBOutlet weak var gameView:SCNView!
+	
+	
+	#if os(iOS)
+		override func viewDidLoad() {
+			super.awakeFromNib()
+			
+			setupScene()
+		}
+	#else
+		override func awakeFromNib() {
+			super.viewDidLoad()
+			
+			setupScene()
+		}
+	#endif
+	
+	func setupScene()
 	{
-		super.viewDidLoad()
-		
 		// create a new scene
 		let scene = SCNScene()
 		
@@ -66,7 +151,7 @@ class GameViewController: UIViewController
 		lightNode.light = {
 			let l = SCNLight()
 			l.type = SCNLightTypeSpot
-			l.color = UIColor(hue: 60.0 / 360.0, saturation: 0.2, brightness: 1.0, alpha: 1.0)
+			l.color = Color(hue: 60.0 / 360.0, saturation: 0.2, brightness: 1.0, alpha: 1.0)
 			l.spotOuterAngle = 135
 			l.spotInnerAngle = l.spotOuterAngle * 0.9
 			l.castsShadow = true
@@ -96,7 +181,7 @@ class GameViewController: UIViewController
 		ambientLightNode.light = {
 			let l = SCNLight()
 			l.type = SCNLightTypeAmbient
-			l.color = UIColor(hue: 240.0 / 360.0, saturation: 1.0, brightness: 0.1, alpha: 1.0)
+			l.color = Color(hue: 240.0 / 360.0, saturation: 1.0, brightness: 0.1, alpha: 1.0)
 			return l
 		}()
 		scene.rootNode.addChildNode(ambientLightNode)
@@ -105,7 +190,7 @@ class GameViewController: UIViewController
 		// axis widget
 		
 		let axisSphere = SCNSphere(radius: 0.25)
-		let coloredSphereNode = {(position:SCNVector3, color:UIColor) -> SCNNode in
+		let coloredSphereNode = {(position:SCNVector3, color:Color) -> SCNNode in
 			let s = (axisSphere.copy() as! SCNSphere)
 			s.firstMaterial = {
 				let material = SCNMaterial()
@@ -117,10 +202,10 @@ class GameViewController: UIViewController
 			return n
 		}
 		let axisSphereNodes = [
-			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), UIColor.whiteColor()),
-			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), UIColor.redColor()),
-			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), UIColor.greenColor()),
-			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), UIColor.blueColor()),
+			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), Color.whiteColor()),
+			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), Color.redColor()),
+			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), Color.greenColor()),
+			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), Color.blueColor()),
 		]
 		for node in axisSphereNodes {
 			scene.rootNode.addChildNode(node)
@@ -130,23 +215,25 @@ class GameViewController: UIViewController
 		//ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
 		
 		// retrieve the SCNView
-		let scnView = self.view as! SCNView
+		let gameView = self.gameView
 		
 		// set the scene to the view
-		scnView.scene = scene
+		gameView.scene = scene
 		
 		// allows the user to manipulate the camera
-		scnView.allowsCameraControl = true
+		gameView.allowsCameraControl = true
 		
 		// show statistics such as fps and timing information
-		scnView.showsStatistics = true
+		gameView.showsStatistics = true
 		
 		// configure the view
-		scnView.backgroundColor = UIColor.blackColor()
+		gameView.backgroundColor = Color.blackColor()
 		
-		// add a tap gesture recognizer
-		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-		scnView.addGestureRecognizer(tapGesture)
+		#if os(iOS)
+			// add a tap gesture recognizer
+			let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+			gameView.addGestureRecognizer(tapGesture)
+		#endif
 	}
 	
 	func createVoxelModel(named name:String) -> (SCNNode, MDLAxisAlignedBoundingBox)
@@ -158,9 +245,9 @@ class GameViewController: UIViewController
 		
 		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path!))
 		let voxelPaletteIndices = asset.voxelPaletteIndices as Array<Array<Array<NSNumber>>>
-		let paletteColors = asset.paletteColors as [UIColor]
+		let paletteColors = asset.paletteColors as [Color]
 		
-		var coloredBoxes = Dictionary<UIColor, SCNBox>()
+		var coloredBoxes = Dictionary<Color, SCNBox>()
 		
 		// Create voxel grid from MDLAsset
 		let grid:MDLVoxelArray = asset.voxelArray
@@ -208,40 +295,42 @@ class GameViewController: UIViewController
 		return (baseNode.flattenedClone(), boundingBox)
 	}
 	
-	func handleTap(gestureRecognize: UIGestureRecognizer) {
-		// retrieve the SCNView
-		let scnView = self.view as! SCNView
-		
-		// check what nodes are tapped
-		let p = gestureRecognize.locationInView(scnView)
-		let hitResults = scnView.hitTest(p, options: nil)
-		// check that we clicked on at least one object
-		if hitResults.count > 0 {
-			// retrieved the first clicked object
-			let result: AnyObject! = hitResults[0]
+	#if os(iOS)
+		func handleTap(gestureRecognize: UIGestureRecognizer) {
+			// retrieve the SCNView
+			let scnView = self.view as! SCNView
 			
-			// get its material
-			let material = result.node!.geometry!.firstMaterial!
-			
-			// highlight it
-			SCNTransaction.begin()
-			SCNTransaction.setAnimationDuration(0.5)
-			
-			// on completion - unhighlight
-			SCNTransaction.setCompletionBlock {
+			// check what nodes are tapped
+			let p = gestureRecognize.locationInView(scnView)
+			let hitResults = scnView.hitTest(p, options: nil)
+			// check that we clicked on at least one object
+			if hitResults.count > 0 {
+				// retrieved the first clicked object
+				let result: AnyObject! = hitResults[0]
+				
+				// get its material
+				let material = result.node!.geometry!.firstMaterial!
+				
+				// highlight it
 				SCNTransaction.begin()
 				SCNTransaction.setAnimationDuration(0.5)
 				
-				material.emission.contents = UIColor.blackColor()
+				// on completion - unhighlight
+				SCNTransaction.setCompletionBlock {
+					SCNTransaction.begin()
+					SCNTransaction.setAnimationDuration(0.5)
+					
+					material.emission.contents = Color.blackColor()
+					
+					SCNTransaction.commit()
+				}
+				
+				material.emission.contents = Color.redColor()
 				
 				SCNTransaction.commit()
 			}
-			
-			material.emission.contents = UIColor.redColor()
-			
-			SCNTransaction.commit()
 		}
-	}
+	#endif
 	
 	override func shouldAutorotate() -> Bool {
 		return true
