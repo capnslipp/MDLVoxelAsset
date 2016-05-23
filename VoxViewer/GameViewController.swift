@@ -244,6 +244,7 @@ class GameViewController: ViewController
 		}
 		
 		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path!))
+		asset.calculateShellLevels()
 		let voxelPaletteIndices = asset.voxelPaletteIndices as Array<Array<Array<NSNumber>>>
 		let paletteColors = asset.paletteColors as [Color]
 		

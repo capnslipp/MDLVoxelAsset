@@ -33,11 +33,15 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 - (instancetype)initWithURL:(NSURL *)URL;
 
-@property (nonatomic, retain) MDLVoxelArray *voxelArray;
+- (void)calculateShellLevels;
 
-@property (nonatomic, retain) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
+@property (nonatomic, retain, readonly) MDLVoxelArray *voxelArray;
+@property (nonatomic, assign, readonly) NSUInteger voxelCount;
+@property (nonatomic, assign, readonly) MDLAxisAlignedBoundingBox boundingBox;
 
-@property (nonatomic, retain) NSArray<Color*> *paletteColors;
+@property (nonatomic, retain, readonly) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
+
+@property (nonatomic, retain, readonly) NSArray<Color*> *paletteColors;
 
 + (BOOL)canImportFileExtension:(NSString *)extension;
 
