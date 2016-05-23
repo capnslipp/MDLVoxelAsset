@@ -61,6 +61,61 @@
 	};
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:dimensions_aabbox voxelExtent:1.0f];	
 	
+	BOOL didAddShell;
+	int currentShellLevel = 0;
+	do {
+		didAddShell = NO;
+		
+		for (int vI = (int)voxelCount - 1; vI >= 0; --vI) {
+			MDLVoxelIndex voxel = voxels[vI];
+			
+			NSData *neighborVoxelsData = [_voxelArray voxelsWithinExtent:(MDLVoxelIndexExtent){
+				.minimumExtent = voxel + (vector_int4){ -1, -1, -1, 0 },
+				.maximumExtent = voxel + (vector_int4){ +1, +1, +1, 0 },
+			}];
+			size_t neighborVoxelCount = neighborVoxelsData.length / sizeof(MDLVoxelIndex);
+			MDLVoxelIndex const *neighborVoxels = (MDLVoxelIndex const *)neighborVoxelsData.bytes;
+			
+			BOOL coveredXPos = NO, coveredXNeg = NO, coveredYPos = NO, coveredYNeg = NO, coveredZPos = NO, coveredZNeg = NO;
+			for (int svI = (int)neighborVoxelCount - 1; svI >= 0; --svI) {
+				MDLVoxelIndex neighborVoxel = neighborVoxels[svI];
+				if (neighborVoxel.w != currentShellLevel)
+					continue;
+				
+				if (neighborVoxel.y == voxel.y && neighborVoxel.z == voxel.z) {
+					if (neighborVoxel.x == voxel.x + 1)
+						coveredXPos = YES;
+					else if (neighborVoxel.x == voxel.x - 1)
+						coveredXNeg = YES;
+				}
+				else if (neighborVoxel.x == voxel.x && neighborVoxel.z == voxel.z) {
+					if (neighborVoxel.y == voxel.y + 1)
+						coveredYPos = YES;
+					else if (neighborVoxel.y == voxel.y - 1)
+						coveredYNeg = YES;
+				}
+				else if (neighborVoxel.x == voxel.x && neighborVoxel.y == voxel.y) {
+					if (neighborVoxel.z == voxel.z + 1)
+						coveredZPos = YES;
+					else if (neighborVoxel.z == voxel.z - 1)
+						coveredZNeg = YES;
+				}
+			}
+			
+			BOOL coveredOnAllSides = coveredXPos && coveredXNeg && coveredYPos && coveredYNeg && coveredZPos && coveredZNeg;
+			if (coveredOnAllSides) {
+				voxel += (vector_int4){ 0, 0, 0, -1 };
+				voxels[vI] = voxel;
+				
+				didAddShell = YES;
+			}
+		}
+		
+		++currentShellLevel;
+	} while (didAddShell);
+	[_voxelArray release];
+	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:dimensions_aabbox voxelExtent:1.0f];	
+	
 	NSNumber *zeroPaletteIndex = @(0);
 	NSMutableArray<NSMutableArray<NSMutableArray<NSNumber*>*>*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:(dimensions.x + 1)];
 	for (int xI = 0; xI <= dimensions.x; ++xI) {

@@ -263,6 +263,8 @@ class GameViewController: ViewController
 		// Traverse the NSData voxel array and for each ijk index, create a voxel node positioned at its spatial location
 		let voxelsIndices = UnsafeBufferPointer<MDLVoxelIndex>(start: UnsafePointer<MDLVoxelIndex>(voxelData.bytes), count: grid.count)
 		for voxelIndex in voxelsIndices {
+			if (voxelIndex.w != 0) { continue }
+			
 			let position:vector_float3 = grid.spatialLocationOfIndex(voxelIndex);
 			
 			let colorIndex = voxelPaletteIndices[Int(voxelIndex.x)][Int(voxelIndex.y)][Int(voxelIndex.z)].integerValue
