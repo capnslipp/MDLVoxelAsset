@@ -139,9 +139,9 @@ class GameViewController: ViewController
 		
 		cameraNode.eulerAngles = SCNVector3(0, 0, 0)
 		cameraNode.position = SCNVector3(
-			x: 0,
-			y: shipCenterpoint.y,
-			z: CGFloat(shipBounds.maxBounds.z + (shipBounds.maxBounds.z - shipBounds.minBounds.z) * 0.5 + 15)
+			0.0,
+			Float(shipCenterpoint.y),
+			shipBounds.maxBounds.z + (shipBounds.maxBounds.z - shipBounds.minBounds.z) * 0.5 + 15
 		)
 		
 		
@@ -166,7 +166,7 @@ class GameViewController: ViewController
 			}() * 2
 			return l
 		}()
-		lightNode.position = SCNVector3(x: CGFloat(shipBounds.maxBounds.x), y: CGFloat(shipBounds.maxBounds.y), z: CGFloat(shipBounds.maxBounds.z))
+		lightNode.position = SCNVector3(shipBounds.maxBounds.x, shipBounds.maxBounds.y, shipBounds.maxBounds.z)
 		scene.rootNode.addChildNode(lightNode)
 		
 		if lightNode.constraints == nil {
