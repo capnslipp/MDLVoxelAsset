@@ -40,11 +40,11 @@
 	
 	_mvvoxData = [[MagicaVoxelVoxData alloc] initWithContentsOfURL:URL];
 	
-	int voxelCount = _mvvoxData.voxels_count;
+	NSUInteger voxelCount = _mvvoxData.voxels_count;
 	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
 	
 	MDLVoxelIndex *voxels = calloc(voxelCount, sizeof(MDLVoxelIndex));
-	for (int vI = voxelCount - 1; vI >= 0; --vI) {
+	for (int vI = (int)voxelCount - 1; vI >= 0; --vI) {
 		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
 		voxels[vI] = (MDLVoxelIndex){
 			voxVoxel->x, voxVoxel->y, voxVoxel->z,
@@ -81,7 +81,7 @@
 	_voxelPaletteIndices = voxelPaletteIndices;
 	
 	
-	int paletteColorCount = _mvvoxData.paletteColors_count;
+	NSUInteger paletteColorCount = _mvvoxData.paletteColors_count;
 	MagicaVoxelVoxData_PaletteColor *mvvoxPaletteColors = _mvvoxData.paletteColors_array;
 	
 	NSMutableArray<Color*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(paletteColorCount + 1)];
