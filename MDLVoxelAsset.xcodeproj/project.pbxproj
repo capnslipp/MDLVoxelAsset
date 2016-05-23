@@ -55,9 +55,7 @@
 		FA9CACF31CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */; };
 		FA9CACF41CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */; };
 		FA9CACF51CF1840A00B1ABA4 /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FAC5F7AB1CF186D900B30B58 /* module.modulemap in CopyFiles */ = {isa = PBXBuildFile; fileRef = FA0ADEF61CF00CCA0054DCAA /* module.modulemap */; };
 		FAC5F7AC1CF186DD00B30B58 /* MDLVoxelAsset.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; };
-		FAC5F7AE1CF186F000B30B58 /* module.modulemap in CopyFiles */ = {isa = PBXBuildFile; fileRef = FA0ADEF61CF00CCA0054DCAA /* module.modulemap */; };
 		FAC5F7AF1CF186F100B30B58 /* MDLVoxelAsset.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; };
 		FAC5F7B01CF1889600B30B58 /* monu7.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFE1CF04CE70054DCAA /* monu7.vox */; };
 		FAC5F7B11CF1889600B30B58 /* monu7.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFE1CF04CE70054DCAA /* monu7.vox */; };
@@ -125,7 +123,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				FAC5F7AB1CF186D900B30B58 /* module.modulemap in CopyFiles */,
 				FAC5F7AC1CF186DD00B30B58 /* MDLVoxelAsset.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -136,7 +133,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				FAC5F7AE1CF186F000B30B58 /* module.modulemap in CopyFiles */,
 				FAC5F7AF1CF186F100B30B58 /* MDLVoxelAsset.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -853,7 +849,6 @@
 				INFOPLIST_FILE = MDLVoxelAsset/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = MDLVoxelAsset/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SKIP_INSTALL = YES;
@@ -871,7 +866,6 @@
 				INFOPLIST_FILE = MDLVoxelAsset/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = MDLVoxelAsset/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SKIP_INSTALL = YES;
@@ -946,7 +940,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MODULEMAP_FILE = MDLVoxelAsset/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SDKROOT = macosx;
@@ -968,7 +961,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MODULEMAP_FILE = MDLVoxelAsset/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SDKROOT = macosx;
