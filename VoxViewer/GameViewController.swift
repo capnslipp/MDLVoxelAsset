@@ -248,7 +248,7 @@ class GameViewController: ViewController
 		let voxelPaletteIndices = asset.voxelPaletteIndices as Array<Array<Array<NSNumber>>>
 		let paletteColors = asset.paletteColors as [Color]
 		
-		var coloredBoxes = Dictionary<Color, SCNBox>()
+		var coloredBoxes = Dictionary<Color, SCNGeometry>()
 		
 		// Create voxel grid from MDLAsset
 		let grid:MDLVoxelArray = asset.voxelArray
@@ -273,9 +273,9 @@ class GameViewController: ViewController
 			
 			// Create the voxel node and set its properties, reusing same-colored particle geometry
 			
-			var coloredBox:SCNBox? = coloredBoxes[color]
+			var coloredBox:SCNGeometry? = coloredBoxes[color]
 			if (coloredBox == nil) {
-				coloredBox = (box.copy() as! SCNBox)
+				coloredBox = (box.copy() as! SCNGeometry)
 				
 				let material = SCNMaterial()
 				material.diffuse.contents = color
