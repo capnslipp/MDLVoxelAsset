@@ -28,21 +28,49 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 
 
+#pragma clang assume_nonnull begin
 
-@interface MDLVoxelAsset : MDLAsset
 
-- (instancetype)initWithURL:(NSURL *)URL;
+@interface MDLVoxelAsset : MDLObjectContainer <NSCopying>
 
-- (void)calculateShellLevels;
+- (MDLAsset *)test;
+
+
+#pragma mark Creating an Asset
+
++ (BOOL)canImportFileExtension:(NSString *)extension;
+
+- (instancetype)initWithURL:(NSURL *)URL options:(NSDictionary<NSString*,id> *)options;
+@property(nonatomic, readonly, retain) NSURL *URL;
+
+
+#pragma mark Working with Asset Content
+
+@property (nonatomic, assign, readonly) MDLAxisAlignedBoundingBox boundingBox;
 
 @property (nonatomic, retain, readonly) MDLVoxelArray *voxelArray;
 @property (nonatomic, assign, readonly) NSUInteger voxelCount;
-@property (nonatomic, assign, readonly) MDLAxisAlignedBoundingBox boundingBox;
 
 @property (nonatomic, retain, readonly) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
 
 @property (nonatomic, retain, readonly) NSArray<Color*> *paletteColors;
 
-+ (BOOL)canImportFileExtension:(NSString *)extension;
+- (void)calculateShellLevels;
+
+
+#pragma mark Sub-MDLObject Access
+
+- (MDLObject *)objectAtIndex:(NSUInteger)index;
+- (nullable MDLObject *)objectAtIndexedSubscript:(NSUInteger)index;
+
+@property (nonatomic, readonly) NSUInteger count;
+
+
+#pragma mark NSFastEnumeration Adherance
+
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained [])buffer count:(NSUInteger)len;
 
 @end
+
+
+#pragma clang assume_nonnull end

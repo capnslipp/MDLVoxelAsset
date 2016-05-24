@@ -18,6 +18,13 @@
 
 
 
+@interface MDLVoxelAsset ()
+
+@property(nonatomic, readwrite, retain) NSURL *URL;
+
+@end
+
+
 @implementation MDLVoxelAsset {
 	MagicaVoxelVoxData *_mvvoxData;
 	
@@ -27,6 +34,8 @@
 	MDLVoxelArray *_voxelArray;
 	NSArray<NSArray<NSArray<NSNumber*>*>*> *_voxelPaletteIndices;
 	NSArray<Color*> *_paletteColors;
+	
+	MDLMesh *_mesh;
 }
 
 @synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors;
@@ -49,6 +58,8 @@
 	self = [super init];
 	if (self == nil)
 		return nil;
+	
+	self.URL = URL;
 	
 	_mvvoxData = [[MagicaVoxelVoxData alloc] initWithContentsOfURL:URL];
 	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
@@ -101,6 +112,64 @@
 	}
 	
 	_paletteColors = paletteColors;
+	
+	{
+		[self calculateShellLevels]
+		let voxelPaletteIndices = asset.voxelPaletteIndices as Array<Array<Array<NSNumber>>>
+		let paletteColors = asset.paletteColors as [Color]
+		
+		var coloredBoxes = Dictionary<Color, SCNGeometry>()
+		
+		// Create voxel grid from MDLAsset
+		let grid:MDLVoxelArray = asset.voxelArray
+		let voxelData = grid.voxelIndices()!;   // retrieve voxel data
+		
+		// Create voxel parent node
+		let baseNode = SCNNode();
+		baseNode.eulerAngles = SCNVector3(GLKMathDegreesToRadians(-90), 0, 0) // Z+ is up in .vox; rotate to Y+:up
+		
+		// Create the voxel node geometry
+		let box = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.0);
+		
+		// Traverse the NSData voxel array and for each ijk index, create a voxel node positioned at its spatial location
+		let voxelsIndices = UnsafeBufferPointer<MDLVoxelIndex>(start: UnsafePointer<MDLVoxelIndex>(voxelData.bytes), count: grid.count)
+		for voxelIndex in voxelsIndices {
+			if (voxelIndex.w != 0) { continue }
+			
+			let position:vector_float3 = grid.spatialLocationOfIndex(voxelIndex);
+			
+			let colorIndex = voxelPaletteIndices[Int(voxelIndex.x)][Int(voxelIndex.y)][Int(voxelIndex.z)].integerValue
+			let color = paletteColors[colorIndex]
+			
+			// Create the voxel node and set its properties, reusing same-colored particle geometry
+			
+			var coloredBox:SCNGeometry? = coloredBoxes[color]
+			if (coloredBox == nil) {
+				coloredBox = (box.copy() as! SCNGeometry)
+				
+				let material = SCNMaterial()
+				material.diffuse.contents = color
+				coloredBox!.firstMaterial = material
+				
+				coloredBoxes[color] = coloredBox
+			}
+			
+			let voxelNode = SCNNode(geometry: coloredBox)
+			voxelNode.position = SCNVector3(position)
+			
+			// Add voxel node to the scene
+			baseNode.addChildNode(voxelNode);
+		}
+		
+		let boundingBox = grid.boundingBox
+		let centerpoint = SCNVector3(boundingBox.minBounds + (boundingBox.maxBounds - boundingBox.minBounds) * 0.5)
+		baseNode.pivot = SCNMatrix4MakeTranslation(centerpoint.x, centerpoint.y, 0.0)
+		
+		return (baseNode.flattenedClone(), boundingBox)
+		
+		_mesh = mesh;
+		[self addObject:mesh];
+	}
 	
 	return self;
 }
