@@ -30,17 +30,51 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 #pragma clang assume_nonnull begin
 
+/// If true, runs `-calculateShellLevels` on initialization.
+///		Value: Boolean NSNumber
+///		Default Value: `false`
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionCalculateShellLevels;
+
+/// If true, keeps only the “at-surface” shell, discarding all interior (>= -1) shells.
+///		Value: Boolean NSNumber
+///		Default Value: `false`
+///		Requires: `kMDLVoxelAssetOptionCalculateShellLevels` to be true
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionSkipNonZeroShellMesh;
+
+/// Determines the method used to generate the MDLMesh.
+///		Value: `MDLVoxelAssetMeshGenerationMode` enum NSNumber
+///		Default Value: `MDLVoxelAssetMeshGenerationModeSceneKit`
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionMeshGenerationMode;
+typedef NS_ENUM(NSUInteger, MDLVoxelAssetMeshGenerationMode) {
+	/// Skips mesh generation.  `-objects` will be empty.
+	MDLVoxelAssetMeshGenerationModeSkip,
+	/// Generates using SceneKit SCNGeometry, assembling them into an `SCNNode` tree, combining them into fewer draw calls with `-flattenedClone`, then packaging that up in an `MDLObject`.
+	///		Not the most efficient approach, but the most straight-forward & reliable, since it relies on SceneKit & ModelIO to take care of all the vertex/normal/material/etc. buffer allocation & arrangement.
+    MDLVoxelAssetMeshGenerationModeSceneKit,
+};
+
+/// Whether mesh flattening should be performed (combining all same-material geometry into 1 draw call each).
+/// This should be enabled normally, for the sake of speed, and only disabled for debugging or when independent voxel movement is necessary.
+///		Value: Boolean NSNumber
+///		Default Value: `true` normally; `false` if requirements aren't met
+///		Requires: `kMDLVoxelAssetOptionMeshGenerationMode` to be non-`MDLVoxelAssetMeshGenerationModeSkip`
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionMeshGenerationFlattening;
+
+/// The mesh to use for each voxel.
+///		Value: A `SCNGeometry` or `MDLMesh` instance.  The instance is retained, then copied & modified for each use.
+///		Default Value: A 1x1x1 `SCNBox` with `chamferRadius` of 0.0`
+///		Requires: `kMDLVoxelAssetOptionMeshGenerationMode` to be non-`MDLVoxelAssetMeshGenerationModeSkip`
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionVoxelMesh;
+
 
 @interface MDLVoxelAsset : MDLObjectContainer <NSCopying>
-
-- (MDLAsset *)test;
-
 
 #pragma mark Creating an Asset
 
 + (BOOL)canImportFileExtension:(NSString *)extension;
 
-- (instancetype)initWithURL:(NSURL *)URL options:(NSDictionary<NSString*,id> *)options;
+/// @param options: A dictionary of MDLVoxelArray & MDLMesh initialization options.
+- (instancetype)initWithURL:(NSURL *)URL options:(nullable NSDictionary<NSString*,id> *)options;
 @property(nonatomic, readonly, retain) NSURL *URL;
 
 

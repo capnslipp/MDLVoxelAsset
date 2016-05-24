@@ -8,6 +8,15 @@
 
 #import "MagicaVoxelVoxData.h"
 
+#import <GLKit/GLKMathUtils.h>
+#import <SceneKit/ModelIO.h>
+#import <SceneKit/SceneKit_simd.h>
+#import <SceneKit/SCNGeometry.h>
+#import <SceneKit/SCNMaterial.h>
+#import <SceneKit/SCNMaterialProperty.h>
+#import <SceneKit/SCNNode.h>
+#import <SceneKit/SCNParametricGeometry.h>
+
 #if TARGET_OS_IPHONE
 	#import <UIKit/UIColor.h>
 	typedef UIColor Color;
@@ -15,6 +24,24 @@
 	#import <AppKit/NSColor.h>
 	typedef NSColor Color;
 #endif
+
+
+
+NSString *const kMDLVoxelAssetOptionCalculateShellLevels = @"MDLVoxelAssetOptionCalculateShellLevels";
+NSString *const kMDLVoxelAssetOptionSkipNonZeroShellMesh = @"MDLVoxelAssetOptionSkipNonZeroShellMesh";
+NSString *const kMDLVoxelAssetOptionMeshGenerationMode = @"MDLVoxelAssetOptionMeshGenerationMode";
+NSString *const kMDLVoxelAssetOptionMeshGenerationFlattening = @"MDLVoxelAssetOptionMeshGenerationFlattening";
+NSString *const kMDLVoxelAssetOptionVoxelMesh = @"MDLVoxelAssetOptionVoxelMesh";
+
+
+typedef struct _OptionsValues {
+	BOOL calculateShellLevels : 1;
+	BOOL skipNonZeroShellMesh : 1;
+	BOOL meshGenerationFlattening : 1;
+	
+	MDLVoxelAssetMeshGenerationMode meshGenerationMode;
+	id voxelMesh;
+} OptionsValues;
 
 
 
@@ -26,6 +53,8 @@
 
 
 @implementation MDLVoxelAsset {
+	OptionsValues _options;
+	
 	MagicaVoxelVoxData *_mvvoxData;
 	
 	MDLVoxelIndex *_voxelsRawData;
@@ -53,11 +82,13 @@
 }
 
 
-- (instancetype)initWithURL:(NSURL *)URL
+- (instancetype)initWithURL:(NSURL *)URL options:(NSDictionary<NSString*,id> *)options_dict
 {
 	self = [super init];
 	if (self == nil)
 		return nil;
+	
+	[self parseOptions:options_dict];
 	
 	self.URL = URL;
 	
@@ -113,69 +144,140 @@
 	
 	_paletteColors = paletteColors;
 	
-	{
-		[self calculateShellLevels]
-		let voxelPaletteIndices = asset.voxelPaletteIndices as Array<Array<Array<NSNumber>>>
-		let paletteColors = asset.paletteColors as [Color]
-		
-		var coloredBoxes = Dictionary<Color, SCNGeometry>()
-		
-		// Create voxel grid from MDLAsset
-		let grid:MDLVoxelArray = asset.voxelArray
-		let voxelData = grid.voxelIndices()!;   // retrieve voxel data
-		
-		// Create voxel parent node
-		let baseNode = SCNNode();
-		baseNode.eulerAngles = SCNVector3(GLKMathDegreesToRadians(-90), 0, 0) // Z+ is up in .vox; rotate to Y+:up
-		
-		// Create the voxel node geometry
-		let box = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.0);
-		
-		// Traverse the NSData voxel array and for each ijk index, create a voxel node positioned at its spatial location
-		let voxelsIndices = UnsafeBufferPointer<MDLVoxelIndex>(start: UnsafePointer<MDLVoxelIndex>(voxelData.bytes), count: grid.count)
-		for voxelIndex in voxelsIndices {
-			if (voxelIndex.w != 0) { continue }
-			
-			let position:vector_float3 = grid.spatialLocationOfIndex(voxelIndex);
-			
-			let colorIndex = voxelPaletteIndices[Int(voxelIndex.x)][Int(voxelIndex.y)][Int(voxelIndex.z)].integerValue
-			let color = paletteColors[colorIndex]
-			
-			// Create the voxel node and set its properties, reusing same-colored particle geometry
-			
-			var coloredBox:SCNGeometry? = coloredBoxes[color]
-			if (coloredBox == nil) {
-				coloredBox = (box.copy() as! SCNGeometry)
-				
-				let material = SCNMaterial()
-				material.diffuse.contents = color
-				coloredBox!.firstMaterial = material
-				
-				coloredBoxes[color] = coloredBox
-			}
-			
-			let voxelNode = SCNNode(geometry: coloredBox)
-			voxelNode.position = SCNVector3(position)
-			
-			// Add voxel node to the scene
-			baseNode.addChildNode(voxelNode);
-		}
-		
-		let boundingBox = grid.boundingBox
-		let centerpoint = SCNVector3(boundingBox.minBounds + (boundingBox.maxBounds - boundingBox.minBounds) * 0.5)
-		baseNode.pivot = SCNMatrix4MakeTranslation(centerpoint.x, centerpoint.y, 0.0)
-		
-		return (baseNode.flattenedClone(), boundingBox)
-		
-		_mesh = mesh;
-		[self addObject:mesh];
-	}
+	[self generateMeshWithSceneKit];
 	
 	return self;
 }
 
+- (void)parseOptions:(NSDictionary<NSString*,id> *)options_dict
+{
+	BOOL (^parseBool)(NSString *, BOOL) = ^BOOL(NSString *optionKey, BOOL defaultValue){
+		id dictValue = [options_dict objectForKey:optionKey];
+		BOOL isNonNilAndOfCorrectType = dictValue != nil && [dictValue isKindOfClass:NSNumber.class];
+		return isNonNilAndOfCorrectType ?
+			((NSNumber *)dictValue).boolValue :
+			defaultValue;
+	};
+	NSUInteger (^parseNSUIntegerEnum)(NSString *, NSUInteger) = ^(NSString *optionKey, NSUInteger defaultValue){
+		id dictValue = [options_dict objectForKey:optionKey];
+		BOOL isNonNilAndOfCorrectType = dictValue != nil && [dictValue isKindOfClass:NSNumber.class];
+		return isNonNilAndOfCorrectType ?
+			((NSNumber *)dictValue).unsignedIntegerValue :
+			defaultValue;
+	};
+	id (^parseSCNGeometryOrMDLMesh)(NSString *, id) = ^(NSString *optionKey, id defaultValue){
+		id dictValue = [options_dict objectForKey:optionKey];
+		BOOL isNonNilAndOfCorrectType = dictValue != nil && ([dictValue isKindOfClass:SCNGeometry.class] || [dictValue isKindOfClass:MDLMesh.class]);
+		return isNonNilAndOfCorrectType ?
+			dictValue :
+			defaultValue;
+	};
+	
+	_options.calculateShellLevels = parseBool(kMDLVoxelAssetOptionCalculateShellLevels, NO);
+	
+	if (_options.calculateShellLevels)
+		_options.skipNonZeroShellMesh = parseBool(kMDLVoxelAssetOptionSkipNonZeroShellMesh, NO);
+	else
+		_options.skipNonZeroShellMesh = NO;
+	
+	_options.meshGenerationMode = parseNSUIntegerEnum(kMDLVoxelAssetOptionMeshGenerationMode, MDLVoxelAssetMeshGenerationModeSceneKit);
+	
+	if (_options.meshGenerationMode != MDLVoxelAssetMeshGenerationModeSkip) {
+		_options.meshGenerationFlattening = parseBool(kMDLVoxelAssetOptionMeshGenerationFlattening, YES);
+		
+		_options.voxelMesh = [parseSCNGeometryOrMDLMesh(kMDLVoxelAssetOptionVoxelMesh, 
+			[SCNBox boxWithWidth:1 height:1 length:1 chamferRadius:0.0]
+		) retain];
+	}
+	else {
+		_options.meshGenerationFlattening = NO;
+		_options.voxelMesh = nil;
+	}
+}
+
+- (void)generateMeshWithSceneKit
+{
+	if (_options.meshGenerationMode == MDLVoxelAssetMeshGenerationModeSceneKit)
+	{
+		if (_options.calculateShellLevels)
+			[self calculateShellLevels];
+		
+		// @fixme: Currently overallocates (256, instead of the number of colors used), but it's not a gross overallocation and better than underallocating.
+		NSMutableDictionary<Color*,SCNGeometry*> *coloredBoxes = [[NSMutableDictionary alloc] initWithCapacity:_paletteColors.count];
+		
+		// Create voxel parent node
+		SCNNode *baseNode = [SCNNode new];
+		baseNode.eulerAngles = (SCNVector3){ GLKMathDegreesToRadians(-90), 0, 0 }; // Z+ is up in .vox; rotate to Y+:up
+		
+		// Create the voxel node geometry
+		SCNGeometry *voxelGeo;
+		if ([_options.voxelMesh isKindOfClass:SCNGeometry.class])
+			voxelGeo = _options.voxelMesh;
+		else if ([_options.voxelMesh isKindOfClass:MDLMesh.class])
+			voxelGeo = [SCNGeometry geometryWithMDLMesh:_options.voxelMesh];
+		else
+			@throw [NSException exceptionWithName: NSInvalidArgumentException
+					reason: [NSString stringWithFormat:@"Unexpected _options.voxelMesh type %@.", [_options.voxelMesh class]]
+					userInfo: nil
+				];
+		
+		// Traverse the NSData voxel array and for each ijk index, create a voxel node positioned at its spatial location
+		NSUInteger voxelCount = self.voxelCount;
+		for (int vI = 0; vI < voxelCount; ++vI) {
+			MDLVoxelIndex voxelIndex = _voxelsRawData[vI];
+			
+			if (_options.skipNonZeroShellMesh) {
+				if (voxelIndex.w != 0)
+					continue;
+			}
+			
+			int colorIndex = _voxelPaletteIndices[voxelIndex.x][voxelIndex.y][voxelIndex.z].intValue;
+			Color *color = _paletteColors[colorIndex];
+			
+			// Create the voxel node and set its properties, reusing same-colored particle geometry
+			
+			SCNGeometry *coloredBox = coloredBoxes[color];
+			if (coloredBox == nil) {
+				coloredBox = [voxelGeo copy];
+				
+				SCNMaterial *material = [SCNMaterial new];
+				material.diffuse.contents = color;
+				[(coloredBox.firstMaterial = material) release];
+				
+				[(coloredBoxes[color] = coloredBox) release];
+			}
+			
+			SCNNode *voxelNode = [SCNNode nodeWithGeometry:coloredBox];
+			vector_float3 position = [_voxelArray spatialLocationOfIndex:voxelIndex];
+			voxelNode.position = SCNVector3FromFloat3(position);
+			
+			// Add voxel node to the scene
+			[baseNode addChildNode:voxelNode];
+		}
+		
+		MDLAxisAlignedBoundingBox bbox = _voxelArray.boundingBox;
+		SCNVector3 centerpoint = SCNVector3FromFloat3(bbox.minBounds + (bbox.maxBounds - bbox.minBounds) * 0.5);
+		baseNode.pivot = SCNMatrix4MakeTranslation(centerpoint.x, centerpoint.y, 0.0);
+		
+		if (_options.meshGenerationFlattening) {
+			baseNode = [baseNode flattenedClone];
+			// @TODO: Pre-empt geomertySources/geomertyElements population?
+		}
+		
+		MDLMesh *mesh = [MDLMesh meshWithSCNGeometry:baseNode.geometry];
+		
+		[baseNode release];
+		
+		_mesh = mesh;
+		[self addObject:mesh];
+	}
+}
+
 - (void)dealloc
 {
+	[_mesh release];
+	_mesh = nil;
+	
 	free(_voxelsRawData);
 	_voxelsRawData = NULL;
 	[_voxelsData release];
@@ -190,6 +292,9 @@
 	
 	[_mvvoxData release];
 	_mvvoxData = nil;
+	
+	[_options.voxelMesh release];
+	_options.voxelMesh = nil;
 	
 	[super dealloc];
 }
@@ -267,6 +372,17 @@
 	
 	[_voxelArray release];
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
+}
+
+- (MDLObject *)objectAtIndex:(NSUInteger)index {
+	return self.objects[index];
+}
+- (MDLObject *)objectAtIndexedSubscript:(NSUInteger)index {
+	return self.objects[index];
+}
+
+- (NSUInteger)count {
+	return self.objects.count;
 }
 
 

@@ -6,6 +6,7 @@
 
 import QuartzCore
 import SceneKit
+import SceneKit.ModelIO
 import simd
 import MDLVoxelAsset
 
@@ -70,9 +71,30 @@ class GameViewController: ViewController
 		
 		// create and add the .vox node
 		
-		let (ship, shipBounds) = createVoxelModel(named: "chr_sword")
-		let shipCenterpoint = SCNVector3(shipBounds.minBounds + (shipBounds.maxBounds - shipBounds.minBounds) * 0.5)
-		scene.rootNode.addChildNode(ship)
+		let modelAsset:MDLVoxelAsset = fetchVoxelAsset(named: "chr_sword")
+		let modelCenterpoint:SCNVector3 = {
+			let bbox = modelAsset.boundingBox
+			return SCNVector3(bbox.minBounds + (bbox.maxBounds - bbox.minBounds) * 0.5)
+		}()
+		
+		let modelNode:SCNNode = {
+			if (modelAsset.count == 1) {
+				return SCNNode(MDLObject: modelAsset[0]!)
+			}
+			else if (modelAsset.count > 1) {
+				let baseNode = SCNNode()
+				for assetSubObject:MDLObject in modelAsset.objects {
+					baseNode.addChildNode(SCNNode(MDLObject: assetSubObject))
+				}
+				return baseNode
+			}
+			else {
+				return SCNNode()
+				// @todo: throw
+			}
+		}()
+		
+		scene.rootNode.addChildNode(modelNode)
 		
 		
 		// place the camera
@@ -80,8 +102,11 @@ class GameViewController: ViewController
 		cameraNode.eulerAngles = SCNVector3(0, 0, 0)
 		cameraNode.position = SCNVector3(
 			0.0,
-			Float(shipCenterpoint.y),
-			shipBounds.maxBounds.z + (shipBounds.maxBounds.z - shipBounds.minBounds.z) * 0.5 + 15
+			Float(modelCenterpoint.y),
+			{
+				let bbox = modelAsset.boundingBox
+				return bbox.maxBounds.z + (bbox.maxBounds.z - bbox.minBounds.z) * 0.5 + 15
+			}()
 		)
 		
 		
@@ -97,7 +122,8 @@ class GameViewController: ViewController
 			l.castsShadow = true
 			l.zNear = 1
 			l.zFar = {
-				let extents = (shipBounds.maxBounds - shipBounds.minBounds)
+				let bbox = modelAsset.boundingBox
+				let extents = (bbox.maxBounds - bbox.minBounds)
 				return sqrt(
 					pow(CGFloat(extents.x), 2) +
 					pow(CGFloat(extents.y), 2) +
@@ -106,13 +132,16 @@ class GameViewController: ViewController
 			}() * 2
 			return l
 		}()
-		lightNode.position = SCNVector3(shipBounds.maxBounds.x, shipBounds.maxBounds.y, shipBounds.maxBounds.z)
+		lightNode.position = {
+			let bbox = modelAsset.boundingBox
+			return SCNVector3(bbox.maxBounds.x, bbox.maxBounds.y, bbox.maxBounds.z)
+		}()
 		scene.rootNode.addChildNode(lightNode)
 		
 		if lightNode.constraints == nil {
 			lightNode.constraints = [SCNConstraint]()
 		}
-		lightNode.constraints!.append(SCNLookAtConstraint(target: ship))
+		lightNode.constraints!.append(SCNLookAtConstraint(target: modelNode))
 		
 		
 		// create and add an ambient light to the scene
@@ -152,7 +181,7 @@ class GameViewController: ViewController
 		}
 		
 		//// animate the 3d object
-		//ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
+		//modelNode.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
 		
 		// retrieve the SCNView
 		let gameView = self.gameView
@@ -176,66 +205,18 @@ class GameViewController: ViewController
 		#endif
 	}
 	
-	func createVoxelModel(named name:String) -> (SCNNode, MDLAxisAlignedBoundingBox)
+	func fetchVoxelAsset(named name:String) -> MDLVoxelAsset
 	{
 		var path = NSBundle.mainBundle().pathForResource(name, ofType:"")
 		if (path == nil) {
 			path = NSBundle.mainBundle().pathForResource(name, ofType:"vox")
 		}
 		
-		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path!))
-		asset.calculateShellLevels()
-		let voxelPaletteIndices = asset.voxelPaletteIndices as Array<Array<Array<NSNumber>>>
-		let paletteColors = asset.paletteColors as [Color]
-		
-		var coloredBoxes = Dictionary<Color, SCNGeometry>()
-		
-		// Create voxel grid from MDLAsset
-		let grid:MDLVoxelArray = asset.voxelArray
-		let voxelData = grid.voxelIndices()!;   // retrieve voxel data
-		
-		// Create voxel parent node
-		let baseNode = SCNNode();
-		baseNode.eulerAngles = SCNVector3(GLKMathDegreesToRadians(-90), 0, 0) // Z+ is up in .vox; rotate to Y+:up
-		
-		// Create the voxel node geometry
-		let box = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.0);
-		
-		// Traverse the NSData voxel array and for each ijk index, create a voxel node positioned at its spatial location
-		let voxelsIndices = UnsafeBufferPointer<MDLVoxelIndex>(start: UnsafePointer<MDLVoxelIndex>(voxelData.bytes), count: grid.count)
-		for voxelIndex in voxelsIndices {
-			if (voxelIndex.w != 0) { continue }
-			
-			let position:vector_float3 = grid.spatialLocationOfIndex(voxelIndex);
-			
-			let colorIndex = voxelPaletteIndices[Int(voxelIndex.x)][Int(voxelIndex.y)][Int(voxelIndex.z)].integerValue
-			let color = paletteColors[colorIndex]
-			
-			// Create the voxel node and set its properties, reusing same-colored particle geometry
-			
-			var coloredBox:SCNGeometry? = coloredBoxes[color]
-			if (coloredBox == nil) {
-				coloredBox = (box.copy() as! SCNGeometry)
-				
-				let material = SCNMaterial()
-				material.diffuse.contents = color
-				coloredBox!.firstMaterial = material
-				
-				coloredBoxes[color] = coloredBox
-			}
-			
-			let voxelNode = SCNNode(geometry: coloredBox)
-			voxelNode.position = SCNVector3(position)
-			
-			// Add voxel node to the scene
-			baseNode.addChildNode(voxelNode);
-		}
-		
-		let boundingBox = grid.boundingBox
-		let centerpoint = SCNVector3(boundingBox.minBounds + (boundingBox.maxBounds - boundingBox.minBounds) * 0.5)
-		baseNode.pivot = SCNMatrix4MakeTranslation(centerpoint.x, centerpoint.y, 0.0)
-		
-		return (baseNode.flattenedClone(), boundingBox)
+		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path!), options:[
+			kMDLVoxelAssetOptionCalculateShellLevels: true,
+			kMDLVoxelAssetOptionSkipNonZeroShellMesh: true,
+		])
+		return asset
 	}
 	
 	#if os(iOS)
