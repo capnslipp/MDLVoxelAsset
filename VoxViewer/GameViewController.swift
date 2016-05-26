@@ -93,7 +93,7 @@ class GameViewController: ViewController
 				// @todo: throw
 			}
 		}()
-		
+		modelNode.position = SCNVector3(-modelCenterpoint.x, 0, -modelCenterpoint.z);
 		scene.rootNode.addChildNode(modelNode)
 		
 		
