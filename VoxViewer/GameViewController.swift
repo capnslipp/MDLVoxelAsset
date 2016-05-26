@@ -215,6 +215,7 @@ class GameViewController: ViewController
 		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path!), options:[
 			kMDLVoxelAssetOptionCalculateShellLevels: false,
 			kMDLVoxelAssetOptionSkipNonZeroShellMesh: false,
+			kMDLVoxelAssetOptionConvertZUpToYUp: true,
 		])
 		return asset
 	}

@@ -32,12 +32,14 @@ NSString *const kMDLVoxelAssetOptionSkipNonZeroShellMesh = @"MDLVoxelAssetOption
 NSString *const kMDLVoxelAssetOptionMeshGenerationMode = @"MDLVoxelAssetOptionMeshGenerationMode";
 NSString *const kMDLVoxelAssetOptionMeshGenerationFlattening = @"MDLVoxelAssetOptionMeshGenerationFlattening";
 NSString *const kMDLVoxelAssetOptionVoxelMesh = @"MDLVoxelAssetOptionVoxelMesh";
+NSString *const kMDLVoxelAssetOptionConvertZUpToYUp = @"MDLVoxelAssetOptionConvertZUpToYUp";
 
 
 typedef struct _OptionsValues {
 	BOOL calculateShellLevels : 1;
 	BOOL skipNonZeroShellMesh : 1;
 	BOOL meshGenerationFlattening : 1;
+	BOOL convertZUpToYUp : 1;
 	
 	MDLVoxelAssetMeshGenerationMode meshGenerationMode;
 	id voxelMesh;
@@ -132,10 +134,17 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 
 - (MDLAxisAlignedBoundingBox)boundingBox {
 	MagicaVoxelVoxData_XYZDimensions mvvoxDimensions = _mvvoxData.dimensions;
-	return (MDLAxisAlignedBoundingBox){
-		.minBounds = { 0, 0, 0 },
-		.maxBounds = { mvvoxDimensions.x, mvvoxDimensions.y, mvvoxDimensions.z },
-	};
+	
+	if (_options.convertZUpToYUp)
+		return (MDLAxisAlignedBoundingBox){
+			.minBounds = { 0, 0, 0 },
+			.maxBounds = { mvvoxDimensions.x, mvvoxDimensions.z, mvvoxDimensions.y },
+		};
+	else
+		return (MDLAxisAlignedBoundingBox){
+			.minBounds = { 0, 0, 0 },
+			.maxBounds = { mvvoxDimensions.x, mvvoxDimensions.y, mvvoxDimensions.z },
+		};
 }
 
 
@@ -157,7 +166,11 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_voxelsRawData = calloc(voxelCount, sizeof(MDLVoxelIndex));
 	for (int vI = (int)voxelCount - 1; vI >= 0; --vI) {
 		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
-		_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->y, voxVoxel->z, 0 };
+		
+		if (_options.convertZUpToYUp)
+			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->z, mvvoxDimensions.y + -voxVoxel->y, 0 };
+		else
+			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->y, voxVoxel->z, 0 };
 	}
 	_voxelsData = [[NSData alloc] initWithBytesNoCopy:_voxelsRawData length:(voxelCount * sizeof(MDLVoxelIndex)) freeWhenDone:NO];
 	
@@ -250,6 +263,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		_options.meshGenerationFlattening = NO;
 		_options.voxelMesh = nil;
 	}
+	
+	_options.convertZUpToYUp = parseBool(kMDLVoxelAssetOptionConvertZUpToYUp, NO);
 }
 
 - (void)generateMesh

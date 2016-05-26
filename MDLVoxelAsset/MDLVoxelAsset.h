@@ -53,6 +53,8 @@ typedef NS_ENUM(NSUInteger, MDLVoxelAssetMeshGenerationMode) {
     MDLVoxelAssetMeshGenerationModeSceneKit,
 };
 
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionConvertZUpToYUp;
+
 
 @interface MDLVoxelAsset : MDLObjectContainer <NSCopying>
 
