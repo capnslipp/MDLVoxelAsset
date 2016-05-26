@@ -50,6 +50,7 @@ typedef struct _PerVertexMeshData {
 	vector_float3 __attribute__((aligned(4))) position;
 	vector_float3 __attribute__((aligned(4))) normal;
 	vector_float2 __attribute__((aligned(4))) textureCoordinate;
+	vector_float3 __attribute__((aligned(4))) color;
 } __attribute__((aligned(4))) PerVertexMeshData;
 
 static const PerVertexMeshData kVoxelCubeVertexData[] = {
@@ -211,7 +212,6 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 			alpha: voxColor->a / 255.f
 		];
 	}
-	
 	_paletteColors = paletteColors;
 	
 	[self generateMesh];
@@ -298,6 +298,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	);
 	_vertexIndicesRawData = calloc(vertexIndexCount, sizeof(uint16_t));
 	
+	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
+	
 	NSUInteger voxI = 0;
 	while (voxI < voxelCount)
 	{
@@ -324,8 +326,12 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		for (NSUInteger vertIndexI = startVertIndexI; vertIndexI < startVertIndexI + kVertexIndicesPerVoxel; ++vertIndexI)
 			_vertexIndicesRawData[vertIndexI] += startVertI;
 		
-		int colorIndex = _voxelPaletteIndices[voxelIndex.x][voxelIndex.y][voxelIndex.z].intValue;
+		uint8_t colorIndex = mvvoxVoxels[voxI].colorIndex;
 		Color *color = _paletteColors[colorIndex];
+		CGFloat color_cgArray[4];
+		[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:NULL];
+		for (NSUInteger vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
+			_verticesRawData[vertI].color = (vector_float3){ color_cgArray[0], color_cgArray[1], color_cgArray[2] };
 		
 		++voxI;
 	}
@@ -335,12 +341,14 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	NSData *vertexIndicesData = [[NSData alloc] initWithBytesNoCopy:_vertexIndicesRawData length:(vertexIndexCount * sizeof(uint16_t)) freeWhenDone:NO];
 	
 	MDLVertexDescriptor *meshDescriptor = [[MDLVertexDescriptor new] autorelease];
-	meshDescriptor.attributes[0] = [[[MDLVertexAttribute alloc] initWithName:@"position" format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, position) bufferIndex:0] autorelease];
-	meshDescriptor.attributes[1] = [[[MDLVertexAttribute alloc] initWithName:@"normal" format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, normal)  bufferIndex:0] autorelease];
-	meshDescriptor.attributes[2] = [[[MDLVertexAttribute alloc] initWithName:@"textureCoordinate" format:MDLVertexFormatFloat2 offset:offsetof(PerVertexMeshData, textureCoordinate) bufferIndex:0] autorelease];
+	[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributePosition format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, position) bufferIndex:0] autorelease]];
+	[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeNormal format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, normal)  bufferIndex:0] autorelease]];
+	[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeTextureCoordinate format:MDLVertexFormatFloat2 offset:offsetof(PerVertexMeshData, textureCoordinate) bufferIndex:0] autorelease]];
+	[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeColor format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, color) bufferIndex:0] autorelease]];
 	meshDescriptor.layouts[0].stride = sizeof(PerVertexMeshData);
 	meshDescriptor.layouts[1].stride = sizeof(PerVertexMeshData);
 	meshDescriptor.layouts[2].stride = sizeof(PerVertexMeshData);
+	meshDescriptor.layouts[3].stride = sizeof(PerVertexMeshData);
 	
 	MDLMeshBufferData *vertexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeVertex data:verticesData];
 	MDLMeshBufferData *indexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeIndex data:vertexIndicesData];
