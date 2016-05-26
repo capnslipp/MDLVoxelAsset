@@ -44,6 +44,61 @@ typedef struct _OptionsValues {
 } OptionsValues;
 
 
+typedef struct _PerVertexMeshData {
+	vector_float3 __attribute__((aligned(4))) position;
+	vector_float3 __attribute__((aligned(4))) normal;
+	vector_float2 __attribute__((aligned(4))) textureCoordinate;
+} __attribute__((aligned(4))) PerVertexMeshData;
+
+static const PerVertexMeshData kVoxelCubeVertexData[] = {
+	// X+ Facing
+	{ .position = { 1, 0, 0 }, .normal = { +1,  0,  0 }, .textureCoordinate = { 0, 0 } },
+	{ .position = { 1, 1, 0 }, .normal = { +1,  0,  0 }, .textureCoordinate = { 1, 0 } },
+	{ .position = { 1, 0, 1 }, .normal = { +1,  0,  0 }, .textureCoordinate = { 0, 1 } },
+	{ .position = { 1, 1, 1 }, .normal = { +1,  0,  0 }, .textureCoordinate = { 1, 1 } },
+	// X- Facing
+	{ .position = { 0, 0, 0 }, .normal = { -1,  0,  0 }, .textureCoordinate = { 0, 0 } },
+	{ .position = { 0, 0, 1 }, .normal = { -1,  0,  0 }, .textureCoordinate = { 1, 0 } },
+	{ .position = { 0, 1, 0 }, .normal = { -1,  0,  0 }, .textureCoordinate = { 0, 1 } },
+	{ .position = { 0, 1, 1 }, .normal = { -1,  0,  0 }, .textureCoordinate = { 1, 1 } },
+	// Y+ Facing
+	{ .position = { 0, 1, 0 }, .normal = {  0, +1,  0 }, .textureCoordinate = { 0, 0 } },
+	{ .position = { 0, 1, 1 }, .normal = {  0, +1,  0 }, .textureCoordinate = { 1, 0 } },
+	{ .position = { 1, 1, 0 }, .normal = {  0, +1,  0 }, .textureCoordinate = { 0, 1 } },
+	{ .position = { 1, 1, 1 }, .normal = {  0, +1,  0 }, .textureCoordinate = { 1, 1 } },
+	// Y- Facing
+	{ .position = { 0, 0, 0 }, .normal = {  0, -1,  0 }, .textureCoordinate = { 0, 0 } },
+	{ .position = { 1, 0, 0 }, .normal = {  0, -1,  0 }, .textureCoordinate = { 1, 0 } },
+	{ .position = { 0, 0, 1 }, .normal = {  0, -1,  0 }, .textureCoordinate = { 0, 1 } },
+	{ .position = { 1, 0, 1 }, .normal = {  0, -1,  0 }, .textureCoordinate = { 1, 1 } },
+	// Z+ Facing
+	{ .position = { 0, 0, 1 }, .normal = {  0,  0, +1 }, .textureCoordinate = { 0, 0 } },
+	{ .position = { 1, 0, 1 }, .normal = {  0,  0, +1 }, .textureCoordinate = { 1, 0 } },
+	{ .position = { 0, 1, 1 }, .normal = {  0,  0, +1 }, .textureCoordinate = { 0, 1 } },
+	{ .position = { 1, 1, 1 }, .normal = {  0,  0, +1 }, .textureCoordinate = { 1, 1 } },
+	// Z- Facing
+	{ .position = { 0, 0, 0 }, .normal = {  0,  0, -1 }, .textureCoordinate = { 0, 0 } },
+	{ .position = { 0, 1, 0 }, .normal = {  0,  0, -1 }, .textureCoordinate = { 1, 0 } },
+	{ .position = { 1, 0, 0 }, .normal = {  0,  0, -1 }, .textureCoordinate = { 0, 1 } },
+	{ .position = { 1, 1, 0 }, .normal = {  0,  0, -1 }, .textureCoordinate = { 1, 1 } },
+};
+
+static const uint16_t kVoxelCubeVertexIndexData[] = {
+	// X+ Facing
+	(0*4 + 0), (0*4 + 1), (0*4 + 2), (0*4 + 2), (0*4 + 1), (0*4 + 3),
+	// X- Facing
+	(1*4 + 0), (1*4 + 1), (1*4 + 2), (1*4 + 2), (1*4 + 1), (1*4 + 3),
+	// Y+ Facing
+	(2*4 + 0), (2*4 + 1), (2*4 + 2), (2*4 + 2), (2*4 + 1), (2*4 + 3),
+	// Y- Facing
+	(3*4 + 0), (3*4 + 1), (3*4 + 2), (3*4 + 2), (3*4 + 1), (3*4 + 3),
+	// Z+ Facing
+	(4*4 + 0), (4*4 + 1), (4*4 + 2), (4*4 + 2), (4*4 + 1), (4*4 + 3),
+	// Z- Facing
+	(5*4 + 0), (5*4 + 1), (5*4 + 2), (5*4 + 2), (5*4 + 1), (5*4 + 3),
+};
+
+
 
 @interface MDLVoxelAsset ()
 
@@ -65,6 +120,8 @@ typedef struct _OptionsValues {
 	NSArray<Color*> *_paletteColors;
 	
 	MDLMesh *_mesh;
+	PerVertexMeshData *_verticesRawData;
+	uint16_t *_vertexIndicesRawData;
 }
 
 @synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors;
@@ -144,7 +201,7 @@ typedef struct _OptionsValues {
 	
 	_paletteColors = paletteColors;
 	
-	[self generateMeshWithSceneKit];
+	[self generateMesh];
 	
 	return self;
 }
@@ -195,88 +252,104 @@ typedef struct _OptionsValues {
 	}
 }
 
-- (void)generateMeshWithSceneKit
+- (void)generateMesh
 {
-	if (_options.meshGenerationMode == MDLVoxelAssetMeshGenerationModeSceneKit)
+	[_mesh release];
+	_mesh = nil;
+	free(_verticesRawData);
+	_verticesRawData = NULL;
+	free(_vertexIndicesRawData);
+	_vertexIndicesRawData = NULL;
+	
+	
+	if (_options.calculateShellLevels)
+		[self calculateShellLevels];
+	
+	NSUInteger voxelCount = self.voxelCount;
+	
+	static NSUInteger const kFacesPerVoxel = 6;
+	
+	static NSUInteger const kVerticesPerVoxel = 4 * kFacesPerVoxel;
+	NSUInteger vertexCount = self.voxelCount * kVerticesPerVoxel;
+	NSAssert(sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData) == kVerticesPerVoxel,
+		@"`sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData)` must equal %lu.", (unsigned long)kVerticesPerVoxel
+	);
+	_verticesRawData = calloc(vertexCount, sizeof(PerVertexMeshData));
+	
+	static NSUInteger const kVertexIndicesPerVoxel = 6 * kFacesPerVoxel;
+	NSUInteger vertexIndexCount = self.voxelCount * kVertexIndicesPerVoxel;
+	NSAssert(sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t) == kVertexIndicesPerVoxel,
+		@"`sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t)` must equal %lu.", (unsigned long)kVertexIndicesPerVoxel
+	);
+	_vertexIndicesRawData = calloc(vertexIndexCount, sizeof(uint16_t));
+	
+	NSUInteger voxI = 0;
+	while (voxI < voxelCount)
 	{
-		if (_options.calculateShellLevels)
-			[self calculateShellLevels];
+		NSUInteger startVertI = voxI * kVerticesPerVoxel;
 		
-		// @fixme: Currently overallocates (256, instead of the number of colors used), but it's not a gross overallocation and better than underallocating.
-		NSMutableDictionary<Color*,SCNGeometry*> *coloredBoxes = [[NSMutableDictionary alloc] initWithCapacity:_paletteColors.count];
+		MDLVoxelIndex voxelIndex = _voxelsRawData[voxI];
 		
-		// Create voxel parent node
-		SCNNode *baseNode = [SCNNode new];
-		baseNode.eulerAngles = (SCNVector3){ GLKMathDegreesToRadians(-90), 0, 0 }; // Z+ is up in .vox; rotate to Y+:up
-		
-		// Create the voxel node geometry
-		SCNGeometry *voxelGeo;
-		if ([_options.voxelMesh isKindOfClass:SCNGeometry.class])
-			voxelGeo = _options.voxelMesh;
-		else if ([_options.voxelMesh isKindOfClass:MDLMesh.class])
-			voxelGeo = [SCNGeometry geometryWithMDLMesh:_options.voxelMesh];
-		else
-			@throw [NSException exceptionWithName: NSInvalidArgumentException
-					reason: [NSString stringWithFormat:@"Unexpected _options.voxelMesh type %@.", [_options.voxelMesh class]]
-					userInfo: nil
-				];
-		
-		// Traverse the NSData voxel array and for each ijk index, create a voxel node positioned at its spatial location
-		NSUInteger voxelCount = self.voxelCount;
-		for (int vI = 0; vI < voxelCount; ++vI) {
-			MDLVoxelIndex voxelIndex = _voxelsRawData[vI];
-			
-			if (_options.skipNonZeroShellMesh) {
-				if (voxelIndex.w != 0)
-					continue;
+		if (_options.skipNonZeroShellMesh) {
+			if (voxelIndex.w != 0) {
+				voxelCount -= 1;
+				vertexCount -= kVerticesPerVoxel;
+				vertexIndexCount -= kVertexIndicesPerVoxel;
+				continue;
 			}
-			
-			int colorIndex = _voxelPaletteIndices[voxelIndex.x][voxelIndex.y][voxelIndex.z].intValue;
-			Color *color = _paletteColors[colorIndex];
-			
-			// Create the voxel node and set its properties, reusing same-colored particle geometry
-			
-			SCNGeometry *coloredBox = coloredBoxes[color];
-			if (coloredBox == nil) {
-				coloredBox = [voxelGeo copy];
-				
-				SCNMaterial *material = [SCNMaterial new];
-				material.diffuse.contents = color;
-				[(coloredBox.firstMaterial = material) release];
-				
-				[(coloredBoxes[color] = coloredBox) release];
-			}
-			
-			SCNNode *voxelNode = [SCNNode nodeWithGeometry:coloredBox];
-			vector_float3 position = [_voxelArray spatialLocationOfIndex:voxelIndex];
-			voxelNode.position = SCNVector3FromFloat3(position);
-			
-			// Add voxel node to the scene
-			[baseNode addChildNode:voxelNode];
 		}
 		
-		MDLAxisAlignedBoundingBox bbox = _voxelArray.boundingBox;
-		SCNVector3 centerpoint = SCNVector3FromFloat3(bbox.minBounds + (bbox.maxBounds - bbox.minBounds) * 0.5);
-		baseNode.pivot = SCNMatrix4MakeTranslation(centerpoint.x, centerpoint.y, 0.0);
+		memcpy(&_verticesRawData[startVertI], kVoxelCubeVertexData, sizeof(kVoxelCubeVertexData));
+		for (NSUInteger vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
+			_verticesRawData[vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
 		
-		if (_options.meshGenerationFlattening) {
-			baseNode = [baseNode flattenedClone];
-			// @TODO: Pre-empt geomertySources/geomertyElements population?
-		}
+		NSUInteger startVertIndexI = voxI * kVertexIndicesPerVoxel;
 		
-		MDLMesh *mesh = [MDLMesh meshWithSCNGeometry:baseNode.geometry];
+		memcpy(&_vertexIndicesRawData[startVertIndexI], kVoxelCubeVertexIndexData, sizeof(kVoxelCubeVertexIndexData));
+		for (NSUInteger vertIndexI = startVertIndexI; vertIndexI < startVertIndexI + kVertexIndicesPerVoxel; ++vertIndexI)
+			_vertexIndicesRawData[vertIndexI] += startVertI;
 		
-		[baseNode release];
+		int colorIndex = _voxelPaletteIndices[voxelIndex.x][voxelIndex.y][voxelIndex.z].intValue;
+		Color *color = _paletteColors[colorIndex];
 		
-		_mesh = mesh;
-		[self addObject:mesh];
+		++voxI;
 	}
+	
+	// @note: We hang onto `_verticesRawData` & `_vertexIndicesRawData` and free them ourselves since they're might be oversized (`_options.skipNonZeroShellMesh`) and the `NSData`s only address the length we used (so no more data is sent to the GPU than necessary).
+	NSData *verticesData = [[NSData alloc] initWithBytesNoCopy:_verticesRawData length:(vertexCount * sizeof(PerVertexMeshData)) freeWhenDone:NO];
+	NSData *vertexIndicesData = [[NSData alloc] initWithBytesNoCopy:_vertexIndicesRawData length:(vertexIndexCount * sizeof(uint16_t)) freeWhenDone:NO];
+	
+	MDLVertexDescriptor *meshDescriptor = [[MDLVertexDescriptor new] autorelease];
+	meshDescriptor.attributes[0] = [[[MDLVertexAttribute alloc] initWithName:@"position" format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, position) bufferIndex:0] autorelease];
+	meshDescriptor.attributes[1] = [[[MDLVertexAttribute alloc] initWithName:@"normal" format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, normal)  bufferIndex:0] autorelease];
+	meshDescriptor.attributes[2] = [[[MDLVertexAttribute alloc] initWithName:@"textureCoordinate" format:MDLVertexFormatFloat2 offset:offsetof(PerVertexMeshData, textureCoordinate) bufferIndex:0] autorelease];
+	meshDescriptor.layouts[0].stride = sizeof(PerVertexMeshData);
+	meshDescriptor.layouts[1].stride = sizeof(PerVertexMeshData);
+	meshDescriptor.layouts[2].stride = sizeof(PerVertexMeshData);
+	
+	MDLMeshBufferData *vertexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeVertex data:verticesData];
+	MDLMeshBufferData *indexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeIndex data:vertexIndicesData];
+	[verticesData release];
+	[vertexIndicesData release];
+	
+	MDLSubmesh *submesh = [[MDLSubmesh alloc] initWithIndexBuffer:indexBufferData indexCount:vertexIndexCount indexType:MDLIndexBitDepthUInt16 geometryType:MDLGeometryTypeTriangles material:nil];
+	
+	_mesh = [[MDLMesh alloc] initWithVertexBuffer:vertexBufferData vertexCount:vertexCount descriptor:meshDescriptor submeshes:@[ submesh ]];
+	[submesh release];
+	[vertexBufferData release];
+	[indexBufferData release];
+	
+	[self addObject:_mesh];
 }
 
 - (void)dealloc
 {
 	[_mesh release];
 	_mesh = nil;
+	free(_verticesRawData);
+	_verticesRawData = NULL;
+	free(_vertexIndicesRawData);
+	_vertexIndicesRawData = NULL;
 	
 	free(_voxelsRawData);
 	_voxelsRawData = NULL;

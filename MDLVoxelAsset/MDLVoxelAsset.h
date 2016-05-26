@@ -53,19 +53,6 @@ typedef NS_ENUM(NSUInteger, MDLVoxelAssetMeshGenerationMode) {
     MDLVoxelAssetMeshGenerationModeSceneKit,
 };
 
-/// Whether mesh flattening should be performed (combining all same-material geometry into 1 draw call each).
-/// This should be enabled normally, for the sake of speed, and only disabled for debugging or when independent voxel movement is necessary.
-///		Value: Boolean NSNumber
-///		Default Value: `true` normally; `false` if requirements aren't met
-///		Requires: `kMDLVoxelAssetOptionMeshGenerationMode` to be non-`MDLVoxelAssetMeshGenerationModeSkip`
-FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionMeshGenerationFlattening;
-
-/// The mesh to use for each voxel.
-///		Value: A `SCNGeometry` or `MDLMesh` instance.  The instance is retained, then copied & modified for each use.
-///		Default Value: A 1x1x1 `SCNBox` with `chamferRadius` of 0.0`
-///		Requires: `kMDLVoxelAssetOptionMeshGenerationMode` to be non-`MDLVoxelAssetMeshGenerationModeSkip`
-FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionVoxelMesh;
-
 
 @interface MDLVoxelAsset : MDLObjectContainer <NSCopying>
 
