@@ -234,25 +234,25 @@ class GameViewController: ViewController
 				let result: AnyObject! = hitResults[0]
 				
 				// get its material
-				let material = result.node!.geometry!.firstMaterial!
-				
-				// highlight it
-				SCNTransaction.begin()
-				SCNTransaction.setAnimationDuration(0.5)
-				
-				// on completion - unhighlight
-				SCNTransaction.setCompletionBlock {
+				if let material = result.node!.geometry!.firstMaterial {
+					// highlight it
 					SCNTransaction.begin()
 					SCNTransaction.setAnimationDuration(0.5)
 					
-					material.emission.contents = Color.blackColor()
+					// on completion - unhighlight
+					SCNTransaction.setCompletionBlock {
+						SCNTransaction.begin()
+						SCNTransaction.setAnimationDuration(0.5)
+						
+						material.emission.contents = Color.blackColor()
+						
+						SCNTransaction.commit()
+					}
+					
+					material.emission.contents = Color.redColor()
 					
 					SCNTransaction.commit()
 				}
-				
-				material.emission.contents = Color.redColor()
-				
-				SCNTransaction.commit()
 			}
 		}
 		
