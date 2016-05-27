@@ -89,9 +89,10 @@ FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionConvertZUpToYUp;
 @property (nonatomic, readonly) NSUInteger count;
 
 
-#pragma mark NSFastEnumeration Adherance
+#pragma mark MDLObjectContainerComponent Overrides
 
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained [])buffer count:(NSUInteger)len;
+- (void)addObject:(MDLObject*)object;
+- (void)removeObject:(MDLObject*)object;
 
 @end
 

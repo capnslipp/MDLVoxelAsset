@@ -16,6 +16,7 @@
 #import <SceneKit/SCNMaterialProperty.h>
 #import <SceneKit/SCNNode.h>
 #import <SceneKit/SCNParametricGeometry.h>
+#import <objc/message.h> // @for: objc_msgSendSuper()
 
 #if TARGET_OS_IPHONE
 	#import <UIKit/UIColor.h>
@@ -219,6 +220,10 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	return self;
 }
 
+- (id)copyWithZone:(NSZone *)_ {
+	return [self retain]; // MDLVoxelAsset is immutable, so just keep using the same instance.
+}
+
 - (void)parseOptions:(NSDictionary<NSString*,id> *)options_dict
 {
 	BOOL (^parseBool)(NSString *, BOOL) = ^BOOL(NSString *optionKey, BOOL defaultValue){
@@ -362,7 +367,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	[vertexBufferData release];
 	[indexBufferData release];
 	
-	[self addObject:_mesh];
+	[super addObject:_mesh];
 }
 
 - (void)dealloc
@@ -470,6 +475,9 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
 }
 
+
+#pragma mark Sub-MDLObject Access
+
 - (MDLObject *)objectAtIndex:(NSUInteger)index {
 	return self.objects[index];
 }
@@ -479,6 +487,30 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 
 - (NSUInteger)count {
 	return self.objects.count;
+}
+
+
+#pragma mark MDLObjectContainerComponent Overrides
+
+
+- (void)addObject:(MDLObject *)object {
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException
+		reason: [NSString stringWithFormat:@"%@ does not allow mutation; calling this %@ method is not allowed.", MDLVoxelAsset.class, NSStringFromSelector(_cmd)]
+		userInfo: @{
+			@"receiver": self,
+			@"selector": [NSValue value:&_cmd withObjCType:@encode(SEL)],
+		}
+	];
+}
+
+- (void)removeObject:(MDLObject *)object {
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException
+		reason: [NSString stringWithFormat:@"%@ does not allow mutation; calling this %@ method is not allowed.", MDLVoxelAsset.class, NSStringFromSelector(_cmd)]
+		userInfo: @{
+			@"receiver": self,
+			@"selector": [NSValue value:&_cmd withObjCType:@encode(SEL)],
+		}
+	];
 }
 
 
