@@ -305,40 +305,42 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	
 	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
 	
-	NSUInteger voxI = 0;
-	while (voxI < voxelCount)
 	{
-		NSUInteger startVertI = voxI * kVerticesPerVoxel;
-		
-		MDLVoxelIndex voxelIndex = _voxelsRawData[voxI];
-		
-		if (_options.skipNonZeroShellMesh) {
-			if (voxelIndex.w != 0) {
-				voxelCount -= 1;
-				vertexCount -= kVerticesPerVoxel;
-				vertexIndexCount -= kVertexIndicesPerVoxel;
-				continue;
+		NSUInteger voxI = 0;
+		while (voxI < voxelCount)
+		{
+			NSUInteger startVertI = voxI * kVerticesPerVoxel;
+			
+			MDLVoxelIndex voxelIndex = _voxelsRawData[voxI];
+			
+			if (_options.skipNonZeroShellMesh) {
+				if (voxelIndex.w != 0) {
+					voxelCount -= 1;
+					vertexCount -= kVerticesPerVoxel;
+					vertexIndexCount -= kVertexIndicesPerVoxel;
+					continue;
+				}
 			}
+			
+			memcpy(&_verticesRawData[startVertI], kVoxelCubeVertexData, sizeof(kVoxelCubeVertexData));
+			for (NSUInteger vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
+				_verticesRawData[vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
+			
+			NSUInteger startVertIndexI = voxI * kVertexIndicesPerVoxel;
+			
+			memcpy(&_vertexIndicesRawData[startVertIndexI], kVoxelCubeVertexIndexData, sizeof(kVoxelCubeVertexIndexData));
+			for (NSUInteger vertIndexI = startVertIndexI; vertIndexI < startVertIndexI + kVertexIndicesPerVoxel; ++vertIndexI)
+				_vertexIndicesRawData[vertIndexI] += startVertI;
+			
+			uint8_t colorIndex = mvvoxVoxels[voxI].colorIndex;
+			Color *color = _paletteColors[colorIndex];
+			CGFloat color_cgArray[4];
+			[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:NULL];
+			for (NSUInteger vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
+				_verticesRawData[vertI].color = (vector_float3){ color_cgArray[0], color_cgArray[1], color_cgArray[2] };
+			
+			++voxI;
 		}
-		
-		memcpy(&_verticesRawData[startVertI], kVoxelCubeVertexData, sizeof(kVoxelCubeVertexData));
-		for (NSUInteger vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
-			_verticesRawData[vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
-		
-		NSUInteger startVertIndexI = voxI * kVertexIndicesPerVoxel;
-		
-		memcpy(&_vertexIndicesRawData[startVertIndexI], kVoxelCubeVertexIndexData, sizeof(kVoxelCubeVertexIndexData));
-		for (NSUInteger vertIndexI = startVertIndexI; vertIndexI < startVertIndexI + kVertexIndicesPerVoxel; ++vertIndexI)
-			_vertexIndicesRawData[vertIndexI] += startVertI;
-		
-		uint8_t colorIndex = mvvoxVoxels[voxI].colorIndex;
-		Color *color = _paletteColors[colorIndex];
-		CGFloat color_cgArray[4];
-		[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:NULL];
-		for (NSUInteger vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
-			_verticesRawData[vertI].color = (vector_float3){ color_cgArray[0], color_cgArray[1], color_cgArray[2] };
-		
-		++voxI;
 	}
 	
 	// @note: We hang onto `_verticesRawData` & `_vertexIndicesRawData` and free them ourselves since they're might be oversized (`_options.skipNonZeroShellMesh`) and the `NSData`s only address the length we used (so no more data is sent to the GPU than necessary).
@@ -368,6 +370,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	[indexBufferData release];
 	
 	[super addObject:_mesh];
+	
+	BOOL aoSuccess = [_mesh generateAmbientOcclusionVertexColorsWithQuality:1.0 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
 }
 
 - (void)dealloc
