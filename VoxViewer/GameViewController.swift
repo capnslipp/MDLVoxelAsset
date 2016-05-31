@@ -112,6 +112,8 @@ class GameViewController: ViewController
 		
 		// create and add a light to the scene
 		
+		let lightOffset = SCNVector3(0, 10, 10)
+		
 		let lightNode = SCNNode()
 		lightNode.light = {
 			let l = SCNLight()
@@ -125,16 +127,20 @@ class GameViewController: ViewController
 				let bbox = modelAsset.boundingBox
 				let extents = (bbox.maxBounds - bbox.minBounds)
 				return sqrt(
-					pow(CGFloat(extents.x), 2) +
-					pow(CGFloat(extents.y), 2) +
-					pow(CGFloat(extents.z), 2)
+					pow(CGFloat(extents.x) + lightOffset.x, 2) +
+					pow(CGFloat(extents.y) + lightOffset.y, 2) +
+					pow(CGFloat(extents.z) + lightOffset.z, 2)
 				)
 			}() * 2
 			return l
 		}()
 		lightNode.position = {
 			let bbox = modelAsset.boundingBox
-			return SCNVector3(bbox.maxBounds.x, bbox.maxBounds.y, bbox.maxBounds.z)
+			return SCNVector3(
+				x: CGFloat(bbox.maxBounds.x) + lightOffset.x,
+				y: CGFloat(bbox.maxBounds.y) + lightOffset.y,
+				z: CGFloat(bbox.maxBounds.z) + lightOffset.z
+			)
 		}()
 		scene.rootNode.addChildNode(lightNode)
 		
