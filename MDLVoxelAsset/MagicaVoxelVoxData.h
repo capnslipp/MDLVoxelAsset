@@ -40,10 +40,10 @@ typedef struct _MagicaVoxelVoxData_Voxel {
 @property (nonatomic, assign, readonly) MagicaVoxelVoxData_XYZDimensions dimensions;
 
 @property (nonatomic, assign, readonly) MagicaVoxelVoxData_PaletteColor *paletteColors_array;
-@property (nonatomic, assign, readonly) NSUInteger paletteColors_count;
+@property (nonatomic, assign, readonly) uint8_t paletteColors_count;
 
 @property (nonatomic, assign, nullable) MagicaVoxelVoxData_Voxel *voxels_array;
-@property (nonatomic, assign, readonly) NSUInteger voxels_count;
+@property (nonatomic, assign, readonly) uint32_t voxels_count;
 
 #pragma mark NSData-Mirroring Interface
 

@@ -300,7 +300,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return (MagicaVoxelVoxData_PaletteColor *)chunkContents.colors_array;
 }
 
-- (NSUInteger)paletteColors_count {
+- (uint8_t)paletteColors_count {
 	return 255; // last color is unused
 }
 
@@ -317,7 +317,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return (MagicaVoxelVoxData_Voxel *)chunkContents.voxels_array;
 }
 
-- (NSUInteger)voxels_count
+- (uint32_t)voxels_count
 {
 	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)];
 	if (!chunkHandle)

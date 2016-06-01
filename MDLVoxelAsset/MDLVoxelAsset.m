@@ -132,7 +132,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 
 @synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors;
 
-- (NSUInteger)voxelCount {
+- (uint32_t)voxelCount {
 	return _mvvoxData.voxels_count;
 }
 
@@ -164,7 +164,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	
 	_mvvoxData = [[MagicaVoxelVoxData alloc] initWithContentsOfURL:URL];
 	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
-	NSUInteger voxelCount = self.voxelCount;
+	uint32_t voxelCount = self.voxelCount;
 	
 	MagicaVoxelVoxData_XYZDimensions mvvoxDimensions = _mvvoxData.dimensions;
 	MagicaVoxelVoxData_XYZDimensions dimensions = _options.convertZUpToYUp ?
@@ -172,7 +172,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		mvvoxDimensions;
 	
 	_voxelsRawData = calloc(voxelCount, sizeof(MDLVoxelIndex));
-	for (int vI = (int)voxelCount - 1; vI >= 0; --vI) {
+	for (int32_t vI = voxelCount - 1; vI >= 0; --vI) {
 		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
 		
 		if (_options.convertZUpToYUp)
@@ -187,16 +187,16 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	
 	NSNumber *zeroPaletteIndex = @(0);
 	NSMutableArray<NSMutableArray<NSMutableArray<NSNumber*>*>*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:(dimensions.x + 1)];
-	for (int xI = 0; xI <= dimensions.x; ++xI) {
+	for (uint32_t xI = 0; xI <= dimensions.x; ++xI) {
 		[(voxelPaletteIndices[xI] = [[NSMutableArray alloc] initWithCapacity:(dimensions.y + 1)]) release];
-		for (int yI = 0; yI <= dimensions.y; ++yI) {
+		for (uint32_t yI = 0; yI <= dimensions.y; ++yI) {
 			[(voxelPaletteIndices[xI][yI] = [[NSMutableArray alloc] initWithCapacity:(dimensions.z + 1)]) release];
-			for (int zI = 0; zI <= dimensions.z; ++zI)
+			for (uint32_t zI = 0; zI <= dimensions.z; ++zI)
 				voxelPaletteIndices[xI][yI][zI] = zeroPaletteIndex;
 		}
 	}
 	//NSMutableArray<NSValue*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:voxelCount];
-	for (int vI = 0; vI < voxelCount; ++vI) {
+	for (int32_t vI = 0; vI < voxelCount; ++vI) {
 		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
 		MDLVoxelIndex voxelIndex = _voxelsRawData[vI];
 		voxelPaletteIndices[voxelIndex.x][voxelIndex.y][voxelIndex.z] = @(voxVoxel->colorIndex);
@@ -205,12 +205,12 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_voxelPaletteIndices = voxelPaletteIndices;
 	
 	
-	NSUInteger paletteColorCount = _mvvoxData.paletteColors_count;
+	uint16_t paletteColorCount = _mvvoxData.paletteColors_count;
 	MagicaVoxelVoxData_PaletteColor *mvvoxPaletteColors = _mvvoxData.paletteColors_array;
 	
 	NSMutableArray<Color*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(paletteColorCount + 1)];
 	paletteColors[0] = [Color clearColor];
-	for (int pI = 1; pI <= paletteColorCount; ++pI) {
+	for (uint16_t pI = 1; pI <= paletteColorCount; ++pI) {
 		MagicaVoxelVoxData_PaletteColor *voxColor = &mvvoxPaletteColors[pI - 1];
 		paletteColors[pI] = [Color
 			colorWithRed: voxColor->r / 255.f
@@ -293,19 +293,19 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	if (_options.calculateShellLevels)
 		[self calculateShellLevels];
 	
-	NSUInteger voxelCount = self.voxelCount;
+	uint32_t voxelCount = self.voxelCount;
 	
-	static NSUInteger const kFacesPerVoxel = 6;
+	static uint32_t const kFacesPerVoxel = 6;
 	
-	static NSUInteger const kVerticesPerVoxel = 4 * kFacesPerVoxel;
-	NSUInteger vertexCount = self.voxelCount * kVerticesPerVoxel;
+	static uint32_t const kVerticesPerVoxel = 4 * kFacesPerVoxel;
+	uint32_t vertexCount = self.voxelCount * kVerticesPerVoxel;
 	NSAssert(sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData) == kVerticesPerVoxel,
 		@"`sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData)` must equal %lu.", (unsigned long)kVerticesPerVoxel
 	);
 	_verticesRawData = calloc(vertexCount, sizeof(PerVertexMeshData));
 	
-	static NSUInteger const kVertexIndicesPerVoxel = 6 * kFacesPerVoxel;
-	NSUInteger vertexIndexCount = self.voxelCount * kVertexIndicesPerVoxel;
+	static uint32_t const kVertexIndicesPerVoxel = 6 * kFacesPerVoxel;
+	uint32_t vertexIndexCount = self.voxelCount * kVertexIndicesPerVoxel;
 	NSAssert(sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t) == kVertexIndicesPerVoxel,
 		@"`sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t)` must equal %lu.", (unsigned long)kVertexIndicesPerVoxel
 	);
@@ -314,11 +314,9 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
 	
 	{
-		NSUInteger voxI = 0;
+		uint32_t voxI = 0;
 		while (voxI < voxelCount)
 		{
-			NSUInteger startVertI = voxI * kVerticesPerVoxel;
-			
 			MDLVoxelIndex voxelIndex = _voxelsRawData[voxI];
 			
 			if (_options.skipNonZeroShellMesh) {
@@ -330,21 +328,21 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 				}
 			}
 			
+			uint32_t startVertI = voxI * kVerticesPerVoxel;
 			memcpy(&_verticesRawData[startVertI], kVoxelCubeVertexData, sizeof(kVoxelCubeVertexData));
-			for (NSUInteger vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
+			for (uint32_t vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
 				_verticesRawData[vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
 			
-			NSUInteger startVertIndexI = voxI * kVertexIndicesPerVoxel;
-			
+			uint32_t startVertIndexI = voxI * kVertexIndicesPerVoxel;
 			memcpy(&_vertexIndicesRawData[startVertIndexI], kVoxelCubeVertexIndexData, sizeof(kVoxelCubeVertexIndexData));
-			for (NSUInteger vertIndexI = startVertIndexI; vertIndexI < startVertIndexI + kVertexIndicesPerVoxel; ++vertIndexI)
+			for (uint32_t vertIndexI = startVertIndexI; vertIndexI < startVertIndexI + kVertexIndicesPerVoxel; ++vertIndexI)
 				_vertexIndicesRawData[vertIndexI] += startVertI;
 			
 			uint8_t colorIndex = mvvoxVoxels[voxI].colorIndex;
 			Color *color = _paletteColors[colorIndex];
 			CGFloat color_cgArray[4];
 			[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:NULL];
-			for (NSUInteger vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
+			for (uint32_t vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
 				_verticesRawData[vertI].color = (vector_float3){ color_cgArray[0], color_cgArray[1], color_cgArray[2] };
 			
 			++voxI;
@@ -427,14 +425,14 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 - (void)calculateShellLevels
 {
 	MDLVoxelIndex *voxelIndices = (MDLVoxelIndex *)_voxelsData.bytes;
-	NSUInteger voxelCount = self.voxelCount;
+	uint32_t voxelCount = self.voxelCount;
 	
 	BOOL didAddShell;
 	int currentShellLevel = 0;
 	do {
 		didAddShell = NO;
 		
-		for (int vI = (int)voxelCount - 1; vI >= 0; --vI) {
+		for (int32_t vI = voxelCount - 1; vI >= 0; --vI) {
 			MDLVoxelIndex voxel = voxelIndices[vI];
 			
 			// @fixme: Dangerously expensive!
@@ -443,11 +441,11 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 				.maximumExtent = voxel + (vector_int4){ +1, +1, +1, 0 },
 			}];
 			
-			NSUInteger neighborVoxelCount = neighborVoxelsData.length / sizeof(MDLVoxelIndex);
+			uint32_t neighborVoxelCount = (uint32_t)neighborVoxelsData.length / sizeof(MDLVoxelIndex);
 			MDLVoxelIndex const *neighborIndices = (MDLVoxelIndex const *)neighborVoxelsData.bytes;
 			
 			BOOL coveredXPos = NO, coveredXNeg = NO, coveredYPos = NO, coveredYNeg = NO, coveredZPos = NO, coveredZNeg = NO;
-			for (int svI = (int)neighborVoxelCount - 1; svI >= 0; --svI)
+			for (int32_t svI = neighborVoxelCount - 1; svI >= 0; --svI)
 			{
 				MDLVoxelIndex neighbor = neighborIndices[svI];
 				if (neighbor.w != currentShellLevel)

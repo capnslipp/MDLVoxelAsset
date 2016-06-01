@@ -74,7 +74,7 @@ FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion;
 @property (nonatomic, assign, readonly) MDLAxisAlignedBoundingBox boundingBox;
 
 @property (nonatomic, retain, readonly) MDLVoxelArray *voxelArray;
-@property (nonatomic, assign, readonly) NSUInteger voxelCount;
+@property (nonatomic, assign, readonly) uint32_t voxelCount;
 
 @property (nonatomic, retain, readonly) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
 
