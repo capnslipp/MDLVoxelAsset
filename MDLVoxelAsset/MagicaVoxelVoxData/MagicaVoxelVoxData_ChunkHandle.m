@@ -18,7 +18,7 @@ static const ptrdiff_t kChunkChildrenTotalSize_ChunkOffset = kChunkContentsSize_
 static const size_t kChunkChildrenTotalSize_Size = 4;
 static const ptrdiff_t kChunkContentsOrChildren_Offset = kChunkChildrenTotalSize_ChunkOffset + kChunkChildrenTotalSize_Size;
 
-static const ptrdiff_t kPtrdiffMax = 1 << (sizeof(ptrdiff_t) * 8 - 1);
+static const ptrdiff_t kPtrdiffMax = -(((ptrdiff_t)1 << (sizeof(ptrdiff_t) * 8 - 1)) + 1);
 static const ptrdiff_t kInvalidPtrdiff = kPtrdiffMax;
 
 
