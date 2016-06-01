@@ -127,9 +127,9 @@ class GameViewController: ViewController
 				let bbox = modelAsset.boundingBox
 				let extents = (bbox.maxBounds - bbox.minBounds)
 				return sqrt(
-					pow(CGFloat(extents.x) + lightOffset.x, 2) +
-					pow(CGFloat(extents.y) + lightOffset.y, 2) +
-					pow(CGFloat(extents.z) + lightOffset.z, 2)
+					pow(CGFloat(extents.x) + CGFloat(lightOffset.x), 2.0) +
+					pow(CGFloat(extents.y) + CGFloat(lightOffset.y), 2.0) +
+					pow(CGFloat(extents.z) + CGFloat(lightOffset.z), 2.0)
 				)
 			}() * 2
 			return l
@@ -137,9 +137,9 @@ class GameViewController: ViewController
 		lightNode.position = {
 			let bbox = modelAsset.boundingBox
 			return SCNVector3(
-				x: CGFloat(bbox.maxBounds.x) + lightOffset.x,
-				y: CGFloat(bbox.maxBounds.y) + lightOffset.y,
-				z: CGFloat(bbox.maxBounds.z) + lightOffset.z
+				Float(bbox.maxBounds.x) + Float(lightOffset.x),
+				Float(bbox.maxBounds.y) + Float(lightOffset.y),
+				Float(bbox.maxBounds.z) + Float(lightOffset.z)
 			)
 		}()
 		scene.rootNode.addChildNode(lightNode)
