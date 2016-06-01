@@ -174,7 +174,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
 		
 		if (_options.convertZUpToYUp)
-			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->z, (mvvoxDimensions.y + -voxVoxel->y), 0 };
+			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->z, (mvvoxDimensions.y - 1 + -voxVoxel->y), 0 };
 		else
 			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->y, voxVoxel->z, 0 };
 	}
