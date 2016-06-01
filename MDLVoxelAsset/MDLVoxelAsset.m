@@ -125,7 +125,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	NSArray<NSArray<NSArray<NSNumber*>*>*> *_voxelPaletteIndices;
 	NSArray<Color*> *_paletteColors;
 	
-	MDLMesh *_mesh;
+	NSMutableArray<MDLMesh*> *_meshes;
 	PerVertexMeshData *_verticesRawData;
 	uint16_t *_vertexIndicesRawData;
 }
@@ -282,8 +282,11 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 
 - (void)generateMesh
 {
-	[_mesh release];
-	_mesh = nil;
+	if (_meshes == nil)
+		_meshes = [NSMutableArray new];
+	else
+		[_meshes removeAllObjects];
+	
 	free(_verticesRawData);
 	_verticesRawData = NULL;
 	free(_vertexIndicesRawData);
@@ -303,6 +306,9 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		@"`sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData)` must equal %lu.", (unsigned long)kVerticesPerVoxel
 	);
 	_verticesRawData = calloc(vertexCount, sizeof(PerVertexMeshData));
+	#if DEBUG
+		memset(_verticesRawData, '\xFF', vertexCount * sizeof(PerVertexMeshData));
+	#endif
 	
 	static uint32_t const kVertexIndicesPerVoxel = 6 * kFacesPerVoxel;
 	uint32_t vertexIndexCount = self.voxelCount * kVertexIndicesPerVoxel;
@@ -310,6 +316,9 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		@"`sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t)` must equal %lu.", (unsigned long)kVertexIndicesPerVoxel
 	);
 	_vertexIndicesRawData = calloc(vertexIndexCount, sizeof(uint16_t));
+	#if DEBUG
+		memset(_vertexIndicesRawData, '\xFF', vertexIndexCount * sizeof(uint16_t));
+	#endif
 	
 	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
 	
@@ -328,64 +337,100 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 				}
 			}
 			
-			uint32_t startVertI = voxI * kVerticesPerVoxel;
-			memcpy(&_verticesRawData[startVertI], kVoxelCubeVertexData, sizeof(kVoxelCubeVertexData));
-			for (uint32_t vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
-				_verticesRawData[vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
-			
-			uint32_t startVertIndexI = voxI * kVertexIndicesPerVoxel;
-			memcpy(&_vertexIndicesRawData[startVertIndexI], kVoxelCubeVertexIndexData, sizeof(kVoxelCubeVertexIndexData));
-			for (uint32_t vertIndexI = startVertIndexI; vertIndexI < startVertIndexI + kVertexIndicesPerVoxel; ++vertIndexI)
-				_vertexIndicesRawData[vertIndexI] += startVertI;
+			uint32_t baseVertI = voxI * kVerticesPerVoxel;
+			memcpy(&_verticesRawData[baseVertI], kVoxelCubeVertexData, sizeof(kVoxelCubeVertexData));
+			for (uint32_t vertI = 0; vertI < kVerticesPerVoxel; ++vertI)
+				_verticesRawData[baseVertI + vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
 			
 			uint8_t colorIndex = mvvoxVoxels[voxI].colorIndex;
 			Color *color = _paletteColors[colorIndex];
 			CGFloat color_cgArray[4];
-			[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:NULL];
-			for (uint32_t vertI = startVertI; vertI < startVertI + kVerticesPerVoxel; ++vertI)
-				_verticesRawData[vertI].color = (vector_float3){ color_cgArray[0], color_cgArray[1], color_cgArray[2] };
+			[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:&color_cgArray[3]];
+			for (uint32_t vertI = 0; vertI < kVerticesPerVoxel; ++vertI)
+				_verticesRawData[baseVertI + vertI].color = (vector_float3){ color_cgArray[0], color_cgArray[1], color_cgArray[2] };
 			
 			++voxI;
 		}
 	}
 	
-	// @note: We hang onto `_verticesRawData` & `_vertexIndicesRawData` and free them ourselves since they're might be oversized (`_options.skipNonZeroShellMesh`) and the `NSData`s only address the length we used (so no more data is sent to the GPU than necessary).
-	NSData *verticesData = [[NSData alloc] initWithBytesNoCopy:_verticesRawData length:(vertexCount * sizeof(PerVertexMeshData)) freeWhenDone:NO];
-	NSData *vertexIndicesData = [[NSData alloc] initWithBytesNoCopy:_vertexIndicesRawData length:(vertexIndexCount * sizeof(uint16_t)) freeWhenDone:NO];
+	static const uint32_t kPerMeshVertexCountLimit = 65536;
+	const uint32_t perMeshVoxelCountLimit = kPerMeshVertexCountLimit / kVerticesPerVoxel;
 	
-	MDLVertexDescriptor *meshDescriptor = [[MDLVertexDescriptor new] autorelease];
-	[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributePosition format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, position) bufferIndex:0] autorelease]];
-	[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeNormal format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, normal)  bufferIndex:0] autorelease]];
-	[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeTextureCoordinate format:MDLVertexFormatFloat2 offset:offsetof(PerVertexMeshData, textureCoordinate) bufferIndex:0] autorelease]];
-	[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeColor format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, color) bufferIndex:0] autorelease]];
-	meshDescriptor.layouts[0].stride = sizeof(PerVertexMeshData);
-	meshDescriptor.layouts[1].stride = sizeof(PerVertexMeshData);
-	meshDescriptor.layouts[2].stride = sizeof(PerVertexMeshData);
-	meshDescriptor.layouts[3].stride = sizeof(PerVertexMeshData);
-	
-	MDLMeshBufferData *vertexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeVertex data:verticesData];
-	MDLMeshBufferData *indexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeIndex data:vertexIndicesData];
-	[verticesData release];
-	[vertexIndicesData release];
-	
-	MDLSubmesh *submesh = [[MDLSubmesh alloc] initWithIndexBuffer:indexBufferData indexCount:vertexIndexCount indexType:MDLIndexBitDepthUInt16 geometryType:MDLGeometryTypeTriangles material:nil];
-	
-	_mesh = [[MDLMesh alloc] initWithVertexBuffer:vertexBufferData vertexCount:vertexCount descriptor:meshDescriptor submeshes:@[ submesh ]];
-	[submesh release];
-	[vertexBufferData release];
-	[indexBufferData release];
-	
-	[super addObject:_mesh];
-	
-	if (_options.generateAmbientOcclusion) {
-		BOOL aoSuccess = [_mesh generateAmbientOcclusionVertexColorsWithQuality:0.1 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
+	uint32_t voxI = 0;
+	while (voxI < voxelCount)
+	{
+		uint32_t startVoxI = voxI;
+		uint32_t voxILimit = MIN(voxI + perMeshVoxelCountLimit, voxelCount);
+		
+		while (voxI < voxILimit)
+		{
+			MDLVoxelIndex voxelIndex = _voxelsRawData[voxI];
+			
+			if (_options.skipNonZeroShellMesh) {
+				if (voxelIndex.w != 0) {
+					voxelCount -= 1;
+					vertexCount -= kVerticesPerVoxel;
+					vertexIndexCount -= kVertexIndicesPerVoxel;
+					continue;
+				}
+			}
+			
+			uint32_t baseVertI = (voxI - startVoxI) * kVerticesPerVoxel;
+			
+			uint32_t baseVertIndexI = voxI * kVertexIndicesPerVoxel;
+			memcpy(&_vertexIndicesRawData[baseVertIndexI], kVoxelCubeVertexIndexData, sizeof(kVoxelCubeVertexIndexData));
+			for (uint32_t vertIndexI = 0; vertIndexI < kVertexIndicesPerVoxel; ++vertIndexI)
+				_vertexIndicesRawData[baseVertIndexI + vertIndexI] += baseVertI;
+			
+			++voxI;
+		}
+		
+		// @note: We hang onto `_verticesRawData` & `_vertexIndicesRawData` and free them ourselves since they're might be oversized (`_options.skipNonZeroShellMesh`) and the `NSData`s only address the length we used (so no more data is sent to the GPU than necessary).
+		NSData *verticesData = [[NSData alloc] initWithBytesNoCopy: &_verticesRawData[startVoxI * kVerticesPerVoxel]
+			length: (voxILimit - startVoxI) * kVerticesPerVoxel * sizeof(PerVertexMeshData)
+			freeWhenDone: NO
+		];
+		NSData *vertexIndicesData = [[NSData alloc] initWithBytesNoCopy: &_vertexIndicesRawData[startVoxI * kVertexIndicesPerVoxel]
+			length: (voxILimit - startVoxI) * kVertexIndicesPerVoxel * sizeof(uint16_t)
+			freeWhenDone: NO
+		];
+		
+		MDLVertexDescriptor *meshDescriptor = [[MDLVertexDescriptor new] autorelease];
+		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributePosition format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, position) bufferIndex:0] autorelease]];
+		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeNormal format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, normal)  bufferIndex:0] autorelease]];
+		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeTextureCoordinate format:MDLVertexFormatFloat2 offset:offsetof(PerVertexMeshData, textureCoordinate) bufferIndex:0] autorelease]];
+		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeColor format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, color) bufferIndex:0] autorelease]];
+		meshDescriptor.layouts[0].stride = sizeof(PerVertexMeshData);
+		meshDescriptor.layouts[1].stride = sizeof(PerVertexMeshData);
+		meshDescriptor.layouts[2].stride = sizeof(PerVertexMeshData);
+		meshDescriptor.layouts[3].stride = sizeof(PerVertexMeshData);
+		
+		MDLMeshBufferData *vertexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeVertex data:verticesData];
+		MDLMeshBufferData *indexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeIndex data:vertexIndicesData];
+		[verticesData release];
+		[vertexIndicesData release];
+		
+		MDLSubmesh *submesh = [[MDLSubmesh alloc] initWithIndexBuffer:indexBufferData indexCount:((voxILimit - startVoxI) * kVertexIndicesPerVoxel) indexType:MDLIndexBitDepthUInt16 geometryType:MDLGeometryTypeTriangles material:nil];
+		
+		MDLMesh *mesh = [[MDLMesh alloc] initWithVertexBuffer:vertexBufferData vertexCount:((voxILimit - startVoxI) * kVerticesPerVoxel) descriptor:meshDescriptor submeshes:@[ submesh ]];
+		[submesh release];
+		[vertexBufferData release];
+		[indexBufferData release];
+		
+		if (_options.generateAmbientOcclusion) {
+			BOOL aoSuccess = [mesh generateAmbientOcclusionVertexColorsWithQuality:0.1 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
+		}
+		
+		[_meshes addObject:mesh];
+		[super addObject:mesh];
+		[mesh release];
 	}
 }
 
 - (void)dealloc
 {
-	[_mesh release];
-	_mesh = nil;
+	[_meshes release];
+	_meshes = nil;
 	free(_verticesRawData);
 	_verticesRawData = NULL;
 	free(_vertexIndicesRawData);
