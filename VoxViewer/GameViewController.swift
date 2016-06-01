@@ -71,7 +71,7 @@ class GameViewController: ViewController
 		
 		// create and add the .vox node
 		
-		let modelAsset:MDLVoxelAsset = fetchVoxelAsset(named: "chr_sword")
+		let modelAsset:MDLVoxelAsset = try! fetchVoxelAsset(named: "chr_sword")
 		let modelCenterpoint:SCNVector3 = {
 			let bbox = modelAsset.boundingBox
 			return SCNVector3(bbox.minBounds + (bbox.maxBounds - bbox.minBounds) * 0.5)
@@ -211,14 +211,20 @@ class GameViewController: ViewController
 		#endif
 	}
 	
-	func fetchVoxelAsset(named name:String) -> MDLVoxelAsset
+	func fetchVoxelAsset(named name:String) throws -> MDLVoxelAsset
 	{
-		var path = NSBundle.mainBundle().pathForResource(name, ofType:"")
-		if (path == nil) {
-			path = NSBundle.mainBundle().pathForResource(name, ofType:"vox")
+		guard let path:String = {
+			var p = NSBundle.mainBundle().pathForResource(name, ofType:"")
+			if p == nil {
+				p = NSBundle.mainBundle().pathForResource(name, ofType:"vox")
+			}
+			return p
+		}()
+		else {
+			throw NSCocoaError.FileReadNoSuchFileError
 		}
 		
-		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path!), options:[
+		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path), options:[
 			kMDLVoxelAssetOptionCalculateShellLevels: false,
 			kMDLVoxelAssetOptionSkipNonZeroShellMesh: false,
 			kMDLVoxelAssetOptionConvertZUpToYUp: true,
