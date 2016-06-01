@@ -34,6 +34,7 @@ NSString *const kMDLVoxelAssetOptionMeshGenerationMode = @"MDLVoxelAssetOptionMe
 NSString *const kMDLVoxelAssetOptionMeshGenerationFlattening = @"MDLVoxelAssetOptionMeshGenerationFlattening";
 NSString *const kMDLVoxelAssetOptionVoxelMesh = @"MDLVoxelAssetOptionVoxelMesh";
 NSString *const kMDLVoxelAssetOptionConvertZUpToYUp = @"MDLVoxelAssetOptionConvertZUpToYUp";
+NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion = @"MDLVoxelAssetOptionGenerateAmbientOcclusion";
 
 
 typedef struct _OptionsValues {
@@ -41,6 +42,7 @@ typedef struct _OptionsValues {
 	BOOL skipNonZeroShellMesh : 1;
 	BOOL meshGenerationFlattening : 1;
 	BOOL convertZUpToYUp : 1;
+	BOOL generateAmbientOcclusion : 1;
 	
 	MDLVoxelAssetMeshGenerationMode meshGenerationMode;
 	id voxelMesh;
@@ -274,6 +276,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	}
 	
 	_options.convertZUpToYUp = parseBool(kMDLVoxelAssetOptionConvertZUpToYUp, NO);
+	
+	_options.generateAmbientOcclusion = parseBool(kMDLVoxelAssetOptionGenerateAmbientOcclusion, NO);
 }
 
 - (void)generateMesh
@@ -375,7 +379,9 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	
 	[super addObject:_mesh];
 	
-	BOOL aoSuccess = [_mesh generateAmbientOcclusionVertexColorsWithQuality:1.0 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
+	if (_options.generateAmbientOcclusion) {
+		BOOL aoSuccess = [_mesh generateAmbientOcclusionVertexColorsWithQuality:0.1 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
+	}
 }
 
 - (void)dealloc

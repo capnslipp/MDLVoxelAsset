@@ -55,6 +55,8 @@ typedef NS_ENUM(NSUInteger, MDLVoxelAssetMeshGenerationMode) {
 
 FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionConvertZUpToYUp;
 
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion;
+
 
 @interface MDLVoxelAsset : MDLObjectContainer <NSCopying>
 
