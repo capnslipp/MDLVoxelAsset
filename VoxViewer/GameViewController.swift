@@ -15,17 +15,45 @@ import MDLVoxelAsset
 	import UIKit
 	typealias Color = UIColor
 	typealias ViewController = UIViewController
+	typealias Button = UIButton
+	typealias StoryboardSegue = UIStoryboardSegue
 #else
 	import AppKit
 	typealias Color = NSColor
 	typealias ViewController = NSViewController
+	typealias Button = NSButton
+	typealias StoryboardSegue = NSStoryboardSegue
 #endif
 
 
 
-class GameViewController: ViewController
+class GameViewController : ViewController, UITableViewDataSource, UITableViewDelegate
 {
 	@IBOutlet weak var gameView:SCNView!
+	
+	var _filenames:Array<String>?
+	@IBOutlet weak var filenameButton:UIButton!
+	
+	var fileSelectorPopoverSequeID:String?
+	var fileSelectorPopoverTableCellReuseID:String?
+	var isFileSelectorPopoverActive:Bool {
+		return _fileSelectorSegue != nil
+	}
+	
+	var _fileSelectorTable:UITableView?
+	var _fileSelectorSegue:StoryboardSegue?
+	
+	
+	let lightOffset = SCNVector3(0, 10, 10)
+	
+	
+	var _currentFilename:String?
+	
+	var _scene:SCNScene?
+	var _cameraNode:SCNNode?
+	var _lightNode:SCNNode?
+	var _modelNode:SCNNode?
+	var _modelAsset:MDLVoxelAsset?
 	
 	
 	#if os(iOS)
@@ -46,6 +74,7 @@ class GameViewController: ViewController
 	{
 		// create a new scene
 		let scene = SCNScene()
+		_scene = scene
 		
 		
 		// create and add a camera to the scene
@@ -56,7 +85,9 @@ class GameViewController: ViewController
 			c.automaticallyAdjustsZRange = true
 			return c
 		}()
+		cameraNode.eulerAngles = SCNVector3(0, 0, 0)
 		scene.rootNode.addChildNode(cameraNode)
+		_cameraNode = cameraNode
 		
 		
 		// floor
@@ -69,50 +100,7 @@ class GameViewController: ViewController
 		scene.rootNode.addChildNode(floorNode)
 		
 		
-		// create and add the .vox node
-		
-		let modelAsset:MDLVoxelAsset = try! fetchVoxelAsset(named: "chr_sword")
-		let modelCenterpoint:SCNVector3 = {
-			let bbox = modelAsset.boundingBox
-			return SCNVector3(bbox.minBounds + (bbox.maxBounds - bbox.minBounds) * 0.5)
-		}()
-		
-		let modelNode:SCNNode = {
-			if (modelAsset.count == 1) {
-				return SCNNode(MDLObject: modelAsset[0]!)
-			}
-			else if (modelAsset.count > 1) {
-				let baseNode = SCNNode()
-				for assetSubObject:MDLObject in modelAsset.objects {
-					baseNode.addChildNode(SCNNode(MDLObject: assetSubObject))
-				}
-				return baseNode
-			}
-			else {
-				return SCNNode()
-				// @todo: throw
-			}
-		}()
-		modelNode.position = SCNVector3(-modelCenterpoint.x, 0, -modelCenterpoint.z);
-		scene.rootNode.addChildNode(modelNode)
-		
-		
-		// place the camera
-		
-		cameraNode.eulerAngles = SCNVector3(0, 0, 0)
-		cameraNode.position = SCNVector3(
-			0.0,
-			Float(modelCenterpoint.y),
-			{
-				let bbox = modelAsset.boundingBox
-				return bbox.maxBounds.z + (bbox.maxBounds.z - bbox.minBounds.z) * 0.5 + 15
-			}()
-		)
-		
-		
 		// create and add a light to the scene
-		
-		let lightOffset = SCNVector3(0, 10, 10)
 		
 		let lightNode = SCNNode()
 		lightNode.light = {
@@ -122,32 +110,13 @@ class GameViewController: ViewController
 			l.spotOuterAngle = 135
 			l.spotInnerAngle = l.spotOuterAngle * 0.9
 			l.castsShadow = true
-			l.zNear = 1
-			l.zFar = {
-				let bbox = modelAsset.boundingBox
-				let extents = (bbox.maxBounds - bbox.minBounds)
-				return sqrt(
-					pow(CGFloat(extents.x) + CGFloat(lightOffset.x), 2.0) +
-					pow(CGFloat(extents.y) + CGFloat(lightOffset.y), 2.0) +
-					pow(CGFloat(extents.z) + CGFloat(lightOffset.z), 2.0)
-				)
-			}() * 2
 			return l
 		}()
-		lightNode.position = {
-			let bbox = modelAsset.boundingBox
-			return SCNVector3(
-				Float(bbox.maxBounds.x) + Float(lightOffset.x),
-				Float(bbox.maxBounds.y) + Float(lightOffset.y),
-				Float(bbox.maxBounds.z) + Float(lightOffset.z)
-			)
-		}()
-		scene.rootNode.addChildNode(lightNode)
-		
 		if lightNode.constraints == nil {
 			lightNode.constraints = [SCNConstraint]()
 		}
-		lightNode.constraints!.append(SCNLookAtConstraint(target: modelNode))
+		scene.rootNode.addChildNode(lightNode)
+		_lightNode = lightNode
 		
 		
 		// create and add an ambient light to the scene
@@ -186,6 +155,12 @@ class GameViewController: ViewController
 			scene.rootNode.addChildNode(node)
 		}
 		
+		
+		// create and add the .vox node
+		
+		loadModelFile(named: "ship_1.2")
+		
+		
 		//// animate the 3d object
 		//modelNode.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
 		
@@ -209,6 +184,95 @@ class GameViewController: ViewController
 			let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
 			gameView.addGestureRecognizer(tapGesture)
 		#endif
+	}
+	
+	func loadModelFile(named filename:String)
+	{
+		let filenameWithSuffix = filename.hasSuffix(".vox") ? filename : "\(filename).vox"
+		
+		if _modelNode != nil {
+			_modelNode!.removeFromParentNode()
+			_modelNode = nil
+		}
+		if _modelAsset != nil {
+			_modelAsset = nil
+		}
+		
+		self.gameView!.layer.setNeedsDisplay()
+		self.gameView!.layer.displayIfNeeded()
+		
+		let modelAsset:MDLVoxelAsset = try! fetchVoxelAsset(named: filenameWithSuffix)
+		let modelCenterpoint:SCNVector3 = {
+			let bbox = modelAsset.boundingBox
+			return SCNVector3(bbox.minBounds + (bbox.maxBounds - bbox.minBounds) * 0.5)
+		}()
+		
+		let modelNode:SCNNode = {
+			if (modelAsset.count == 1) {
+				return SCNNode(MDLObject: modelAsset[0]!)
+			}
+			else if (modelAsset.count > 1) {
+				let baseNode = SCNNode()
+				for assetSubObject:MDLObject in modelAsset.objects {
+					baseNode.addChildNode(SCNNode(MDLObject: assetSubObject))
+				}
+				return baseNode
+			}
+			else {
+				return SCNNode()
+				// @todo: throw
+			}
+		}()
+		modelNode.position = SCNVector3(-modelCenterpoint.x, 0, -modelCenterpoint.z);
+		
+		_modelAsset = modelAsset
+		_modelNode = modelNode
+		_scene!.rootNode.addChildNode(modelNode)
+		
+		repositionCameraBasedOnModel(centerpoint: modelCenterpoint, boundingBox: modelAsset.boundingBox)
+		repositionLightBasedOnModel(centerpoint: modelCenterpoint, boundingBox: modelAsset.boundingBox)
+		
+		_currentFilename = filenameWithSuffix
+		
+		self.filenameButton.setTitle(filenameWithSuffix, forState: .Normal)
+	}
+	
+	func repositionCameraBasedOnModel(centerpoint centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
+	{
+		_cameraNode!.position = SCNVector3(
+			0.0,
+			Float(centerpoint.y),
+			bbox.maxBounds.z + (bbox.maxBounds.z - bbox.minBounds.z) * 0.5 + 15
+		)
+	}
+	
+	func repositionLightBasedOnModel(centerpoint centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
+	{
+		let extents = (bbox.maxBounds - bbox.minBounds)
+		
+		let lightNode = _lightNode!
+		
+		lightNode.position = {
+			return SCNVector3(
+				Float(bbox.maxBounds.x) + Float(lightOffset.x),
+				Float(bbox.maxBounds.y) + Float(lightOffset.y),
+				Float(bbox.maxBounds.z) + Float(lightOffset.z)
+			)
+		}()
+		
+		lightNode.constraints!.append(SCNLookAtConstraint(target: _modelNode!))
+		
+		let light:SCNLight = lightNode.light!
+		light.zNear = sqrt(
+			pow(CGFloat(lightOffset.x), 2.0) +
+			pow(CGFloat(lightOffset.y), 2.0) +
+			pow(CGFloat(lightOffset.z), 2.0)
+		) * 2
+		light.zFar = sqrt(
+			pow(CGFloat(extents.x) + CGFloat(lightOffset.x), 2.0) +
+			pow(CGFloat(extents.y) + CGFloat(lightOffset.y), 2.0) +
+			pow(CGFloat(extents.z) + CGFloat(lightOffset.z), 2.0)
+		) * 2
 	}
 	
 	func fetchVoxelAsset(named name:String) throws -> MDLVoxelAsset
@@ -235,7 +299,7 @@ class GameViewController: ViewController
 	#if os(iOS)
 		func handleTap(gestureRecognize: UIGestureRecognizer) {
 			// retrieve the SCNView
-			let scnView = self.view as! SCNView
+			let scnView = self.gameView
 			
 			// check what nodes are tapped
 			let p = gestureRecognize.locationInView(scnView)
@@ -289,5 +353,94 @@ class GameViewController: ViewController
 			// Release any cached data, images, etc that aren't in use.
 		}
 	#endif
+	
+	
+	@IBAction func openFileSelector(sender:Button)
+	{
+		let filepaths:Array<String> = NSBundle.mainBundle().pathsForResourcesOfType("vox", inDirectory: nil)
+		_filenames = filepaths.map { NSURL(string: $0)!.lastPathComponent! }
+		
+		let canPerformSeque = self.shouldPerformSegueWithIdentifier(self.fileSelectorPopoverSequeID!, sender: self)
+		guard canPerformSeque else { return }
+		
+		self.performSegueWithIdentifier(self.fileSelectorPopoverSequeID!, sender: self)
+	}
+	
+	override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject?) -> Bool
+	{
+		switch identifier {
+			case self.fileSelectorPopoverSequeID!:
+				return !self.isFileSelectorPopoverActive
+				
+			default:
+				return super.shouldPerformSegueWithIdentifier(identifier, sender: sender)
+		}
+	}
+	
+	override func prepareForSegue(segue:StoryboardSegue, sender:AnyObject?)
+	{
+		guard let identifier = segue.identifier else { return }
+		switch identifier {
+			case self.fileSelectorPopoverSequeID!:
+				let tableController = segue.destinationViewController as! UITableViewController
+				
+				let tableView:UITableView = tableController.tableView
+				tableView.dataSource = self
+				tableView.delegate = self
+				_fileSelectorTable = tableView
+				
+				_fileSelectorSegue = segue
+			
+			default:
+				return
+		}
+	}
+	
+	func tableView(tableView:UITableView, numberOfRowsInSection section:Int) -> Int
+	{
+		if tableView == _fileSelectorTable! {
+			switch section {
+				case 0:
+					return _filenames!.count
+				
+				default:
+					return 0
+			}
+		}
+		else {
+			return 0
+		}
+	}
+	
+	func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell
+	{
+		if tableView == _fileSelectorTable! {
+			let filename = _filenames![indexPath.item]
+			
+			let tableCell = tableView.dequeueReusableCellWithIdentifier(self.fileSelectorPopoverTableCellReuseID!)!
+			tableCell.textLabel!.text = filename
+			
+			return tableCell
+		}
+		else {
+			return UITableViewCell()
+			// @todo: Throw an error, somehow (`@objc` disallows `throws`).
+		}
+	}
+	
+	func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath)
+	{
+		if tableView == _fileSelectorTable! {
+			let filename = _filenames![indexPath.item]
+			
+			_fileSelectorSegue!.destinationViewController.dismissViewControllerAnimated(true, completion: nil)
+			
+			_fileSelectorSegue = nil
+			_fileSelectorTable = nil
+			
+			self.loadModelFile(named: filename)
+		}
+	}
+	
 	
 }

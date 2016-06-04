@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BV1-FR-VrT">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -8,18 +8,92 @@
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="VoxViewer__iOS_" customModuleProvider="target" sceneMemberID="viewController">
-                    <sceneKitView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="3se-qz-xqx">
+                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="VoxViewer" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="tiC-2f-tCd"/>
+                        <viewControllerLayoutGuide type="bottom" id="t7e-uP-B5x"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="9ly-9C-jDv">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </sceneKitView>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VO0-yb-elP" userLabel="Game View">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </sceneKitView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U7K-iV-G3S">
+                                <rect key="frame" x="8" y="8" width="74" height="28"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="13"/>
+                                <state key="normal" title="«Filename»"/>
+                                <connections>
+                                    <action selector="openFileSelector:" destination="BV1-FR-VrT" eventType="touchUpInside" id="Uuh-RV-JZH"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="VO0-yb-elP" firstAttribute="width" secondItem="9ly-9C-jDv" secondAttribute="width" id="Czq-xT-2su"/>
+                            <constraint firstItem="VO0-yb-elP" firstAttribute="centerY" secondItem="9ly-9C-jDv" secondAttribute="centerY" id="L6d-Yg-cix"/>
+                            <constraint firstItem="VO0-yb-elP" firstAttribute="height" secondItem="9ly-9C-jDv" secondAttribute="height" id="Tw5-LN-XwG"/>
+                            <constraint firstItem="U7K-iV-G3S" firstAttribute="top" secondItem="VO0-yb-elP" secondAttribute="top" constant="8" id="bcV-fj-BKy"/>
+                            <constraint firstItem="U7K-iV-G3S" firstAttribute="left" secondItem="VO0-yb-elP" secondAttribute="left" constant="8" id="fb5-3k-8QN"/>
+                            <constraint firstItem="VO0-yb-elP" firstAttribute="centerX" secondItem="9ly-9C-jDv" secondAttribute="centerX" id="qa7-gh-KcD"/>
+                        </constraints>
+                    </view>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="fileSelectorPopoverSequeID" value="file_selector_popover"/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="fileSelectorPopoverTableCellReuseID" value="default"/>
+                    </userDefinedRuntimeAttributes>
                     <connections>
-                        <outlet property="gameView" destination="3se-qz-xqx" id="fz4-oT-pA4"/>
+                        <outlet property="filenameButton" destination="U7K-iV-G3S" id="t5N-e8-Uh5"/>
+                        <outlet property="gameView" destination="VO0-yb-elP" id="KB2-LL-S4X"/>
+                        <segue destination="DYq-ef-NsY" kind="popoverPresentation" identifier="file_selector_popover" popoverAnchorView="U7K-iV-G3S" id="eeP-Mj-nCC">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="274" y="474"/>
+        </scene>
+        <!--Table View Controller-->
+        <scene sceneID="4up-of-hpo">
+            <objects>
+                <tableViewController id="DYq-ef-NsY" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Epr-3u-Hgq">
+                        <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="default" textLabel="UjK-7Z-1td" style="IBUITableViewCellStyleDefault" id="K4N-Ck-Zve">
+                                <rect key="frame" x="0.0" y="28" width="200" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="K4N-Ck-Zve" id="kTX-AZ-1gq">
+                                    <rect key="frame" x="0.0" y="0.0" width="200" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UjK-7Z-1td">
+                                            <rect key="frame" x="15" y="0.0" width="170" height="43"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="DYq-ef-NsY" id="ekg-qb-ifg"/>
+                            <outlet property="delegate" destination="DYq-ef-NsY" id="4c8-df-U1d"/>
+                        </connections>
+                    </tableView>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="200" height="200"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Fno-vU-Mr7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="756" y="474"/>
         </scene>
     </scenes>
 </document>
