@@ -24,6 +24,10 @@
 		FA64893B1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA64893C1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m in Sources */ = {isa = PBXBuildFile; fileRef = FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */; };
 		FA64893E1CEAF99B00B6AEB1 /* chr_sword.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */; };
+		FA67ABFB1D015B4D00A8A852 /* ship_1.1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA67ABF71D015B4100A8A852 /* ship_1.1.vox */; };
+		FA67ABFC1D015B4D00A8A852 /* ship_1.2.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA67ABF81D015B4100A8A852 /* ship_1.2.vox */; };
+		FA67ABFD1D015B4F00A8A852 /* ship_1.1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA67ABF71D015B4100A8A852 /* ship_1.1.vox */; };
+		FA67ABFE1D015B4F00A8A852 /* ship_1.2.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA67ABF81D015B4100A8A852 /* ship_1.2.vox */; };
 		FA6EECAF1CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */; };
 		FA6EECB01CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */; };
 		FA6EECB11CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */; };
@@ -55,6 +59,8 @@
 		FA9CACF31CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */; };
 		FA9CACF41CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */; };
 		FA9CACF51CF1840A00B1ABA4 /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FAA13CA81D027A270099B085 /* ship_1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAA13CA71D027A270099B085 /* ship_1.vox */; };
+		FAA13CA91D027A270099B085 /* ship_1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAA13CA71D027A270099B085 /* ship_1.vox */; };
 		FAC5F7AC1CF186DD00B30B58 /* MDLVoxelAsset.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; };
 		FAC5F7AF1CF186F100B30B58 /* MDLVoxelAsset.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; };
 		FAC5F7B01CF1889600B30B58 /* monu7.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFE1CF04CE70054DCAA /* monu7.vox */; };
@@ -171,6 +177,8 @@
 		FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData.h; sourceTree = "<group>"; };
 		FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData.m; sourceTree = "<group>"; };
 		FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = chr_sword.vox; sourceTree = "<group>"; };
+		FA67ABF71D015B4100A8A852 /* ship_1.1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = ship_1.1.vox; sourceTree = "<group>"; };
+		FA67ABF81D015B4100A8A852 /* ship_1.2.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = ship_1.2.vox; sourceTree = "<group>"; };
 		FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_ChunkHandle.h; sourceTree = "<group>"; };
 		FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_ChunkHandle.m; sourceTree = "<group>"; };
 		FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_ChunkIdent.h; sourceTree = "<group>"; };
@@ -188,6 +196,7 @@
 		FA96950F1CF1725000DC632A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MDLVoxelAsset.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA9CACD31CF17E0200B1ABA4 /* MDLVoxelAssetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MDLVoxelAssetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAA13CA71D027A270099B085 /* ship_1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = ship_1.vox; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -291,6 +300,9 @@
 		FA2685901CEA9A72003B86C8 /* MDLVoxelAssetTests */ = {
 			isa = PBXGroup;
 			children = (
+				FAA13CA71D027A270099B085 /* ship_1.vox */,
+				FA67ABF71D015B4100A8A852 /* ship_1.1.vox */,
+				FA67ABF81D015B4100A8A852 /* ship_1.2.vox */,
 				FA0ADEFE1CF04CE70054DCAA /* monu7.vox */,
 				FA0ADEFB1CF032590054DCAA /* rgbw_cmyk.vox */,
 				FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */,
@@ -548,8 +560,11 @@
 				FA0ADEF11CF00A280054DCAA /* LaunchScreen.storyboard in Resources */,
 				FA0ADEFD1CF032600054DCAA /* rgbw_cmyk.vox in Resources */,
 				FA0ADF001CF04D400054DCAA /* monu7.vox in Resources */,
+				FA67ABFC1D015B4D00A8A852 /* ship_1.2.vox in Resources */,
+				FAA13CA81D027A270099B085 /* ship_1.vox in Resources */,
 				FA0ADEEE1CF00A280054DCAA /* Assets.xcassets in Resources */,
 				FA0ADEEC1CF00A280054DCAA /* Main.storyboard in Resources */,
+				FA67ABFB1D015B4D00A8A852 /* ship_1.1.vox in Resources */,
 				FA0ADEFA1CF00DE80054DCAA /* chr_sword.vox in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -576,9 +591,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				FAC5F7B11CF1889600B30B58 /* monu7.vox in Resources */,
+				FAA13CA91D027A270099B085 /* ship_1.vox in Resources */,
 				FAC5F7B31CF1889900B30B58 /* rgbw_cmyk.vox in Resources */,
 				FA96950E1CF1725000DC632A /* MainMenu.xib in Resources */,
+				FA67ABFE1D015B4F00A8A852 /* ship_1.2.vox in Resources */,
 				FAC5F7B51CF1889D00B30B58 /* chr_sword.vox in Resources */,
+				FA67ABFD1D015B4F00A8A852 /* ship_1.1.vox in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

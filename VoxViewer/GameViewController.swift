@@ -167,7 +167,7 @@ class GameViewController : ViewController
 		
 		// create and add the .vox node
 		
-		loadModelFile(named: "ship_1.2")
+		loadModelFile(named: "ship_1")
 		
 		
 		//// animate the 3d object
