@@ -209,9 +209,19 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		self.gameView!.layer.displayIfNeeded()
 		
 		let modelAsset:MDLVoxelAsset = try! fetchVoxelAsset(named: filenameWithSuffix)
+		
 		let modelCenterpoint:SCNVector3 = {
 			let bbox = modelAsset.boundingBox
 			return SCNVector3(bbox.minBounds + (bbox.maxBounds - bbox.minBounds) * 0.5)
+		}()
+		
+		var modelBoundingBox = modelAsset.boundingBox
+		let modelExtents = modelBoundingBox.maxBounds - modelBoundingBox.minBounds
+		modelBoundingBox = {
+			let centerpoint = vector_float3(modelCenterpoint)
+			let halfMaxXZExtent = max(modelExtents.x, modelExtents.z) * 0.5
+			let halfExtents = vector_float3(halfMaxXZExtent, (modelExtents.y * 0.5), halfMaxXZExtent)
+			return MDLAxisAlignedBoundingBox(maxBounds: (centerpoint + halfExtents), minBounds: (centerpoint - halfExtents))
 		}()
 		
 		let modelNode:SCNNode = {
@@ -236,8 +246,8 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		_modelNode = modelNode
 		_scene!.rootNode.addChildNode(modelNode)
 		
-		repositionCameraBasedOnModel(centerpoint: modelCenterpoint, boundingBox: modelAsset.boundingBox)
-		repositionLightBasedOnModel(centerpoint: modelCenterpoint, boundingBox: modelAsset.boundingBox)
+		repositionCameraBasedOnModel(centerpoint: modelCenterpoint, boundingBox: modelBoundingBox)
+		repositionLightBasedOnModel(centerpoint: modelCenterpoint, boundingBox: modelBoundingBox)
 		
 		_currentFilename = filenameWithSuffix
 		
