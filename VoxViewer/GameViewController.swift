@@ -55,7 +55,8 @@ class GameViewController : ViewController
 	var _cameraNode:SCNNode?
 	var _lightNode:SCNNode?
 	var _modelNode:SCNNode?
-	var _modelAsset:MDLVoxelAsset?
+	var _modelVoxelAsset:MDLVoxelAsset?
+	var _modelMeshAsset:MDLAsset?
 	
 	
 	#if os(iOS)
@@ -167,8 +168,8 @@ class GameViewController : ViewController
 		
 		// create and add the .vox node
 		
-		loadModelFile(named: "ship_1")
-		
+		//try! loadVoxelModelFile(named: "ship_1")
+		try! loadMeshModelFile(named: "ship_1_design")
 		
 		//// animate the 3d object
 		//modelNode.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
@@ -195,24 +196,13 @@ class GameViewController : ViewController
 		#endif
 	}
 	
-	func loadModelFile(named filename:String)
+	func loadVoxelModelFile(named filename:String) throws
 	{
+		removeExistingModel()
+		
 		let filenameWithSuffix = filename.hasSuffix(".vox") ? filename : "\(filename).vox"
 		
-		if _modelNode != nil {
-			_modelNode!.removeFromParentNode()
-			_modelNode = nil
-		}
-		if _modelAsset != nil {
-			_modelAsset = nil
-		}
-		
-		if let gameLayer = self.gameView!.layer {
-			gameLayer.setNeedsDisplay()
-			gameLayer.displayIfNeeded()
-		}
-		
-		let modelAsset:MDLVoxelAsset = try! fetchVoxelAsset(named: filenameWithSuffix)
+		let modelAsset:MDLVoxelAsset = try fetchVoxelAsset(named: filenameWithSuffix)
 		
 		let modelCenterpoint:SCNVector3 = {
 			let bbox = modelAsset.boundingBox
@@ -246,7 +236,7 @@ class GameViewController : ViewController
 		}()
 		modelNode.position = SCNVector3(-modelCenterpoint.x, 0, -modelCenterpoint.z);
 		
-		_modelAsset = modelAsset
+		_modelVoxelAsset = modelAsset
 		_modelNode = modelNode
 		_scene!.rootNode.addChildNode(modelNode)
 		
@@ -254,12 +244,110 @@ class GameViewController : ViewController
 		repositionLightBasedOnModel(centerpoint: modelCenterpoint, boundingBox: modelBoundingBox)
 		
 		_currentFilename = filenameWithSuffix
-		
 		#if os(iOS)
 			self.filenameButton.setTitle(filenameWithSuffix, for: [])
 		#else
 			self.filenameButton.title = filenameWithSuffix
 		#endif
+	}
+	
+	func loadMeshModelFile(named filename:String) throws
+	{
+		removeExistingModel()
+		
+		guard let (path, filenameWithSuffix) = {() -> (NSURL, String)? in
+			var p:NSURL?
+			p = NSBundle.mainBundle().URLForResource(filename, withExtension: "")
+			if p == nil && MDLAsset.canImportFileExtension("abc") {
+				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "abc")
+			}
+			if p == nil && MDLAsset.canImportFileExtension("dae") {
+				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "dae")
+			}
+			if p == nil && MDLAsset.canImportFileExtension("fbx") {
+				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "fbx")
+			}
+			if p == nil && MDLAsset.canImportFileExtension("obj") {
+				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "obj")
+			}
+			if p == nil && MDLAsset.canImportFileExtension("ply") {
+				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "ply")
+			}
+			if p == nil && MDLAsset.canImportFileExtension("stl") {
+				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "stl")
+			}
+			if p == nil {
+				return nil
+			}
+			
+			return (p!, p!.lastPathComponent!)
+		}() else {
+			throw NSCocoaError.FileReadNoSuchFileError
+		}
+		
+		let asset = MDLAsset(URL: path)
+		let node:SCNNode = {
+			if (asset.count == 1) {
+				return SCNNode(MDLObject: asset[0]!)
+			}
+			else if (asset.count > 1) {
+				let baseNode = SCNNode()
+				for assetSubObjectI in 0..<asset.count {
+					baseNode.addChildNode(SCNNode(MDLObject: asset[assetSubObjectI]!))
+				}
+				return baseNode
+			}
+			else {
+				return SCNNode()
+				// @todo: throw
+			}
+		}()
+		
+		let centerpoint:SCNVector3 = {
+			let bbox = asset.boundingBox
+			return SCNVector3(bbox.minBounds + (bbox.maxBounds - bbox.minBounds) * 0.5)
+		}()
+		node.position = SCNVector3(-centerpoint.x, 0, -centerpoint.z);
+		
+		var boundingBox = asset.boundingBox
+		let extents = boundingBox.maxBounds - boundingBox.minBounds
+		boundingBox = {
+			let centerpoint = vector_float3(centerpoint)
+			let halfMaxXZExtent = max(extents.x, extents.z) * 0.5
+			let halfExtents = vector_float3(halfMaxXZExtent, (extents.y * 0.5), halfMaxXZExtent)
+			return MDLAxisAlignedBoundingBox(maxBounds: (centerpoint + halfExtents), minBounds: (centerpoint - halfExtents))
+		}()
+		
+		_modelMeshAsset = asset
+		_modelNode = node
+		_scene!.rootNode.addChildNode(node)
+		
+		repositionCameraBasedOnModel(centerpoint: centerpoint, boundingBox: boundingBox)
+		repositionLightBasedOnModel(centerpoint: centerpoint, boundingBox: boundingBox)
+		
+		_currentFilename = filenameWithSuffix
+		#if os(iOS)
+			self.filenameButton.setTitle(filenameWithSuffix, for: [])
+		#else
+			self.filenameButton.title = filenameWithSuffix
+		#endif
+	}
+	
+	func removeExistingModel()
+	{
+		if _modelNode != nil {
+			_modelNode!.removeFromParentNode()
+			_modelNode = nil
+		}
+		if _modelVoxelAsset != nil {
+			_modelVoxelAsset = nil
+		}
+		if _modelMeshAsset != nil {
+			_modelMeshAsset = nil
+		}
+		
+		self.gameView!.layer.setNeedsDisplay()
+		self.gameView!.layer.displayIfNeeded()
 	}
 	
 	func repositionCameraBasedOnModel(centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
@@ -469,7 +557,7 @@ class GameViewController : ViewController
 				_fileSelectorSegue = nil
 				_fileSelectorTable = nil
 				
-				self.loadModelFile(named: filename)
+				try! self.loadVoxelModelFile(named: filename)
 			}
 		}
 	}
