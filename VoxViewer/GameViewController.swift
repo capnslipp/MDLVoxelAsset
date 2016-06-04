@@ -61,6 +61,13 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 			super.awakeFromNib()
 			
 			setupScene()
+			
+			_ = {(b:UIButton, xSpacing:CGFloat) in
+				let xInsetAmount = xSpacing * 0.5
+				b.imageEdgeInsets = UIEdgeInsets(top: b.imageEdgeInsets.top, left: -xInsetAmount, bottom: b.imageEdgeInsets.bottom, right: xInsetAmount)
+				b.titleEdgeInsets = UIEdgeInsets(top: b.titleEdgeInsets.top, left: xInsetAmount, bottom: b.titleEdgeInsets.bottom, right: -xInsetAmount)
+				b.contentEdgeInsets = UIEdgeInsets(top: b.contentEdgeInsets.top, left: xInsetAmount, bottom: b.contentEdgeInsets.bottom, right: xInsetAmount)
+			}(self.filenameButton, 6.0)
 		}
 	#else
 		override func awakeFromNib() {
@@ -370,7 +377,7 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 	{
 		switch identifier {
 			case self.fileSelectorPopoverSequeID!:
-				return !self.isFileSelectorPopoverActive
+				return true
 				
 			default:
 				return super.shouldPerformSegueWithIdentifier(identifier, sender: sender)
@@ -389,6 +396,9 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 				tableView.delegate = self
 				_fileSelectorTable = tableView
 				
+				let popoverController = segue.destinationViewController.popoverPresentationController!
+				
+				popoverController.sourceRect = popoverController.sourceView!.frame
 				_fileSelectorSegue = segue
 			
 			default:
