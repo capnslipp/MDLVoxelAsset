@@ -31,7 +31,8 @@ class GameViewController : ViewController
 {
 	@IBOutlet weak var gameView:SCNView!
 	
-	var _filenames:Array<String>?
+	var _voxelFilenames:Array<String>?
+	var _meshFilenames:Array<String>?
 	@IBOutlet weak var filenameButton:Button!
 	
 	#if os(iOS)
@@ -467,8 +468,19 @@ class GameViewController : ViewController
 		
 		@IBAction func openFileSelector(_ sender:Button)
 		{
-			let filepaths:Array<String> = Bundle.main().pathsForResources(ofType: "vox", inDirectory: nil)
-			_filenames = filepaths.map { NSURL(string: $0)!.lastPathComponent! }
+			let voxelFilepaths:Array<NSURL> = NSBundle.mainBundle().URLsForResourcesWithExtension("vox", subdirectory: nil) ?? []
+			_voxelFilenames = voxelFilepaths.map { $0.lastPathComponent! }
+			
+			let fetchResourceURLsWithExtension = {(ext:String) -> [NSURL] in
+				NSBundle.mainBundle().URLsForResourcesWithExtension(ext, subdirectory: nil) ?? []
+			}
+			var meshFilepaths:Array<NSURL> = fetchResourceURLsWithExtension("abc")
+			meshFilepaths += fetchResourceURLsWithExtension("dae")
+			meshFilepaths += fetchResourceURLsWithExtension("fbx")
+			meshFilepaths += fetchResourceURLsWithExtension("obj")
+			meshFilepaths += fetchResourceURLsWithExtension("ply")
+			meshFilepaths += fetchResourceURLsWithExtension("stl")
+			_meshFilenames = meshFilepaths.map { $0.lastPathComponent! }.sort()
 			
 			let canPerformSeque = self.shouldPerformSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
 			guard canPerformSeque else { return }
@@ -515,12 +527,42 @@ class GameViewController : ViewController
 #if os(iOS)
 	extension GameViewController : UITableViewDataSource, UITableViewDelegate
 	{
+		func numberOfSections(in tableView:UITableView) -> Int
+		{
+			if tableView == _fileSelectorTable! {
+				return 2
+			}
+			else {
+				return 0
+			}
+		}
+		
+		func tableView(_ tableView:UITableView, titleForHeaderInSection section:Int) -> String?
+		{
+			if tableView == _fileSelectorTable! {
+				switch section {
+					case 0:
+						return "Voxel Models"
+					case 1:
+						return "Mesh Models"
+					
+					default:
+						return nil
+				}
+			}
+			else {
+				return nil
+			}
+		}
+		
 		func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
 		{
 			if tableView == _fileSelectorTable! {
 				switch section {
 					case 0:
-						return _filenames!.count
+						return _voxelFilenames!.count
+					case 1:
+						return _meshFilenames!.count
 					
 					default:
 						return 0
@@ -534,7 +576,17 @@ class GameViewController : ViewController
 		func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell
 		{
 			if tableView == _fileSelectorTable! {
-				let filename = _filenames![indexPath.item!]
+				let filename:String = {
+					switch indexPath.section {
+						case 0:
+							return _voxelFilenames![indexPath.item]
+						case 1:
+							return _meshFilenames![indexPath.item]
+						
+						default:
+							return ""
+					}
+				}()
 				
 				let tableCell = tableView.dequeueReusableCell(withIdentifier: self.fileSelectorPopoverTableCellReuseID!)!
 				tableCell.textLabel!.text = filename
@@ -550,14 +602,31 @@ class GameViewController : ViewController
 		func tableView(_ tableView:UITableView, didSelectRowAt indexPath:IndexPath)
 		{
 			if tableView == _fileSelectorTable! {
-				let filename = _filenames![indexPath.item!]
+				let filename:String = {
+					switch indexPath.section {
+						case 0:
+							return _voxelFilenames![indexPath.item]
+						case 1:
+							return _meshFilenames![indexPath.item]
+						
+						default:
+							return ""
+					}
+				}()
 				
 				_fileSelectorSegue!.destinationViewController.dismiss(animated: true, completion: nil)
 				
 				_fileSelectorSegue = nil
 				_fileSelectorTable = nil
 				
-				try! self.loadVoxelModelFile(named: filename)
+				switch indexPath.section {
+					case 0:
+						try! self.loadVoxelModelFile(named: filename)
+					case 1:
+						try! self.loadMeshModelFile(named: filename)
+					
+					default: ()
+				}
 			}
 		}
 	}
