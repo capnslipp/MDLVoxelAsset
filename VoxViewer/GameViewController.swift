@@ -295,13 +295,12 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 	func fetchVoxelAsset(named name:String) throws -> MDLVoxelAsset
 	{
 		guard let path:String = {
-			var p = NSBundle.mainBundle().pathForResource(name, ofType:"")
+			var p = NSBundle.mainBundle().pathForResource(name, ofType: "")
 			if p == nil {
-				p = NSBundle.mainBundle().pathForResource(name, ofType:"vox")
+				p = NSBundle.mainBundle().pathForResource(name, ofType: "vox")
 			}
 			return p
-		}()
-		else {
+		}() else {
 			throw NSCocoaError.FileReadNoSuchFileError
 		}
 		
