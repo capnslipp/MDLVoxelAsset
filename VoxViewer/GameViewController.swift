@@ -68,9 +68,24 @@ class GameViewController : ViewController
 			
 			_ = {(b:UIButton, xSpacing:CGFloat) in
 				let xInsetAmount = xSpacing * 0.5
-				b.imageEdgeInsets = UIEdgeInsets(top: b.imageEdgeInsets.top, left: -xInsetAmount, bottom: b.imageEdgeInsets.bottom, right: xInsetAmount)
-				b.titleEdgeInsets = UIEdgeInsets(top: b.titleEdgeInsets.top, left: xInsetAmount, bottom: b.titleEdgeInsets.bottom, right: -xInsetAmount)
-				b.contentEdgeInsets = UIEdgeInsets(top: b.contentEdgeInsets.top, left: xInsetAmount, bottom: b.contentEdgeInsets.bottom, right: xInsetAmount)
+				b.imageEdgeInsets = UIEdgeInsets(
+					top: b.imageEdgeInsets.top,
+					left: b.imageEdgeInsets.left + -xInsetAmount,
+					bottom: b.imageEdgeInsets.bottom,
+					right: b.imageEdgeInsets.right + xInsetAmount
+				)
+				b.titleEdgeInsets = UIEdgeInsets(
+					top: b.titleEdgeInsets.top,
+					left: b.titleEdgeInsets.left + xInsetAmount,
+					bottom: b.titleEdgeInsets.bottom,
+					right: b.titleEdgeInsets.right + -xInsetAmount
+				)
+				b.contentEdgeInsets = UIEdgeInsets(
+					top: b.contentEdgeInsets.top,
+					left: b.contentEdgeInsets.left + xInsetAmount,
+					bottom: b.contentEdgeInsets.bottom,
+					right: b.contentEdgeInsets.right + xInsetAmount
+				)
 			}(self.filenameButton, 6.0)
 		}
 	#else

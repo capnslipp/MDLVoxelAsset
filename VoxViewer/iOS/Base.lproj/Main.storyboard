@@ -22,8 +22,10 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </sceneKitView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U7K-iV-G3S">
+                                <rect key="frame" x="0.0" y="0.0" width="115" height="38"/>
                                 <rect key="contentStretch" x="1" y="0.0" width="1" height="1"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
+                                <inset key="contentEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
                                 <size key="titleShadowOffset" width="0.0" height="1"/>
                                 <state key="normal" title="«Filename»" image="noun_180701_cc">
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -39,8 +41,8 @@
                             <constraint firstItem="VO0-yb-elP" firstAttribute="width" secondItem="9ly-9C-jDv" secondAttribute="width" id="Czq-xT-2su"/>
                             <constraint firstItem="VO0-yb-elP" firstAttribute="centerY" secondItem="9ly-9C-jDv" secondAttribute="centerY" id="L6d-Yg-cix"/>
                             <constraint firstItem="VO0-yb-elP" firstAttribute="height" secondItem="9ly-9C-jDv" secondAttribute="height" id="Tw5-LN-XwG"/>
-                            <constraint firstItem="U7K-iV-G3S" firstAttribute="top" secondItem="VO0-yb-elP" secondAttribute="top" constant="8" id="bcV-fj-BKy"/>
-                            <constraint firstItem="U7K-iV-G3S" firstAttribute="left" secondItem="VO0-yb-elP" secondAttribute="left" constant="8" id="fb5-3k-8QN"/>
+                            <constraint firstItem="U7K-iV-G3S" firstAttribute="top" secondItem="VO0-yb-elP" secondAttribute="top" id="bcV-fj-BKy"/>
+                            <constraint firstItem="U7K-iV-G3S" firstAttribute="left" secondItem="VO0-yb-elP" secondAttribute="left" id="fb5-3k-8QN"/>
                             <constraint firstItem="VO0-yb-elP" firstAttribute="centerX" secondItem="9ly-9C-jDv" secondAttribute="centerX" id="qa7-gh-KcD"/>
                         </constraints>
                     </view>
