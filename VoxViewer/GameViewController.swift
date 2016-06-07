@@ -235,7 +235,22 @@ class GameViewController : ViewController
 				// @todo: throw
 			}
 		}()
-		modelNode.position = SCNVector3(-modelCenterpoint.x, 0, -modelCenterpoint.z);
+		
+		let glkPivot = GLKMatrix4MakeTranslation(modelCenterpoint.x, 0, modelCenterpoint.z)
+		modelNode.pivot = SCNMatrix4(float4x4([
+			float4(glkPivot.m00, glkPivot.m01, glkPivot.m02, glkPivot.m03),
+			float4(glkPivot.m10, glkPivot.m11, glkPivot.m12, glkPivot.m13),
+			float4(glkPivot.m20, glkPivot.m21, glkPivot.m22, glkPivot.m23),
+			float4(glkPivot.m30, glkPivot.m31, glkPivot.m32, glkPivot.m33),
+		]))
+		
+		switch filenameWithSuffix {
+			case "ship_1.1.vox",
+				"ship_1.2.vox":
+				modelNode.eulerAngles = SCNVector3(0, GLKMathDegreesToRadians(-45), 0);
+				
+			default: ()
+		}
 		
 		_modelVoxelAsset = modelAsset
 		_modelNode = modelNode
