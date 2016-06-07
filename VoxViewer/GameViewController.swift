@@ -136,6 +136,7 @@ class GameViewController : ViewController
 			l.spotOuterAngle = 135
 			l.spotInnerAngle = l.spotOuterAngle * 0.9
 			l.castsShadow = true
+			l.shadowMapSize = CGSize(width: 4096, height: 4096)
 			return l
 		}()
 		if lightNode.constraints == nil {
