@@ -153,10 +153,10 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 			return n
 		}
 		let axisSphereNodes = [
-			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), Color.whiteColor()),
-			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), Color.redColor()),
-			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), Color.greenColor()),
-			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), Color.blueColor()),
+			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), Color.white()),
+			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), Color.red()),
+			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), Color.green()),
+			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), Color.blue()),
 		]
 		for node in axisSphereNodes {
 			scene.rootNode.addChildNode(node)
@@ -172,7 +172,7 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		//modelNode.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
 		
 		// retrieve the SCNView
-		let gameView = self.gameView
+		let gameView = self.gameView!
 		
 		// set the scene to the view
 		gameView.scene = scene
@@ -184,11 +184,11 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		gameView.showsStatistics = true
 		
 		// configure the view
-		gameView.backgroundColor = Color.blackColor()
+		gameView.backgroundColor = Color.black()
 		
 		#if os(iOS)
 			// add a tap gesture recognizer
-			let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+			let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(gestureRecognize:)))
 			gameView.addGestureRecognizer(tapGesture)
 		#endif
 	}
@@ -226,12 +226,12 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		
 		let modelNode:SCNNode = {
 			if (modelAsset.count == 1) {
-				return SCNNode(MDLObject: modelAsset[0]!)
+				return SCNNode(mdlObject: modelAsset[0]!)
 			}
 			else if (modelAsset.count > 1) {
 				let baseNode = SCNNode()
 				for assetSubObject:MDLObject in modelAsset.objects {
-					baseNode.addChildNode(SCNNode(MDLObject: assetSubObject))
+					baseNode.addChildNode(SCNNode(mdlObject: assetSubObject))
 				}
 				return baseNode
 			}
@@ -251,10 +251,10 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		
 		_currentFilename = filenameWithSuffix
 		
-		self.filenameButton.setTitle(filenameWithSuffix, forState: .Normal)
+		self.filenameButton.setTitle(filenameWithSuffix, for: [])
 	}
 	
-	func repositionCameraBasedOnModel(centerpoint centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
+	func repositionCameraBasedOnModel(centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
 	{
 		_cameraNode!.position = SCNVector3(
 			0.0,
@@ -263,7 +263,7 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		)
 	}
 	
-	func repositionLightBasedOnModel(centerpoint centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
+	func repositionLightBasedOnModel(centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
 	{
 		let extents = (bbox.maxBounds - bbox.minBounds)
 		
@@ -295,16 +295,16 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 	func fetchVoxelAsset(named name:String) throws -> MDLVoxelAsset
 	{
 		guard let path:String = {
-			var p = NSBundle.mainBundle().pathForResource(name, ofType: "")
+			var p = Bundle.main().pathForResource(name, ofType: "")
 			if p == nil {
-				p = NSBundle.mainBundle().pathForResource(name, ofType: "vox")
+				p = Bundle.main().pathForResource(name, ofType: "vox")
 			}
 			return p
 		}() else {
-			throw NSCocoaError.FileReadNoSuchFileError
+			throw NSCocoaError.fileReadNoSuchFileError
 		}
 		
-		let asset = MDLVoxelAsset(URL: NSURL(fileURLWithPath: path), options:[
+		let asset = MDLVoxelAsset(url: URL(fileURLWithPath: path), options:[
 			kMDLVoxelAssetOptionCalculateShellLevels: false,
 			kMDLVoxelAssetOptionSkipNonZeroShellMesh: false,
 			kMDLVoxelAssetOptionConvertZUpToYUp: true,
@@ -315,10 +315,10 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 	#if os(iOS)
 		func handleTap(gestureRecognize: UIGestureRecognizer) {
 			// retrieve the SCNView
-			let scnView = self.gameView
+			let scnView = self.gameView!
 			
 			// check what nodes are tapped
-			let p = gestureRecognize.locationInView(scnView)
+			let p = gestureRecognize.location(in: scnView)
 			let hitResults = scnView.hitTest(p, options: nil)
 			// check that we clicked on at least one object
 			if hitResults.count > 0 {
@@ -329,19 +329,19 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 				if let material = result.node!.geometry!.firstMaterial {
 					// highlight it
 					SCNTransaction.begin()
-					SCNTransaction.setAnimationDuration(0.5)
+					SCNTransaction.animationDuration = 0.5
 					
 					// on completion - unhighlight
-					SCNTransaction.setCompletionBlock {
+					SCNTransaction.completionBlock = {
 						SCNTransaction.begin()
-						SCNTransaction.setAnimationDuration(0.5)
+						SCNTransaction.animationDuration = 0.5
 						
-						material.emission.contents = Color.blackColor()
+						material.emission.contents = Color.black()
 						
 						SCNTransaction.commit()
 					}
 					
-					material.emission.contents = Color.redColor()
+					material.emission.contents = Color.red()
 					
 					SCNTransaction.commit()
 				}
@@ -357,10 +357,10 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		}
 		
 		override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-			if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-				return .AllButUpsideDown
+			if UIDevice.current().userInterfaceIdiom == .phone {
+				return .allButUpsideDown
 			} else {
-				return .All
+				return .all
 			}
 		}
 		
@@ -371,29 +371,29 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 	#endif
 	
 	
-	@IBAction func openFileSelector(sender:Button)
+	@IBAction func openFileSelector(_ sender:Button)
 	{
-		let filepaths:Array<String> = NSBundle.mainBundle().pathsForResourcesOfType("vox", inDirectory: nil)
+		let filepaths:Array<String> = Bundle.main().pathsForResources(ofType: "vox", inDirectory: nil)
 		_filenames = filepaths.map { NSURL(string: $0)!.lastPathComponent! }
 		
-		let canPerformSeque = self.shouldPerformSegueWithIdentifier(self.fileSelectorPopoverSequeID!, sender: self)
+		let canPerformSeque = self.shouldPerformSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
 		guard canPerformSeque else { return }
 		
-		self.performSegueWithIdentifier(self.fileSelectorPopoverSequeID!, sender: self)
+		self.performSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
 	}
 	
-	override func shouldPerformSegueWithIdentifier(identifier:String, sender:AnyObject?) -> Bool
+	override func shouldPerformSegue(withIdentifier identifier:String, sender:AnyObject?) -> Bool
 	{
 		switch identifier {
 			case self.fileSelectorPopoverSequeID!:
 				return true
 				
 			default:
-				return super.shouldPerformSegueWithIdentifier(identifier, sender: sender)
+				return super.shouldPerformSegue(withIdentifier: identifier, sender: sender)
 		}
 	}
 	
-	override func prepareForSegue(segue:StoryboardSegue, sender:AnyObject?)
+	override func prepare(for segue:StoryboardSegue, sender:AnyObject?)
 	{
 		guard let identifier = segue.identifier else { return }
 		switch identifier {
@@ -415,7 +415,7 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		}
 	}
 	
-	func tableView(tableView:UITableView, numberOfRowsInSection section:Int) -> Int
+	func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
 	{
 		if tableView == _fileSelectorTable! {
 			switch section {
@@ -431,12 +431,12 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		}
 	}
 	
-	func tableView(tableView:UITableView, cellForRowAtIndexPath indexPath:NSIndexPath) -> UITableViewCell
+	func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell
 	{
 		if tableView == _fileSelectorTable! {
-			let filename = _filenames![indexPath.item]
+			let filename = _filenames![indexPath.item!]
 			
-			let tableCell = tableView.dequeueReusableCellWithIdentifier(self.fileSelectorPopoverTableCellReuseID!)!
+			let tableCell = tableView.dequeueReusableCell(withIdentifier: self.fileSelectorPopoverTableCellReuseID!)!
 			tableCell.textLabel!.text = filename
 			
 			return tableCell
@@ -447,12 +447,12 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		}
 	}
 	
-	func tableView(tableView:UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath)
+	func tableView(_ tableView:UITableView, didSelectRowAt indexPath:IndexPath)
 	{
 		if tableView == _fileSelectorTable! {
-			let filename = _filenames![indexPath.item]
+			let filename = _filenames![indexPath.item!]
 			
-			_fileSelectorSegue!.destinationViewController.dismissViewControllerAnimated(true, completion: nil)
+			_fileSelectorSegue!.destinationViewController.dismiss(animated: true, completion: nil)
 			
 			_fileSelectorSegue = nil
 			_fileSelectorTable = nil

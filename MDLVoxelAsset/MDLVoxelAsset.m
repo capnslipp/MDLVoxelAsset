@@ -10,7 +10,7 @@
 
 #import <GLKit/GLKMathUtils.h>
 #import <SceneKit/ModelIO.h>
-#import <SceneKit/SceneKit_simd.h>
+#import <SceneKit/SceneKitTypes.h>
 #import <SceneKit/SCNGeometry.h>
 #import <SceneKit/SCNMaterial.h>
 #import <SceneKit/SCNMaterialProperty.h>
