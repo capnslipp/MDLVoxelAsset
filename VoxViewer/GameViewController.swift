@@ -27,21 +27,23 @@ import MDLVoxelAsset
 
 
 
-class GameViewController : ViewController, UITableViewDataSource, UITableViewDelegate
+class GameViewController : ViewController
 {
 	@IBOutlet weak var gameView:SCNView!
 	
 	var _filenames:Array<String>?
-	@IBOutlet weak var filenameButton:UIButton!
+	@IBOutlet weak var filenameButton:Button!
 	
-	var fileSelectorPopoverSequeID:String?
-	var fileSelectorPopoverTableCellReuseID:String?
-	var isFileSelectorPopoverActive:Bool {
-		return _fileSelectorSegue != nil
-	}
-	
-	var _fileSelectorTable:UITableView?
-	var _fileSelectorSegue:StoryboardSegue?
+	#if os(iOS)
+		var fileSelectorPopoverSequeID:String?
+		var fileSelectorPopoverTableCellReuseID:String?
+		var isFileSelectorPopoverActive:Bool {
+			return _fileSelectorSegue != nil
+		}
+		
+ 		var _fileSelectorTable:UITableView?
+		var _fileSelectorSegue:StoryboardSegue?
+	#endif
 	
 	
 	let lightOffset = SCNVector3(0, 10, 10)
@@ -205,8 +207,10 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 			_modelAsset = nil
 		}
 		
-		self.gameView!.layer.setNeedsDisplay()
-		self.gameView!.layer.displayIfNeeded()
+		if let gameLayer = self.gameView!.layer {
+			gameLayer.setNeedsDisplay()
+			gameLayer.displayIfNeeded()
+		}
 		
 		let modelAsset:MDLVoxelAsset = try! fetchVoxelAsset(named: filenameWithSuffix)
 		
@@ -251,7 +255,11 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 		
 		_currentFilename = filenameWithSuffix
 		
-		self.filenameButton.setTitle(filenameWithSuffix, for: [])
+		#if os(iOS)
+			self.filenameButton.setTitle(filenameWithSuffix, for: [])
+		#else
+			self.filenameButton.title = filenameWithSuffix
+		#endif
 	}
 	
 	func repositionCameraBasedOnModel(centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
@@ -368,98 +376,101 @@ class GameViewController : ViewController, UITableViewDataSource, UITableViewDel
 			super.didReceiveMemoryWarning()
 			// Release any cached data, images, etc that aren't in use.
 		}
-	#endif
-	
-	
-	@IBAction func openFileSelector(_ sender:Button)
-	{
-		let filepaths:Array<String> = Bundle.main().pathsForResources(ofType: "vox", inDirectory: nil)
-		_filenames = filepaths.map { NSURL(string: $0)!.lastPathComponent! }
 		
-		let canPerformSeque = self.shouldPerformSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
-		guard canPerformSeque else { return }
-		
-		self.performSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
-	}
-	
-	override func shouldPerformSegue(withIdentifier identifier:String, sender:AnyObject?) -> Bool
-	{
-		switch identifier {
-			case self.fileSelectorPopoverSequeID!:
-				return true
-				
-			default:
-				return super.shouldPerformSegue(withIdentifier: identifier, sender: sender)
-		}
-	}
-	
-	override func prepare(for segue:StoryboardSegue, sender:AnyObject?)
-	{
-		guard let identifier = segue.identifier else { return }
-		switch identifier {
-			case self.fileSelectorPopoverSequeID!:
-				let tableController = segue.destinationViewController as! UITableViewController
-				
-				let tableView:UITableView = tableController.tableView
-				tableView.dataSource = self
-				tableView.delegate = self
-				_fileSelectorTable = tableView
-				
-				let popoverController = segue.destinationViewController.popoverPresentationController!
-				
-				popoverController.sourceRect = popoverController.sourceView!.frame
-				_fileSelectorSegue = segue
+		@IBAction func openFileSelector(_ sender:Button)
+		{
+			let filepaths:Array<String> = Bundle.main().pathsForResources(ofType: "vox", inDirectory: nil)
+			_filenames = filepaths.map { NSURL(string: $0)!.lastPathComponent! }
 			
-			default:
-				return
+			let canPerformSeque = self.shouldPerformSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
+			guard canPerformSeque else { return }
+			
+			self.performSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
 		}
-	}
-	
-	func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
-	{
-		if tableView == _fileSelectorTable! {
-			switch section {
-				case 0:
-					return _filenames!.count
-				
+		
+		override func shouldPerformSegue(withIdentifier identifier:String, sender:AnyObject?) -> Bool
+		{
+			switch identifier {
+				case self.fileSelectorPopoverSequeID!:
+					return true
+					
 				default:
-					return 0
+					return super.shouldPerformSegue(withIdentifier: identifier, sender: sender)
 			}
 		}
-		else {
-			return 0
+		
+		override func prepare(for segue:StoryboardSegue, sender:AnyObject?)
+		{
+			guard let identifier = segue.identifier else { return }
+			switch identifier {
+				case self.fileSelectorPopoverSequeID!:
+					let tableController = segue.destinationViewController as! UITableViewController
+					
+					let tableView:UITableView = tableController.tableView
+					tableView.dataSource = self
+					tableView.delegate = self
+					_fileSelectorTable = tableView
+					
+					let popoverController = segue.destinationViewController.popoverPresentationController!
+					
+					popoverController.sourceRect = popoverController.sourceView!.frame
+					_fileSelectorSegue = segue
+				
+				default:
+					return
+			}
 		}
-	}
-	
-	func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell
-	{
-		if tableView == _fileSelectorTable! {
-			let filename = _filenames![indexPath.item!]
-			
-			let tableCell = tableView.dequeueReusableCell(withIdentifier: self.fileSelectorPopoverTableCellReuseID!)!
-			tableCell.textLabel!.text = filename
-			
-			return tableCell
-		}
-		else {
-			return UITableViewCell()
-			// @todo: Throw an error, somehow (`@objc` disallows `throws`).
-		}
-	}
-	
-	func tableView(_ tableView:UITableView, didSelectRowAt indexPath:IndexPath)
-	{
-		if tableView == _fileSelectorTable! {
-			let filename = _filenames![indexPath.item!]
-			
-			_fileSelectorSegue!.destinationViewController.dismiss(animated: true, completion: nil)
-			
-			_fileSelectorSegue = nil
-			_fileSelectorTable = nil
-			
-			self.loadModelFile(named: filename)
-		}
-	}
-	
-	
+	#endif
 }
+
+
+#if os(iOS)
+	extension GameViewController : UITableViewDataSource, UITableViewDelegate
+	{
+		func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
+		{
+			if tableView == _fileSelectorTable! {
+				switch section {
+					case 0:
+						return _filenames!.count
+					
+					default:
+						return 0
+				}
+			}
+			else {
+				return 0
+			}
+		}
+		
+		func tableView(_ tableView:UITableView, cellForRowAt indexPath:IndexPath) -> UITableViewCell
+		{
+			if tableView == _fileSelectorTable! {
+				let filename = _filenames![indexPath.item!]
+				
+				let tableCell = tableView.dequeueReusableCell(withIdentifier: self.fileSelectorPopoverTableCellReuseID!)!
+				tableCell.textLabel!.text = filename
+				
+				return tableCell
+			}
+			else {
+				return UITableViewCell()
+				// @todo: Throw an error, somehow (`@objc` disallows `throws`).
+			}
+		}
+		
+		func tableView(_ tableView:UITableView, didSelectRowAt indexPath:IndexPath)
+		{
+			if tableView == _fileSelectorTable! {
+				let filename = _filenames![indexPath.item!]
+				
+				_fileSelectorSegue!.destinationViewController.dismiss(animated: true, completion: nil)
+				
+				_fileSelectorSegue = nil
+				_fileSelectorTable = nil
+				
+				self.loadModelFile(named: filename)
+			}
+		}
+	}
+#endif
