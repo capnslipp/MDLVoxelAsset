@@ -290,24 +290,16 @@ class GameViewController : ViewController
 		guard let (path, filenameWithSuffix) = {() -> (NSURL, String)? in
 			var p:NSURL?
 			p = NSBundle.mainBundle().URLForResource(filename, withExtension: "")
-			if p == nil && MDLAsset.canImportFileExtension("abc") {
-				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "abc")
+			
+			if p == nil {
+				for fileExtension in ["abc", "dae", "fbx", "obj", "ply", "stl"] {
+					if MDLAsset.canImportFileExtension(fileExtension) {
+						p = NSBundle.mainBundle().URLForResource(filename, withExtension: fileExtension)
+					}
+					if p != nil { break }
+				}
 			}
-			if p == nil && MDLAsset.canImportFileExtension("dae") {
-				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "dae")
-			}
-			if p == nil && MDLAsset.canImportFileExtension("fbx") {
-				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "fbx")
-			}
-			if p == nil && MDLAsset.canImportFileExtension("obj") {
-				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "obj")
-			}
-			if p == nil && MDLAsset.canImportFileExtension("ply") {
-				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "ply")
-			}
-			if p == nil && MDLAsset.canImportFileExtension("stl") {
-				p = NSBundle.mainBundle().URLForResource(filename, withExtension: "stl")
-			}
+			
 			if p == nil {
 				return nil
 			}
