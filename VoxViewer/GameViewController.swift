@@ -131,7 +131,7 @@ class GameViewController : ViewController
 		let lightNode = SCNNode()
 		lightNode.light = {
 			let l = SCNLight()
-			l.type = SCNLightTypeSpot
+			l.type = .spot
 			l.color = Color(hue: 60.0 / 360.0, saturation: 0.2, brightness: 1.0, alpha: 1.0)
 			l.spotOuterAngle = 135
 			l.spotInnerAngle = l.spotOuterAngle * 0.9
@@ -151,7 +151,7 @@ class GameViewController : ViewController
 		let ambientLightNode = SCNNode()
 		ambientLightNode.light = {
 			let l = SCNLight()
-			l.type = SCNLightTypeAmbient
+			l.type = .ambient
 			l.color = Color(hue: 240.0 / 360.0, saturation: 1.0, brightness: 0.1, alpha: 1.0)
 			return l
 		}()
@@ -173,10 +173,10 @@ class GameViewController : ViewController
 			return n
 		}
 		let axisSphereNodes = [
-			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), Color.white()),
-			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), Color.red()),
-			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), Color.green()),
-			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), Color.blue()),
+			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), .white),
+			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), .red),
+			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), .green),
+			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), .blue),
 		]
 		for node in axisSphereNodes {
 			scene.rootNode.addChildNode(node)
@@ -204,11 +204,11 @@ class GameViewController : ViewController
 		gameView.showsStatistics = true
 		
 		// configure the view
-		gameView.backgroundColor = Color.black()
+		gameView.backgroundColor = .black
 		
 		#if os(iOS)
 			// add a tap gesture recognizer
-			let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(gestureRecognize:)))
+			let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
 			gameView.addGestureRecognizer(tapGesture)
 		#endif
 	}
@@ -287,14 +287,14 @@ class GameViewController : ViewController
 	{
 		removeExistingModel()
 		
-		guard let (path, filenameWithSuffix) = {() -> (NSURL, String)? in
-			var p:NSURL?
-			p = NSBundle.mainBundle().URLForResource(filename, withExtension: "")
+		guard let (path, filenameWithSuffix) = {() -> (URL, String)? in
+			var p:URL?
+			p = Bundle.main.url(forResource: filename, withExtension: "")
 			
 			if p == nil {
 				for fileExtension in ["abc", "dae", "fbx", "obj", "ply", "stl"] {
 					if MDLAsset.canImportFileExtension(fileExtension) {
-						p = NSBundle.mainBundle().URLForResource(filename, withExtension: fileExtension)
+						p = Bundle.main.url(forResource: filename, withExtension: fileExtension)
 					}
 					if p != nil { break }
 				}
@@ -304,20 +304,20 @@ class GameViewController : ViewController
 				return nil
 			}
 			
-			return (p!, p!.lastPathComponent!)
+			return (p!, p!.lastPathComponent)
 		}() else {
-			throw NSCocoaError.FileReadNoSuchFileError
+			throw CocoaError(.fileReadNoSuchFile)
 		}
 		
-		let asset = MDLAsset(URL: path)
+		let asset = MDLAsset(url: path)
 		let node:SCNNode = {
 			if (asset.count == 1) {
-				return SCNNode(MDLObject: asset[0]!)
+				return SCNNode(mdlObject: asset[0]!)
 			}
 			else if (asset.count > 1) {
 				let baseNode = SCNNode()
 				for assetSubObjectI in 0..<asset.count {
-					baseNode.addChildNode(SCNNode(MDLObject: asset[assetSubObjectI]!))
+					baseNode.addChildNode(SCNNode(mdlObject: asset[assetSubObjectI]!))
 				}
 				return baseNode
 			}
@@ -415,13 +415,13 @@ class GameViewController : ViewController
 	func fetchVoxelAsset(named name:String) throws -> MDLVoxelAsset
 	{
 		guard let path:String = {
-			var p = Bundle.main().pathForResource(name, ofType: "")
+			var p = Bundle.main.path(forResource: name, ofType: "")
 			if p == nil {
-				p = Bundle.main().pathForResource(name, ofType: "vox")
+				p = Bundle.main.path(forResource: name, ofType: "vox")
 			}
 			return p
 		}() else {
-			throw NSCocoaError.fileReadNoSuchFileError
+			throw CocoaError(.fileReadNoSuchFile)
 		}
 		
 		let asset = MDLVoxelAsset(url: URL(fileURLWithPath: path), options:[
@@ -433,7 +433,7 @@ class GameViewController : ViewController
 	}
 	
 	#if os(iOS)
-		func handleTap(gestureRecognize: UIGestureRecognizer) {
+		func handleTap(_ gestureRecognize:UIGestureRecognizer) {
 			// retrieve the SCNView
 			let scnView = self.gameView!
 			
@@ -456,28 +456,28 @@ class GameViewController : ViewController
 						SCNTransaction.begin()
 						SCNTransaction.animationDuration = 0.5
 						
-						material.emission.contents = Color.black()
+						material.emission.contents = Color.black
 						
 						SCNTransaction.commit()
 					}
 					
-					material.emission.contents = Color.red()
+					material.emission.contents = Color.red
 					
 					SCNTransaction.commit()
 				}
 			}
 		}
 		
-		override func shouldAutorotate() -> Bool {
+		override var shouldAutorotate:Bool {
 			return true
 		}
 		
-		override func prefersStatusBarHidden() -> Bool {
+		override var prefersStatusBarHidden:Bool {
 			return true
 		}
 		
-		override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-			if UIDevice.current().userInterfaceIdiom == .phone {
+		override var supportedInterfaceOrientations:UIInterfaceOrientationMask {
+			if UIDevice.current.userInterfaceIdiom == .phone {
 				return .allButUpsideDown
 			} else {
 				return .all
@@ -491,19 +491,19 @@ class GameViewController : ViewController
 		
 		@IBAction func openFileSelector(_ sender:Button)
 		{
-			let voxelFilepaths:Array<NSURL> = NSBundle.mainBundle().URLsForResourcesWithExtension("vox", subdirectory: nil) ?? []
-			_voxelFilenames = voxelFilepaths.map { $0.lastPathComponent! }
+			let voxelFilepaths:Array<URL> = Bundle.main.urls(forResourcesWithExtension: "vox", subdirectory: nil) ?? []
+			_voxelFilenames = voxelFilepaths.map { $0.lastPathComponent }
 			
-			let fetchResourceURLsWithExtension = {(ext:String) -> [NSURL] in
-				NSBundle.mainBundle().URLsForResourcesWithExtension(ext, subdirectory: nil) ?? []
+			let fetchResourceURLsWithExtension = {(ext:String) -> [URL] in
+				Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: nil) ?? []
 			}
-			var meshFilepaths:Array<NSURL> = fetchResourceURLsWithExtension("abc")
+			var meshFilepaths:Array<URL> = fetchResourceURLsWithExtension("abc")
 			meshFilepaths += fetchResourceURLsWithExtension("dae")
 			meshFilepaths += fetchResourceURLsWithExtension("fbx")
 			meshFilepaths += fetchResourceURLsWithExtension("obj")
 			meshFilepaths += fetchResourceURLsWithExtension("ply")
 			meshFilepaths += fetchResourceURLsWithExtension("stl")
-			_meshFilenames = meshFilepaths.map { $0.lastPathComponent! }.sort()
+			_meshFilenames = meshFilepaths.map { $0.lastPathComponent }.sorted()
 			
 			let canPerformSeque = self.shouldPerformSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
 			guard canPerformSeque else { return }
@@ -511,7 +511,7 @@ class GameViewController : ViewController
 			self.performSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
 		}
 		
-		override func shouldPerformSegue(withIdentifier identifier:String, sender:AnyObject?) -> Bool
+		override func shouldPerformSegue(withIdentifier identifier:String, sender:Any?) -> Bool
 		{
 			switch identifier {
 				case self.fileSelectorPopoverSequeID!:
@@ -522,19 +522,19 @@ class GameViewController : ViewController
 			}
 		}
 		
-		override func prepare(for segue:StoryboardSegue, sender:AnyObject?)
+		override func prepare(for segue:StoryboardSegue, sender:Any?)
 		{
 			guard let identifier = segue.identifier else { return }
 			switch identifier {
 				case self.fileSelectorPopoverSequeID!:
-					let tableController = segue.destinationViewController as! UITableViewController
+					let tableController = segue.destination as! UITableViewController
 					
 					let tableView:UITableView = tableController.tableView
 					tableView.dataSource = self
 					tableView.delegate = self
 					_fileSelectorTable = tableView
 					
-					let popoverController = segue.destinationViewController.popoverPresentationController!
+					let popoverController = segue.destination.popoverPresentationController!
 					
 					popoverController.sourceRect = popoverController.sourceView!.frame
 					_fileSelectorSegue = segue
@@ -637,7 +637,7 @@ class GameViewController : ViewController
 					}
 				}()
 				
-				_fileSelectorSegue!.destinationViewController.dismiss(animated: true, completion: nil)
+				_fileSelectorSegue!.destination.dismiss(animated: true, completion: nil)
 				
 				_fileSelectorSegue = nil
 				_fileSelectorTable = nil

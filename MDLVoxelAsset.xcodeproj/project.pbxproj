@@ -518,9 +518,12 @@
 				TargetAttributes = {
 					FA0ADEE11CF00A270054DCAA = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = UQQE2H6P34;
+						LastSwiftMigration = 0820;
 					};
 					FA2685811CEA9A71003B86C8 = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0820;
 					};
 					FA26858B1CEA9A71003B86C8 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -764,7 +767,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -778,7 +781,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -886,7 +889,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -904,7 +907,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

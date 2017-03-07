@@ -10,7 +10,7 @@ import SceneKit
 
 class GameView: SCNView {
     
-    override func mouseDown(_ theEvent: NSEvent) {
+    override func mouseDown(with theEvent: NSEvent) {
         /* Called when a mouse click occurs */
         
         // check what nodes are clicked
@@ -32,18 +32,18 @@ class GameView: SCNView {
 					SCNTransaction.begin()
 					SCNTransaction.animationDuration = 0.5
 					
-					material.emission.contents = NSColor.black()
+					material.emission.contents = NSColor.black
 					
 					SCNTransaction.commit()
 				}
 				
-				material.emission.contents = NSColor.red()
+				material.emission.contents = NSColor.red
 				
 				SCNTransaction.commit()
 			}
         }
         
-        super.mouseDown(theEvent)
+        super.mouseDown(with: theEvent)
     }
 
 }
