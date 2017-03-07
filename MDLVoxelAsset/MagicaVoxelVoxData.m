@@ -38,6 +38,10 @@ static const char kVoxelChunkIdent_string[] = "XYZI";
 static const ChunkIdent kVoxelChunkIdent = { .ptr = (uint8_t const *)&kVoxelChunkIdent_string };
 static const char kPaletteChunkIdent_string[] = "RGBA";
 static const ChunkIdent kPaletteChunkIdent = { .ptr = (uint8_t const *)&kPaletteChunkIdent_string };
+static const char kMaterialChunkIdent_string[] = "MATT";
+static const ChunkIdent kMaterialChunkIdent = { .ptr = (uint8_t const *)&kMaterialChunkIdent_string };
+static const char kPackChunkIdent_string[] = "PACK";
+static const ChunkIdent kPackChunkIdent = { .ptr = (uint8_t const *)&kPackChunkIdent_string };
 
 
 #import "MagicaVoxelVoxData_SizeChunkContentsHandle.h"
@@ -190,6 +194,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 				return [self parseVoxelContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kPaletteChunkIdent.fourCharCode)
 				return [self parsePaletteContentsDataAtOffset:contentsStartOffset withDataSize:size];
+			else if (*ident.fourCharCode == *kMaterialChunkIdent.fourCharCode)
+				return nil; // materials ignored for now
+			else if (*ident.fourCharCode == *kPackChunkIdent.fourCharCode)
+				return nil; // pack (multiple models) ignored for now
 			else
 				@throw [NSException exceptionWithName: NSInvalidArgumentException
 					reason: [NSString stringWithFormat:@"Unknown chunk ID %c%c%c%c.", (*ident.array)[0], (*ident.array)[1], (*ident.array)[2], (*ident.array)[3]]
