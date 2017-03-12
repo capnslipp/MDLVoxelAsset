@@ -186,12 +186,12 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
 	
 	NSNumber *zeroPaletteIndex = @(0);
-	NSMutableArray<NSMutableArray<NSMutableArray<NSNumber*>*>*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:(dimensions.x + 1)];
-	for (uint32_t xI = 0; xI <= dimensions.x; ++xI) {
-		[(voxelPaletteIndices[xI] = [[NSMutableArray alloc] initWithCapacity:(dimensions.y + 1)]) release];
-		for (uint32_t yI = 0; yI <= dimensions.y; ++yI) {
-			[(voxelPaletteIndices[xI][yI] = [[NSMutableArray alloc] initWithCapacity:(dimensions.z + 1)]) release];
-			for (uint32_t zI = 0; zI <= dimensions.z; ++zI)
+	NSMutableArray<NSMutableArray<NSMutableArray<NSNumber*>*>*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:dimensions.x];
+	for (uint32_t xI = 0; xI < dimensions.x; ++xI) {
+		[(voxelPaletteIndices[xI] = [[NSMutableArray alloc] initWithCapacity:dimensions.y]) release];
+		for (uint32_t yI = 0; yI < dimensions.y; ++yI) {
+			[(voxelPaletteIndices[xI][yI] = [[NSMutableArray alloc] initWithCapacity:dimensions.z]) release];
+			for (uint32_t zI = 0; zI < dimensions.z; ++zI)
 				voxelPaletteIndices[xI][yI][zI] = zeroPaletteIndex;
 		}
 	}
