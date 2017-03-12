@@ -75,6 +75,8 @@
 		FAC5F7B51CF1889D00B30B58 /* chr_sword.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */; };
 		FAE7C4AC1CF13DD20075ED7D /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
 		FAE7C4AD1CF13DD20075ED7D /* MDLVoxelAsset.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FAF7D4631E73E1B8007CFA66 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF7D4621E73E1B8007CFA66 /* main.swift */; };
+		FAF7D4671E73F966007CFA66 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -158,6 +160,15 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FAF7D45E1E73E1B7007CFA66 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -203,6 +214,8 @@
 		FAA13CA71D027A270099B085 /* ship_1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = ship_1.vox; sourceTree = "<group>"; };
 		FAC050631D0664D400D18B8B /* ship_1_design.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_1_design.mtl; sourceTree = "<group>"; };
 		FAC050641D0664D400D18B8B /* ship_1_design.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ship_1_design.obj; sourceTree = "<group>"; };
+		FAF7D4601E73E1B7007CFA66 /* convertToJSON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = convertToJSON; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAF7D4621E73E1B8007CFA66 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -252,6 +265,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FAF7D45D1E73E1B7007CFA66 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAF7D4671E73F966007CFA66 /* MDLVoxelAsset.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -272,6 +293,7 @@
 				FA2685841CEA9A71003B86C8 /* MDLVoxelAsset */,
 				FA2685901CEA9A72003B86C8 /* MDLVoxelAssetTests */,
 				FA0ADEE31CF00A280054DCAA /* VoxViewer */,
+				FAF7D4611E73E1B8007CFA66 /* convertToJSON */,
 				FA2685831CEA9A71003B86C8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -285,6 +307,7 @@
 				FA9695001CF1725000DC632A /* VoxViewer.app */,
 				FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */,
 				FA9CACD31CF17E0200B1ABA4 /* MDLVoxelAssetTests.xctest */,
+				FAF7D4601E73E1B7007CFA66 /* convertToJSON */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -357,6 +380,14 @@
 				FA96950F1CF1725000DC632A /* Info.plist */,
 			);
 			path = "OS X";
+			sourceTree = "<group>";
+		};
+		FAF7D4611E73E1B8007CFA66 /* convertToJSON */ = {
+			isa = PBXGroup;
+			children = (
+				FAF7D4621E73E1B8007CFA66 /* main.swift */,
+			);
+			path = convertToJSON;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -506,13 +537,30 @@
 			productReference = FA9CACD31CF17E0200B1ABA4 /* MDLVoxelAssetTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		FAF7D45F1E73E1B7007CFA66 /* convertToJSON */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAF7D4661E73E1B8007CFA66 /* Build configuration list for PBXNativeTarget "convertToJSON" */;
+			buildPhases = (
+				FAF7D45C1E73E1B7007CFA66 /* Sources */,
+				FAF7D45D1E73E1B7007CFA66 /* Frameworks */,
+				FAF7D45E1E73E1B7007CFA66 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = convertToJSON;
+			productName = convertToJSON;
+			productReference = FAF7D4601E73E1B7007CFA66 /* convertToJSON */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		FA2685791CEA9A71003B86C8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
+				LastSwiftUpdateCheck = 0820;
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Cap'n Slipp";
 				TargetAttributes = {
@@ -538,6 +586,10 @@
 						CreatedOnToolsVersion = 7.3.1;
 						TestTargetID = FA9694FF1CF1725000DC632A;
 					};
+					FAF7D45F1E73E1B7007CFA66 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = FA26857C1CEA9A71003B86C8 /* Build configuration list for PBXProject "MDLVoxelAsset" */;
@@ -559,6 +611,7 @@
 				FA9CACD21CF17E0200B1ABA4 /* MDLVoxelAssetTests (OS X) */,
 				FA0ADEE11CF00A270054DCAA /* VoxViewer (iOS) */,
 				FA9694FF1CF1725000DC632A /* VoxViewer (OS X) */,
+				FAF7D45F1E73E1B7007CFA66 /* convertToJSON */,
 			);
 		};
 /* End PBXProject section */
@@ -694,6 +747,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAF7D45C1E73E1B7007CFA66 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAF7D4631E73E1B8007CFA66 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1037,6 +1098,39 @@
 			};
 			name = Release;
 		};
+		FAF7D4641E73E1B8007CFA66 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		FAF7D4651E73E1B8007CFA66 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1099,6 +1193,15 @@
 			buildConfigurations = (
 				FA9CACE51CF17E0200B1ABA4 /* Debug */,
 				FA9CACE61CF17E0200B1ABA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAF7D4661E73E1B8007CFA66 /* Build configuration list for PBXNativeTarget "convertToJSON" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAF7D4641E73E1B8007CFA66 /* Debug */,
+				FAF7D4651E73E1B8007CFA66 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
