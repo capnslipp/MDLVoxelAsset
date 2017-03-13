@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1217" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
-        <plugIn identifier="com.apple.SceneKitIBPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.SceneKitIBPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -648,7 +649,7 @@
             </items>
         </menu>
         <window title="VoxViewer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="371">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" unifiedTitleAndToolbar="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="640" height="480"/>
@@ -669,6 +670,45 @@
                     <constraint firstItem="536" firstAttribute="trailing" secondItem="372" secondAttribute="trailing" id="544"/>
                 </constraints>
             </view>
+            <toolbar key="toolbar" implicitIdentifier="3DDF0B97-9527-429A-9696-A102FFBD0132" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="FYQ-qM-r6X">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="0A0AFA40-F113-4CFA-B4D4-2491D00994BF" label="Filename Icon" paletteLabel="Filename Icon" image="noun_180701_cc" autovalidates="NO" id="gfL-qO-2xg">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="22" height="22"/>
+                        <size key="maxSize" width="22" height="22"/>
+                        <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="486-Tk-e0o">
+                            <rect key="frame" x="29" y="14" width="22" height="22"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" image="noun_180701_cc" id="3Ke-xU-9U0"/>
+                        </imageView>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="8E2BE50B-AD63-40F4-843B-D43BE29A2ABE" label="Filename" paletteLabel="Filename" autovalidates="NO" id="zMk-jk-Pc6" userLabel="Filename">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="206" height="26"/>
+                        <size key="maxSize" width="206" height="26"/>
+                        <popUpButton key="view" verticalHuggingPriority="750" id="ZdO-nH-6lv" userLabel="Filename Button">
+                            <rect key="frame" x="0.0" y="14" width="206" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <popUpButtonCell key="cell" type="roundTextured" title="«Filename»" bezelStyle="texturedRounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="SNP-eV-4oE" id="8Zm-1m-hQI" userLabel="Filename Button">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="cellTitle"/>
+                                <menu key="menu" id="rYI-qt-qiX">
+                                    <items>
+                                        <menuItem title="«Filename»" id="SNP-eV-4oE"/>
+                                    </items>
+                                </menu>
+                            </popUpButtonCell>
+                            <connections>
+                                <action selector="selectFilename:" target="m6c-tG-KhH" id="yDt-MU-AqB"/>
+                            </connections>
+                        </popUpButton>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="gfL-qO-2xg"/>
+                    <toolbarItem reference="zMk-jk-Pc6"/>
+                </defaultToolbarItems>
+            </toolbar>
             <point key="canvasLocation" x="385" y="452"/>
         </window>
         <customObject id="494" customClass="AppDelegate" customModule="VoxViewer" customModuleProvider="target">
@@ -679,8 +719,13 @@
         <customObject id="420" customClass="NSFontManager"/>
         <viewController id="m6c-tG-KhH" customClass="GameViewController" customModule="VoxViewer" customModuleProvider="target">
             <connections>
+                <outlet property="filenameButton" destination="ZdO-nH-6lv" id="od7-Ru-AaH"/>
                 <outlet property="gameView" destination="536" id="mGC-e9-650"/>
             </connections>
         </viewController>
+        <userDefaultsController representsSharedInstance="YES" id="a6k-FP-CcU"/>
     </objects>
+    <resources>
+        <image name="noun_180701_cc" width="19.5" height="22"/>
+    </resources>
 </document>

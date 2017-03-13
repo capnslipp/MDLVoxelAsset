@@ -61,6 +61,7 @@
 		FA9CACF51CF1840A00B1ABA4 /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FAA13CA81D027A270099B085 /* ship_1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAA13CA71D027A270099B085 /* ship_1.vox */; };
 		FAA13CA91D027A270099B085 /* ship_1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAA13CA71D027A270099B085 /* ship_1.vox */; };
+		FAA719D51E76A48D00B1E2FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEED1CF00A280054DCAA /* Assets.xcassets */; };
 		FAC050671D06669600D18B8B /* ship_1_design.mtl in Resources */ = {isa = PBXBuildFile; fileRef = FAC050631D0664D400D18B8B /* ship_1_design.mtl */; };
 		FAC050681D06669600D18B8B /* ship_1_design.obj in Resources */ = {isa = PBXBuildFile; fileRef = FAC050641D0664D400D18B8B /* ship_1_design.obj */; };
 		FAC050691D06669700D18B8B /* ship_1_design.mtl in Resources */ = {isa = PBXBuildFile; fileRef = FAC050631D0664D400D18B8B /* ship_1_design.mtl */; };
@@ -660,6 +661,7 @@
 				FAA13CA91D027A270099B085 /* ship_1.vox in Resources */,
 				FAC5F7B31CF1889900B30B58 /* rgbw_cmyk.vox in Resources */,
 				FAC0506A1D06669700D18B8B /* ship_1_design.obj in Resources */,
+				FAA719D51E76A48D00B1E2FE /* Assets.xcassets in Resources */,
 				FAC050691D06669700D18B8B /* ship_1_design.mtl in Resources */,
 				FA96950E1CF1725000DC632A /* MainMenu.xib in Resources */,
 				FA67ABFE1D015B4F00A8A852 /* ship_1.2.vox in Resources */,

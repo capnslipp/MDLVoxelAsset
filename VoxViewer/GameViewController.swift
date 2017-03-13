@@ -33,6 +33,23 @@ class GameViewController : ViewController
 	
 	var _voxelFilenames:Array<String>?
 	var _meshFilenames:Array<String>?
+	private func loadFilenames()
+	{
+		let voxelFilepaths:Array<URL> = Bundle.main.urls(forResourcesWithExtension: "vox", subdirectory: nil) ?? []
+		_voxelFilenames = voxelFilepaths.map { $0.lastPathComponent }
+		
+		let fetchResourceURLsWithExtension = {(ext:String) -> [URL] in
+			Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: nil) ?? []
+		}
+		var meshFilepaths:Array<URL> = fetchResourceURLsWithExtension("abc")
+		meshFilepaths += fetchResourceURLsWithExtension("dae")
+		meshFilepaths += fetchResourceURLsWithExtension("fbx")
+		meshFilepaths += fetchResourceURLsWithExtension("obj")
+		meshFilepaths += fetchResourceURLsWithExtension("ply")
+		meshFilepaths += fetchResourceURLsWithExtension("stl")
+		_meshFilenames = meshFilepaths.map { $0.lastPathComponent }.sorted()
+	}
+	
 	@IBOutlet weak var filenameButton:Button!
 	
 	#if os(iOS)
@@ -60,12 +77,16 @@ class GameViewController : ViewController
 	var _modelMeshAsset:MDLAsset?
 	
 	
-	#if os(iOS)
-		override func viewDidLoad() {
-			super.awakeFromNib()
-			
-			setupScene()
-			
+	override func viewDidLoad()
+	{
+		super.viewDidLoad()
+		
+		loadFilenames()
+		#if os(macOS)
+			setupFilenamePopUpButton()
+		#endif
+		
+		#if os(iOS)
 			_ = {(b:UIButton, xSpacing:CGFloat) in
 				let xInsetAmount = xSpacing * 0.5
 				b.imageEdgeInsets = UIEdgeInsets(
@@ -87,12 +108,16 @@ class GameViewController : ViewController
 					right: b.contentEdgeInsets.right + xInsetAmount
 				)
 			}(self.filenameButton, 6.0)
-		}
-	#else
+		#endif
+		
+		setupScene()
+	}
+	
+	#if os(macOS)
 		override func awakeFromNib() {
-			super.viewDidLoad()
+			self.viewDidLoad()
 			
-			setupScene()
+			super.awakeFromNib()
 		}
 	#endif
 	
@@ -279,7 +304,9 @@ class GameViewController : ViewController
 		#if os(iOS)
 			self.filenameButton.setTitle(filenameWithSuffix, for: [])
 		#else
-			self.filenameButton.title = filenameWithSuffix
+			let index = _voxelFilenames!.index(of: filenameWithSuffix)!
+			let tag = (0 << 16) | (index & 0x0000ffff)
+			(self.filenameButton as! NSPopUpButton).selectItem(withTag: tag)
 		#endif
 	}
 	
@@ -353,7 +380,9 @@ class GameViewController : ViewController
 		#if os(iOS)
 			self.filenameButton.setTitle(filenameWithSuffix, for: [])
 		#else
-			self.filenameButton.title = filenameWithSuffix
+			let index = _meshFilenames!.index(of: filenameWithSuffix)!
+			let tag = (1 << 16) | (index & 0x0000ffff)
+			(self.filenameButton as! NSPopUpButton).selectItem(withTag: tag)
 		#endif
 	}
 	
@@ -491,20 +520,6 @@ class GameViewController : ViewController
 		
 		@IBAction func openFileSelector(_ sender:Button)
 		{
-			let voxelFilepaths:Array<URL> = Bundle.main.urls(forResourcesWithExtension: "vox", subdirectory: nil) ?? []
-			_voxelFilenames = voxelFilepaths.map { $0.lastPathComponent }
-			
-			let fetchResourceURLsWithExtension = {(ext:String) -> [URL] in
-				Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: nil) ?? []
-			}
-			var meshFilepaths:Array<URL> = fetchResourceURLsWithExtension("abc")
-			meshFilepaths += fetchResourceURLsWithExtension("dae")
-			meshFilepaths += fetchResourceURLsWithExtension("fbx")
-			meshFilepaths += fetchResourceURLsWithExtension("obj")
-			meshFilepaths += fetchResourceURLsWithExtension("ply")
-			meshFilepaths += fetchResourceURLsWithExtension("stl")
-			_meshFilenames = meshFilepaths.map { $0.lastPathComponent }.sorted()
-			
 			let canPerformSeque = self.shouldPerformSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
 			guard canPerformSeque else { return }
 			
@@ -541,6 +556,57 @@ class GameViewController : ViewController
 				
 				default:
 					return
+			}
+		}
+	#endif
+	
+	#if os(macOS)
+		private func setupFilenamePopUpButton()
+		{
+			let popUpButton = self.filenameButton as! NSPopUpButton
+			
+			popUpButton.removeAllItems()
+			popUpButton.autoenablesItems = false
+			
+			popUpButton.addItem(withTitle: "Voxel Models")
+			popUpButton.lastItem!.isEnabled = false
+			popUpButton.lastItem!.tag = -1
+			
+			_voxelFilenames!.enumerated().forEach{ index, filename in
+				popUpButton.addItem(withTitle: filename)
+				popUpButton.lastItem!.tag = (0 << 16) | (index & 0x0000ffff)
+			}
+			
+			popUpButton.addItem(withTitle: "Mesh Models")
+			popUpButton.lastItem!.isEnabled = false
+			popUpButton.lastItem!.tag = -1
+			
+			_meshFilenames!.enumerated().forEach{ index, filename in
+				popUpButton.addItem(withTitle: filename)
+				popUpButton.lastItem!.tag = (1 << 16) | (index & 0x0000ffff)
+			}
+		}
+		
+		@IBAction func selectFilename(_ sender:NSPopUpButton)
+		{
+			let tag = sender.selectedItem!.tag
+			let section = (tag & 0xffff0000) >> 16
+			let index = (tag & 0x0000ffff)
+			
+			let filename:String? = {
+				switch section {
+					case 0: return _voxelFilenames![index]
+					case 1: return _meshFilenames![index]
+					
+					default: return nil
+				}
+			}()
+			
+			switch section {
+				case 0: try! self.loadVoxelModelFile(named: filename!)
+				case 1: try! self.loadMeshModelFile(named: filename!)
+				
+				default: ()
 			}
 		}
 	#endif
