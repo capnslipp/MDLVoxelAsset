@@ -252,7 +252,7 @@ class GameViewController : ViewController
 			}
 		}()
 		
-		let glkPivot = GLKMatrix4MakeTranslation(modelCenterpoint.x, 0, modelCenterpoint.z)
+		let glkPivot = GLKMatrix4MakeTranslation(Float(modelCenterpoint.x), 0, Float(modelCenterpoint.z))
 		modelNode.pivot = SCNMatrix4(float4x4([
 			float4(glkPivot.m00, glkPivot.m01, glkPivot.m02, glkPivot.m03),
 			float4(glkPivot.m10, glkPivot.m11, glkPivot.m12, glkPivot.m13),
@@ -370,8 +370,8 @@ class GameViewController : ViewController
 			_modelMeshAsset = nil
 		}
 		
-		self.gameView!.layer.setNeedsDisplay()
-		self.gameView!.layer.displayIfNeeded()
+		(self.gameView!.layer as CALayer?)?.setNeedsDisplay()
+		(self.gameView!.layer as CALayer?)?.displayIfNeeded()
 	}
 	
 	func repositionCameraBasedOnModel(centerpoint:SCNVector3, boundingBox bbox:MDLAxisAlignedBoundingBox)
