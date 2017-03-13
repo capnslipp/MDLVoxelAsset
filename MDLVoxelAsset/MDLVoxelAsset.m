@@ -280,19 +280,69 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_options.generateAmbientOcclusion = parseBool(kMDLVoxelAssetOptionGenerateAmbientOcclusion, NO);
 }
 
+
+typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t verticesCount, NSData *vertexIndicesData, uint32_t vertexIndicesCount, MDLGeometryType geometryType);
+
 - (void)generateMesh
 {
-	if (_meshes == nil)
+	if (_meshes == nil) {
 		_meshes = [NSMutableArray new];
-	else
+	} else {
 		[_meshes removeAllObjects];
+		for (MDLObject *object in super.objects) {
+			[super removeObject:object];
+		}
+	}
 	
 	free(_verticesRawData);
 	_verticesRawData = NULL;
 	free(_vertexIndicesRawData);
 	_vertexIndicesRawData = NULL;
 	
+	GenerateMesh_AddMeshDataCallback addMeshDataCallback = ^(NSData *verticesData, uint32_t verticesCount, NSData *vertexIndicesData, uint32_t vertexIndicesCount, MDLGeometryType geometryType) {
+		MDLVertexDescriptor *meshDescriptor = [[MDLVertexDescriptor new] autorelease];
+		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributePosition format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, position) bufferIndex:0] autorelease]];
+		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeNormal format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, normal)  bufferIndex:0] autorelease]];
+		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeTextureCoordinate format:MDLVertexFormatFloat2 offset:offsetof(PerVertexMeshData, textureCoordinate) bufferIndex:0] autorelease]];
+		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeColor format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, color) bufferIndex:0] autorelease]];
+		meshDescriptor.layouts[0].stride = sizeof(PerVertexMeshData);
+		meshDescriptor.layouts[1].stride = sizeof(PerVertexMeshData);
+		meshDescriptor.layouts[2].stride = sizeof(PerVertexMeshData);
+		meshDescriptor.layouts[3].stride = sizeof(PerVertexMeshData);
+		
+		MDLMeshBufferData *vertexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeVertex data:verticesData];
+		MDLMeshBufferData *indexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeIndex data:vertexIndicesData];
+		
+		MDLSubmesh *submesh = [[MDLSubmesh alloc] initWithIndexBuffer:indexBufferData indexCount:vertexIndicesCount indexType:MDLIndexBitDepthUInt16 geometryType:geometryType material:nil];
+		
+		MDLMesh *mesh = [[MDLMesh alloc] initWithVertexBuffer:vertexBufferData vertexCount:verticesCount descriptor:meshDescriptor submeshes:@[ submesh ]];
+		[submesh release];
+		[vertexBufferData release];
+		[indexBufferData release];
+		
+		if (_options.generateAmbientOcclusion) {
+			BOOL aoSuccess = [mesh generateAmbientOcclusionVertexColorsWithQuality:0.1 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
+		}
+		
+		[_meshes addObject:mesh];
+		[super addObject:mesh];
+		[mesh release];
+	};
 	
+	switch (_options.meshGenerationMode) {
+		case MDLVoxelAssetMeshGenerationModeSkip:
+			return;
+		case MDLVoxelAssetMeshGenerationModeSceneKit:
+			[self generateSceneKitMesh:addMeshDataCallback];
+			break;
+		case MDLVoxelAssetMeshGenerationModeGreedyQuad:
+			[self generateGreedyQuadMesh:addMeshDataCallback];
+			break;
+	}
+}
+
+- (void)generateSceneKitMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
+{
 	if (_options.calculateShellLevels)
 		[self calculateShellLevels];
 	
@@ -395,36 +445,275 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 			freeWhenDone: NO
 		];
 		
-		MDLVertexDescriptor *meshDescriptor = [[MDLVertexDescriptor new] autorelease];
-		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributePosition format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, position) bufferIndex:0] autorelease]];
-		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeNormal format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, normal)  bufferIndex:0] autorelease]];
-		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeTextureCoordinate format:MDLVertexFormatFloat2 offset:offsetof(PerVertexMeshData, textureCoordinate) bufferIndex:0] autorelease]];
-		[meshDescriptor addOrReplaceAttribute:[[[MDLVertexAttribute alloc] initWithName:MDLVertexAttributeColor format:MDLVertexFormatFloat3 offset:offsetof(PerVertexMeshData, color) bufferIndex:0] autorelease]];
-		meshDescriptor.layouts[0].stride = sizeof(PerVertexMeshData);
-		meshDescriptor.layouts[1].stride = sizeof(PerVertexMeshData);
-		meshDescriptor.layouts[2].stride = sizeof(PerVertexMeshData);
-		meshDescriptor.layouts[3].stride = sizeof(PerVertexMeshData);
+		addMeshDataCallback(
+			verticesData, ((voxILimit - startVoxI) * kVerticesPerVoxel),
+			vertexIndicesData, ((voxILimit - startVoxI) * kVertexIndicesPerVoxel),
+			MDLGeometryTypeTriangles
+		);
 		
-		MDLMeshBufferData *vertexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeVertex data:verticesData];
-		MDLMeshBufferData *indexBufferData = [[MDLMeshBufferData alloc] initWithType:MDLMeshBufferTypeIndex data:vertexIndicesData];
 		[verticesData release];
 		[vertexIndicesData release];
-		
-		MDLSubmesh *submesh = [[MDLSubmesh alloc] initWithIndexBuffer:indexBufferData indexCount:((voxILimit - startVoxI) * kVertexIndicesPerVoxel) indexType:MDLIndexBitDepthUInt16 geometryType:MDLGeometryTypeTriangles material:nil];
-		
-		MDLMesh *mesh = [[MDLMesh alloc] initWithVertexBuffer:vertexBufferData vertexCount:((voxILimit - startVoxI) * kVerticesPerVoxel) descriptor:meshDescriptor submeshes:@[ submesh ]];
-		[submesh release];
-		[vertexBufferData release];
-		[indexBufferData release];
-		
-		if (_options.generateAmbientOcclusion) {
-			BOOL aoSuccess = [mesh generateAmbientOcclusionVertexColorsWithQuality:0.1 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
-		}
-		
-		[_meshes addObject:mesh];
-		[super addObject:mesh];
-		[mesh release];
 	}
+}
+
+- (void)generateGreedyQuadMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
+{
+	static const short kMagicaVoxelMaxDimension = 126;
+	
+	MagicaVoxelVoxData_XYZDimensions mvvoxDimensions = _mvvoxData.dimensions;
+	vector_short3 dimensions = _options.convertZUpToYUp ?
+		(vector_short3){ mvvoxDimensions.x, mvvoxDimensions.z, mvvoxDimensions.y } :
+		(vector_short3){ mvvoxDimensions.x, mvvoxDimensions.y, mvvoxDimensions.z };
+	NSParameterAssert(dimensions.x <= kMagicaVoxelMaxDimension && dimensions.y <= kMagicaVoxelMaxDimension && dimensions.z <= kMagicaVoxelMaxDimension);
+	
+	const uint32_t faceCountGuess = ( MAX(MAX(dimensions.x, dimensions.y), dimensions.z) + MIN(MIN(dimensions.x, dimensions.y), dimensions.z) ) * 2;
+	uint32_t faceCount = 0;
+	uint32_t faceCapacity = faceCountGuess;
+	
+	static uint32_t const kVerticesPerFace = 4;
+	static uint32_t const kVertexIndicesPerFace = 4;
+	
+	{
+		uint32_t vertexCount = faceCapacity * kVerticesPerFace;
+		_verticesRawData = malloc(vertexCount * sizeof(PerVertexMeshData));
+		#if DEBUG
+			memset(_verticesRawData, '\xFF', &_verticesRawData[faceCapacity] - &_verticesRawData[0]);
+		#endif
+		
+		uint32_t vertexIndexCount = faceCapacity * kVertexIndicesPerFace;
+		_vertexIndicesRawData = malloc(vertexIndexCount * sizeof(uint16_t));
+		#if DEBUG
+			memset(_vertexIndicesRawData, '\xFF', &_vertexIndicesRawData[faceCapacity] - &_vertexIndicesRawData[0]);
+		#endif
+	}
+	
+	uint8_t voxelPaletteIndices3DRawData[kMagicaVoxelMaxDimension][kMagicaVoxelMaxDimension][kMagicaVoxelMaxDimension] = { 0 };
+	
+	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
+	for (int32_t vI = _mvvoxData.voxels_count - 1; vI >= 0; --vI) {
+		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
+		MDLVoxelIndex voxelIndex = _voxelsRawData[vI];
+		voxelPaletteIndices3DRawData[voxelIndex.x][voxelIndex.y][voxelIndex.z] = voxVoxel->colorIndex;
+	}
+	
+	// Will contain the groups of matching voxel faces as we proceed through the chunk in 6 directions - once for each face.
+	uint8_t paletteIndexMask[kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension] = { 0 };
+
+	// The variable `isBackFace` will be TRUE on the first iteration and FALSE on the second - this allows us to track which direction the indices should run during creation of the quad.
+	// This loop runs twice, and the inner loop 3 times - totally 6 iterations - one for each voxel face.
+	for (signed char backFaceI = 1; backFaceI >= 0; --backFaceI)
+	{
+		BOOL isBackFace = (BOOL)backFaceI;
+		
+		// Sweep over the 3 dimensions - most of what follows is well described by Mikola Lysenko in his post - and is ported from his Javascript implementation.
+		// Where this implementation diverges, I've added commentary.
+		for (int axisI = 0; axisI < 3; axisI++)
+		{
+			vector_short3 x = { 0,0,0 };
+			
+			vector_short3 q = { 0,0,0 }; q[axisI] = 1;
+			
+			int u = (axisI + 1) % 3;
+			int v = (axisI + 2) % 3;
+			
+			// Move through the dimension from front to back
+			for (x[axisI] = -1; x[axisI] < dimensions[axisI];)
+			{
+				// Compute the `paletteIndexMask`
+				int n = 0;
+				
+				for (x[v] = 0; x[v] < dimensions[v]; x[v] += 1) {
+					for (x[u] = 0; x[u] < dimensions[u]; x[u] += 1) {
+						// Retrieve two voxel faces for comparison.
+						uint8_t voxelAPaletteIndex = 0;
+						if (x[axisI] >= 0) {
+							vector_short3 i = x;
+							voxelAPaletteIndex = voxelPaletteIndices3DRawData[i[0]][i[1]][i[2]];
+						}
+						uint8_t voxelBPaletteIndex = 0;
+						if (x[axisI] < dimensions[axisI] - 1) {
+							vector_short3 i = x + q;
+							voxelBPaletteIndex = voxelPaletteIndices3DRawData[i[0]][i[1]][i[2]];
+						}
+						
+						// Note that we're using the equals function in the voxel face class here, which lets the faces be compared based on any number of attributes.
+						// Also, we choose the face to add to the `paletteIndexMask` depending on whether we're moving through on a backface or not.
+						if (voxelAPaletteIndex != 0 && voxelBPaletteIndex != 0 && voxelAPaletteIndex == voxelBPaletteIndex)
+							paletteIndexMask[n] = 0;
+						else if (isBackFace)
+							paletteIndexMask[n] = voxelBPaletteIndex;
+						else // !isBackFace
+							paletteIndexMask[n] = voxelAPaletteIndex;
+						
+						n += 1;
+					}
+				}
+				
+				x[axisI] += 1;
+				
+				// Generate the mesh for the `paletteIndexMask`
+				n = 0;
+				
+				for (int vI = 0; vI < dimensions[v]; ++vI)
+				{
+					for (int uI = 0; uI < dimensions[u];)
+					{
+						uint8_t paletteIndex = paletteIndexMask[n];
+						
+						if (paletteIndex == 0) {
+							uI += 1;
+							n += 1;
+							continue;
+						}
+						
+						// Compute the quad width
+						int width = 1;
+						while (uI + width < dimensions[u]) {
+							uint8_t checkPaletteIndex = paletteIndexMask[n + width];
+							if (checkPaletteIndex != paletteIndex)
+								break;
+							
+							width += 1;
+						}
+						
+						// Compute quad height
+						int height = 1;
+						while (vI + height < dimensions[v]) {
+							for (int uCheckI = 0; uCheckI < width; ++uCheckI) {
+								uint8_t checkPaletteIndex = paletteIndexMask[n + (height * dimensions[u]) + uCheckI];
+								if (checkPaletteIndex != paletteIndex)
+									goto breakComputeHeight;
+							}
+							
+							height += 1;
+						}
+						breakComputeHeight: ;
+						
+						// Add quad
+						
+						if (faceCount == faceCapacity) {
+							uint32_t oldFaceCapacity = faceCapacity;
+							faceCapacity += faceCountGuess;
+							
+							uint32_t vertexCount = faceCapacity * kVerticesPerFace;
+							_verticesRawData = realloc(_verticesRawData, vertexCount * sizeof(PerVertexMeshData));
+							#if DEBUG
+								memset(&_verticesRawData[oldFaceCapacity], '\xFF', &_verticesRawData[faceCapacity] - &_verticesRawData[oldFaceCapacity]);
+							#endif
+							
+							uint32_t vertexIndexCount = faceCapacity * kVertexIndicesPerFace;
+							_vertexIndicesRawData = realloc(_vertexIndicesRawData, vertexIndexCount * sizeof(uint16_t));
+							#if DEBUG
+								memset(&_vertexIndicesRawData[oldFaceCapacity], '\xFF', &_vertexIndicesRawData[faceCapacity] - &_vertexIndicesRawData[oldFaceCapacity]);
+							#endif
+						}
+						
+						uint32_t faceI = faceCount;
+						faceCount += 1;
+						
+						x[u] = uI;
+						x[v] = vI;
+						
+						vector_short3 uDelta = { 0, 0, 0 }; uDelta[u] = width;
+						
+						vector_short3 vDelta = { 0, 0, 0 }; vDelta[v] = height;
+						
+						// Call the quad function in order to render a merged quad in the scene.
+						// Passing `paletteIndex` to the function, which is an instance of the VoxelFace class containing all the attributes of the face - which allows for variables to be passed to shaders - for example lighting values used to create ambient occlusion.
+						{
+							uint32_t baseVertI = faceI * kVerticesPerFace;
+							uint32_t baseVertIndexI = faceI * kVertexIndicesPerFace;
+							
+							vector_float3 normalData = { 0.0 }; normalData[axisI] = isBackFace ? 1.0 : -1.0;
+							
+							Color *color = _paletteColors[paletteIndex];
+							CGFloat color_cgArray[4];
+							[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:&color_cgArray[3]];
+							vector_float3 colorData = { color_cgArray[0], color_cgArray[1], color_cgArray[2] };
+							
+							_verticesRawData[baseVertI + 0] = (PerVertexMeshData){
+								{ // position
+									x[0],
+									x[1],
+									x[2]
+								},
+								normalData,
+								{ 0.0, 0.0 }, // textureCoordinate
+								colorData,
+							};
+							_verticesRawData[baseVertI + 1] = (PerVertexMeshData){
+								{ // position
+									x[0] + uDelta[0],
+									x[1] + uDelta[1],
+									x[2] + uDelta[2]
+								},
+								normalData,
+								{ 0.0, 0.0 }, // textureCoordinate
+								colorData,
+							};
+							_verticesRawData[baseVertI + 2] = (PerVertexMeshData){
+								{ // position
+									x[0] + uDelta[0] + vDelta[0],
+									x[1] + uDelta[1] + vDelta[1],
+									x[2] + uDelta[2] + vDelta[2]
+								},
+								normalData,
+								{ 0.0, 0.0 }, // textureCoordinate
+								colorData,
+							};
+							_verticesRawData[baseVertI + 3] = (PerVertexMeshData){
+								{ // position
+									x[0] + vDelta[0],
+									x[1] + vDelta[1],
+									x[2] + vDelta[2]
+								},
+								normalData,
+								{ 0.0, 0.0 }, // textureCoordinate
+								colorData,
+							};
+							
+							if (isBackFace) {
+								_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 0;
+								_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
+								_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
+								_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 3;
+							} else {
+								_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 3;
+								_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 2;
+								_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 1;
+								_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 0;
+							}
+						}
+						
+						// Zero out the `paletteIndexMask`
+						for (int vZeroingI = height - 1; vZeroingI >= 0; --vZeroingI)
+							memset(&paletteIndexMask[n + (vZeroingI * dimensions[u])], 0, width);
+						
+						// Increment the counters and continue
+						uI += width;
+						n += width;
+					} // `uI`
+				} // `vI`
+			} // `x[axisI]`
+		} // `axisI`
+	} // `backFaceI`
+	
+	// @note: We hang onto `_verticesRawData` & `_vertexIndicesRawData` and free them ourselves since they're probably be oversized (`faceCapacity > faceCount`) and the `NSData`s only address the length we used (so no more data is sent to the GPU than necessary).
+	uint32_t vertexCount = faceCount * kVerticesPerFace;
+	NSData *verticesData = [[NSData alloc] initWithBytesNoCopy: _verticesRawData
+		length: vertexCount * sizeof(PerVertexMeshData)
+		freeWhenDone: NO
+	];
+	uint32_t vertexIndexCount = faceCount * kVertexIndicesPerFace;
+	NSData *vertexIndicesData = [[NSData alloc] initWithBytesNoCopy: _vertexIndicesRawData
+		length: vertexIndexCount * sizeof(uint16_t)
+		freeWhenDone: NO
+	];
+	
+	addMeshDataCallback(verticesData, vertexCount, vertexIndicesData, vertexIndexCount, MDLGeometryTypeQuads);
+	
+	[verticesData release];
+	[vertexIndicesData release];
 }
 
 - (void)dealloc

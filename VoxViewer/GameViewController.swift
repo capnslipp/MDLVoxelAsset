@@ -457,6 +457,7 @@ class GameViewController : ViewController
 			kMDLVoxelAssetOptionCalculateShellLevels: false,
 			kMDLVoxelAssetOptionSkipNonZeroShellMesh: false,
 			kMDLVoxelAssetOptionConvertZUpToYUp: true,
+			kMDLVoxelAssetOptionMeshGenerationMode: MDLVoxelAssetMeshGenerationMode.greedyQuad.rawValue,
 		])
 		return asset
 	}
