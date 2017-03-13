@@ -335,6 +335,9 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		case MDLVoxelAssetMeshGenerationModeSceneKit:
 			[self generateSceneKitMesh:addMeshDataCallback];
 			break;
+		case MDLVoxelAssetMeshGenerationModeGreedyTri:
+			[self generateGreedyTriMesh:addMeshDataCallback];
+			break;
 		case MDLVoxelAssetMeshGenerationModeGreedyQuad:
 			[self generateGreedyQuadMesh:addMeshDataCallback];
 			break;
@@ -458,6 +461,148 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 
 - (void)generateGreedyQuadMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
 {
+	[self generateGreedyMesh:^(NSData *verticesData, uint32_t verticesCount, NSData *vertexIndicesData, uint32_t vertexIndicesCount, MDLGeometryType _) {
+			addMeshDataCallback(verticesData, verticesCount, vertexIndicesData, vertexIndicesCount, MDLGeometryTypeQuads);
+		}
+		verticesPerFace: 4
+		vertexIndicesPerFace: 4
+		addVerticesRawDataCallback: ^(uint32_t baseVertI, vector_short3 basePosition, vector_short3 positionUDelta, vector_short3 positionVDelta, vector_float3 normalData, vector_float3 colorData) {
+			
+			_verticesRawData[baseVertI + 0] = (PerVertexMeshData){
+				{ // position
+					basePosition[0],
+					basePosition[1],
+					basePosition[2]
+				},
+				normalData,
+				{ 0.0, 0.0 }, // textureCoordinate
+				colorData,
+			};
+			_verticesRawData[baseVertI + 1] = (PerVertexMeshData){
+				{ // position
+					basePosition[0] + positionUDelta[0],
+					basePosition[1] + positionUDelta[1],
+					basePosition[2] + positionUDelta[2]
+				},
+				normalData,
+				{ 0.0, 0.0 }, // textureCoordinate
+				colorData,
+			};
+			_verticesRawData[baseVertI + 2] = (PerVertexMeshData){
+				{ // position
+					basePosition[0] + positionUDelta[0] + positionVDelta[0],
+					basePosition[1] + positionUDelta[1] + positionVDelta[1],
+					basePosition[2] + positionUDelta[2] + positionVDelta[2]
+				},
+				normalData,
+				{ 0.0, 0.0 }, // textureCoordinate
+				colorData,
+			};
+			_verticesRawData[baseVertI + 3] = (PerVertexMeshData){
+				{ // position
+					basePosition[0] + positionVDelta[0],
+					basePosition[1] + positionVDelta[1],
+					basePosition[2] + positionVDelta[2]
+				},
+				normalData,
+				{ 0.0, 0.0 }, // textureCoordinate
+				colorData,
+			};
+		}
+		addVertexIndicesRawDataCallback: ^(uint32_t baseVertIndexI, uint32_t baseVertI, BOOL isBackFace) {
+			if (!isBackFace) {
+				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 0;
+				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
+				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
+				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 3;
+			} else {
+				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 3;
+				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 2;
+				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 1;
+				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 0;
+			}
+		}
+	];
+}
+
+- (void)generateGreedyTriMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
+{
+	[self generateGreedyMesh:^(NSData *verticesData, uint32_t verticesCount, NSData *vertexIndicesData, uint32_t vertexIndicesCount, MDLGeometryType _) {
+			addMeshDataCallback(verticesData, verticesCount, vertexIndicesData, vertexIndicesCount, MDLGeometryTypeQuads);
+		}
+		verticesPerFace: 4
+		vertexIndicesPerFace: 6
+		addVerticesRawDataCallback: ^(uint32_t baseVertI, vector_short3 basePosition, vector_short3 positionUDelta, vector_short3 positionVDelta, vector_float3 normalData, vector_float3 colorData) {
+			_verticesRawData[baseVertI + 0] = (PerVertexMeshData){
+				{ // position
+					basePosition[0],
+					basePosition[1],
+					basePosition[2]
+				},
+				normalData,
+				{ 0.0, 0.0 }, // textureCoordinate
+				colorData,
+			};
+			_verticesRawData[baseVertI + 1] = (PerVertexMeshData){
+				{ // position
+					basePosition[0] + positionUDelta[0],
+					basePosition[1] + positionUDelta[1],
+					basePosition[2] + positionUDelta[2]
+				},
+				normalData,
+				{ 0.0, 0.0 }, // textureCoordinate
+				colorData,
+			};
+			_verticesRawData[baseVertI + 2] = (PerVertexMeshData){
+				{ // position
+					basePosition[0] + positionUDelta[0] + positionVDelta[0],
+					basePosition[1] + positionUDelta[1] + positionVDelta[1],
+					basePosition[2] + positionUDelta[2] + positionVDelta[2]
+				},
+				normalData,
+				{ 0.0, 0.0 }, // textureCoordinate
+				colorData,
+			};
+			_verticesRawData[baseVertI + 3] = (PerVertexMeshData){
+				{ // position
+					basePosition[0] + positionVDelta[0],
+					basePosition[1] + positionVDelta[1],
+					basePosition[2] + positionVDelta[2]
+				},
+				normalData,
+				{ 0.0, 0.0 }, // textureCoordinate
+				colorData,
+			};
+		}
+		addVertexIndicesRawDataCallback: ^(uint32_t baseVertIndexI, uint32_t baseVertI, BOOL isBackFace) {
+			if (!isBackFace) {
+				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 0;
+				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
+				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
+				
+				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 0;
+				_vertexIndicesRawData[baseVertIndexI + 4] = baseVertI + 2;
+				_vertexIndicesRawData[baseVertIndexI + 5] = baseVertI + 3;
+			} else {
+				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 2;
+				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
+				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 0;
+				
+				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 3;
+				_vertexIndicesRawData[baseVertIndexI + 4] = baseVertI + 2;
+				_vertexIndicesRawData[baseVertIndexI + 5] = baseVertI + 0;
+			}
+		}
+	];
+}
+
+typedef void(^GenerateGreedyMesh_AddVerticesRawDataCallback)(uint32_t baseVertI, vector_short3 basePosition, vector_short3 positionUDelta, vector_short3 positionVDelta, vector_float3 normalData, vector_float3 colorData);
+typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseVertIndexI, uint32_t baseVertI, BOOL isBackFace);
+
+- (void)generateGreedyMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
+	verticesPerFace:(uint32_t)verticesPerFace vertexIndicesPerFace:(uint32_t)vertexIndicesPerFace
+	addVerticesRawDataCallback:(GenerateGreedyMesh_AddVerticesRawDataCallback)addVerticesRawDataCallback addVertexIndicesRawDataCallback:(GenerateGreedyMesh_AddVertexIndicesRawDataCallback)addVertexIndicesRawDataCallback
+{
 	static const short kMagicaVoxelMaxDimension = 126;
 	
 	MagicaVoxelVoxData_XYZDimensions mvvoxDimensions = _mvvoxData.dimensions;
@@ -470,17 +615,14 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 	uint32_t faceCount = 0;
 	uint32_t faceCapacity = faceCountGuess;
 	
-	static uint32_t const kVerticesPerFace = 4;
-	static uint32_t const kVertexIndicesPerFace = 4;
-	
 	{
-		uint32_t vertexCount = faceCapacity * kVerticesPerFace;
+		uint32_t vertexCount = faceCapacity * verticesPerFace;
 		_verticesRawData = malloc(vertexCount * sizeof(PerVertexMeshData));
 		#if DEBUG
 			memset(_verticesRawData, '\xFF', &_verticesRawData[faceCapacity] - &_verticesRawData[0]);
 		#endif
 		
-		uint32_t vertexIndexCount = faceCapacity * kVertexIndicesPerFace;
+		uint32_t vertexIndexCount = faceCapacity * vertexIndicesPerFace;
 		_vertexIndicesRawData = malloc(vertexIndexCount * sizeof(uint16_t));
 		#if DEBUG
 			memset(_vertexIndicesRawData, '\xFF', &_vertexIndicesRawData[faceCapacity] - &_vertexIndicesRawData[0]);
@@ -607,13 +749,13 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 							uint32_t oldFaceCapacity = faceCapacity;
 							faceCapacity += faceCountGuess;
 							
-							uint32_t vertexCount = faceCapacity * kVerticesPerFace;
+							uint32_t vertexCount = faceCapacity * verticesPerFace;
 							_verticesRawData = realloc(_verticesRawData, vertexCount * sizeof(PerVertexMeshData));
 							#if DEBUG
 								memset(&_verticesRawData[oldFaceCapacity], '\xFF', &_verticesRawData[faceCapacity] - &_verticesRawData[oldFaceCapacity]);
 							#endif
 							
-							uint32_t vertexIndexCount = faceCapacity * kVertexIndicesPerFace;
+							uint32_t vertexIndexCount = faceCapacity * vertexIndicesPerFace;
 							_vertexIndicesRawData = realloc(_vertexIndicesRawData, vertexIndexCount * sizeof(uint16_t));
 							#if DEBUG
 								memset(&_vertexIndicesRawData[oldFaceCapacity], '\xFF', &_vertexIndicesRawData[faceCapacity] - &_vertexIndicesRawData[oldFaceCapacity]);
@@ -627,14 +769,13 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 						x[v] = vI;
 						
 						vector_short3 uDelta = { 0, 0, 0 }; uDelta[u] = width;
-						
 						vector_short3 vDelta = { 0, 0, 0 }; vDelta[v] = height;
 						
 						// Call the quad function in order to render a merged quad in the scene.
 						// Passing `paletteIndex` to the function, which is an instance of the VoxelFace class containing all the attributes of the face - which allows for variables to be passed to shaders - for example lighting values used to create ambient occlusion.
 						{
-							uint32_t baseVertI = faceI * kVerticesPerFace;
-							uint32_t baseVertIndexI = faceI * kVertexIndicesPerFace;
+							uint32_t baseVertI = faceI * verticesPerFace;
+							uint32_t baseVertIndexI = faceI * vertexIndicesPerFace;
 							
 							vector_float3 normalData = { 0.0 }; normalData[axisI] = isBackFace ? 1.0 : -1.0;
 							
@@ -643,58 +784,9 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 							[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:&color_cgArray[3]];
 							vector_float3 colorData = { color_cgArray[0], color_cgArray[1], color_cgArray[2] };
 							
-							_verticesRawData[baseVertI + 0] = (PerVertexMeshData){
-								{ // position
-									x[0],
-									x[1],
-									x[2]
-								},
-								normalData,
-								{ 0.0, 0.0 }, // textureCoordinate
-								colorData,
-							};
-							_verticesRawData[baseVertI + 1] = (PerVertexMeshData){
-								{ // position
-									x[0] + uDelta[0],
-									x[1] + uDelta[1],
-									x[2] + uDelta[2]
-								},
-								normalData,
-								{ 0.0, 0.0 }, // textureCoordinate
-								colorData,
-							};
-							_verticesRawData[baseVertI + 2] = (PerVertexMeshData){
-								{ // position
-									x[0] + uDelta[0] + vDelta[0],
-									x[1] + uDelta[1] + vDelta[1],
-									x[2] + uDelta[2] + vDelta[2]
-								},
-								normalData,
-								{ 0.0, 0.0 }, // textureCoordinate
-								colorData,
-							};
-							_verticesRawData[baseVertI + 3] = (PerVertexMeshData){
-								{ // position
-									x[0] + vDelta[0],
-									x[1] + vDelta[1],
-									x[2] + vDelta[2]
-								},
-								normalData,
-								{ 0.0, 0.0 }, // textureCoordinate
-								colorData,
-							};
+							addVerticesRawDataCallback(baseVertI, x, uDelta, vDelta, normalData, colorData);
 							
-							if (isBackFace) {
-								_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 0;
-								_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
-								_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
-								_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 3;
-							} else {
-								_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 3;
-								_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 2;
-								_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 1;
-								_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 0;
-							}
+							addVertexIndicesRawDataCallback(baseVertIndexI, baseVertI, isBackFace);
 						}
 						
 						// Zero out the `paletteIndexMask`
@@ -713,18 +805,18 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 	free(voxelPaletteIndices3DRawData);
 	
 	// @note: We hang onto `_verticesRawData` & `_vertexIndicesRawData` and free them ourselves since they're probably be oversized (`faceCapacity > faceCount`) and the `NSData`s only address the length we used (so no more data is sent to the GPU than necessary).
-	uint32_t vertexCount = faceCount * kVerticesPerFace;
+	uint32_t vertexCount = faceCount * verticesPerFace;
 	NSData *verticesData = [[NSData alloc] initWithBytesNoCopy: _verticesRawData
 		length: vertexCount * sizeof(PerVertexMeshData)
 		freeWhenDone: NO
 	];
-	uint32_t vertexIndexCount = faceCount * kVertexIndicesPerFace;
+	uint32_t vertexIndexCount = faceCount * vertexIndicesPerFace;
 	NSData *vertexIndicesData = [[NSData alloc] initWithBytesNoCopy: _vertexIndicesRawData
 		length: vertexIndexCount * sizeof(uint16_t)
 		freeWhenDone: NO
 	];
 	
-	addMeshDataCallback(verticesData, vertexCount, vertexIndicesData, vertexIndexCount, MDLGeometryTypeQuads);
+	addMeshDataCallback(verticesData, vertexCount, vertexIndicesData, vertexIndexCount, 0);
 	
 	[verticesData release];
 	[vertexIndicesData release];
