@@ -478,6 +478,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 				{ 0.0, 0.0 }, // textureCoordinate
 				colorData,
 			};
+			printf("vert #%d (1/4): (%f, %f, %f)\n", (baseVertI + 0), _verticesRawData[baseVertI + 0].position.x, _verticesRawData[baseVertI + 0].position.y, _verticesRawData[baseVertI + 0].position.z);
 			_verticesRawData[baseVertI + 1] = (PerVertexMeshData){
 				{ // position
 					basePosition[0] + positionUDelta[0],
@@ -488,6 +489,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 				{ 0.0, 0.0 }, // textureCoordinate
 				colorData,
 			};
+			printf("vert #%d (2/4): (%f, %f, %f)\n", (baseVertI + 1), _verticesRawData[baseVertI + 1].position.x, _verticesRawData[baseVertI + 1].position.y, _verticesRawData[baseVertI + 1].position.z);
 			_verticesRawData[baseVertI + 2] = (PerVertexMeshData){
 				{ // position
 					basePosition[0] + positionUDelta[0] + positionVDelta[0],
@@ -498,6 +500,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 				{ 0.0, 0.0 }, // textureCoordinate
 				colorData,
 			};
+			printf("vert #%d (3/4): (%f, %f, %f)\n", (baseVertI + 2), _verticesRawData[baseVertI + 2].position.x, _verticesRawData[baseVertI + 2].position.y, _verticesRawData[baseVertI + 2].position.z);
 			_verticesRawData[baseVertI + 3] = (PerVertexMeshData){
 				{ // position
 					basePosition[0] + positionVDelta[0],
@@ -508,6 +511,9 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 				{ 0.0, 0.0 }, // textureCoordinate
 				colorData,
 			};
+			printf("vert #%d (4/4): (%f, %f, %f)\n", (baseVertI + 3), _verticesRawData[baseVertI + 3].position.x, _verticesRawData[baseVertI + 3].position.y, _verticesRawData[baseVertI + 3].position.z);
+			
+			printf("\n");
 		}
 		addVertexIndicesRawDataCallback: ^(uint32_t baseVertIndexI, uint32_t baseVertI, BOOL isBackFace) {
 			if (!isBackFace) {
