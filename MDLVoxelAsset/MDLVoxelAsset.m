@@ -487,13 +487,17 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		#endif
 	}
 	
-	uint8_t voxelPaletteIndices3DRawData[kMagicaVoxelMaxDimension][kMagicaVoxelMaxDimension][kMagicaVoxelMaxDimension] = { 0 };
+	uint8_t *voxelPaletteIndices3DRawData = calloc(kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension, sizeof(uint8_t));
 	
 	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
 	for (int32_t vI = _mvvoxData.voxels_count - 1; vI >= 0; --vI) {
 		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
 		MDLVoxelIndex voxelIndex = _voxelsRawData[vI];
-		voxelPaletteIndices3DRawData[voxelIndex.x][voxelIndex.y][voxelIndex.z] = voxVoxel->colorIndex;
+		voxelPaletteIndices3DRawData[
+			(voxelIndex.x * kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension) +
+			(voxelIndex.y * kMagicaVoxelMaxDimension) +
+			voxelIndex.z
+		] = voxVoxel->colorIndex;
 	}
 	
 	// Will contain the groups of matching voxel faces as we proceed through the chunk in 6 directions - once for each face.
@@ -528,12 +532,20 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 						uint8_t voxelAPaletteIndex = 0;
 						if (x[axisI] >= 0) {
 							vector_short3 i = x;
-							voxelAPaletteIndex = voxelPaletteIndices3DRawData[i[0]][i[1]][i[2]];
+							voxelAPaletteIndex = voxelPaletteIndices3DRawData[
+								(i.x * kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension) +
+								(i.y * kMagicaVoxelMaxDimension) +
+								i.z
+							];
 						}
 						uint8_t voxelBPaletteIndex = 0;
 						if (x[axisI] < dimensions[axisI] - 1) {
 							vector_short3 i = x + q;
-							voxelBPaletteIndex = voxelPaletteIndices3DRawData[i[0]][i[1]][i[2]];
+							voxelBPaletteIndex = voxelPaletteIndices3DRawData[
+								(i.x * kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension) +
+								(i.y * kMagicaVoxelMaxDimension) +
+								i.z
+							];
 						}
 						
 						// Note that we're using the equals function in the voxel face class here, which lets the faces be compared based on any number of attributes.
@@ -697,6 +709,8 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 			} // `x[axisI]`
 		} // `axisI`
 	} // `backFaceI`
+	
+	free(voxelPaletteIndices3DRawData);
 	
 	// @note: We hang onto `_verticesRawData` & `_vertexIndicesRawData` and free them ourselves since they're probably be oversized (`faceCapacity > faceCount`) and the `NSData`s only address the length we used (so no more data is sent to the GPU than necessary).
 	uint32_t vertexCount = faceCount * kVerticesPerFace;
