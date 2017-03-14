@@ -157,7 +157,10 @@ class GameViewController : ViewController
 		lightNode.light = {
 			let l = SCNLight()
 			l.type = .spot
-			l.color = Color(hue: 60.0 / 360.0, saturation: 0.2, brightness: 1.0, alpha: 1.0)
+			l.color = Color(hue: 60.0 / 360.0, saturation: 0.05, brightness: 1.0, alpha: 1.0)
+			if #available(iOS 10.0, tvOS 10.0, macOS 10.12, *) {
+				l.intensity = 1500
+			}
 			l.spotOuterAngle = 135
 			l.spotInnerAngle = l.spotOuterAngle * 0.9
 			l.castsShadow = true
@@ -177,7 +180,7 @@ class GameViewController : ViewController
 		ambientLightNode.light = {
 			let l = SCNLight()
 			l.type = .ambient
-			l.color = Color(hue: 240.0 / 360.0, saturation: 1.0, brightness: 0.1, alpha: 1.0)
+			l.color = Color(hue: 210.0 / 360.0, saturation: 0.4, brightness: 0.4, alpha: 1.0)
 			return l
 		}()
 		scene.rootNode.addChildNode(ambientLightNode)
