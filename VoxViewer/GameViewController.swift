@@ -240,6 +240,12 @@ class GameViewController : ViewController
 	
 	func loadVoxelModelFile(named filename:String) throws
 	{
+		enum Error : Swift.Error {
+			case assetIsEmpty
+			
+			func trap() { try! { throw self }() }
+		}
+		
 		removeExistingModel()
 		
 		let filenameWithSuffix = filename.hasSuffix(".vox") ? filename : "\(filename).vox"
@@ -260,7 +266,7 @@ class GameViewController : ViewController
 			return MDLAxisAlignedBoundingBox(maxBounds: (centerpoint + halfExtents), minBounds: (centerpoint - halfExtents))
 		}()
 		
-		let modelNode:SCNNode = {
+		let modelNode:SCNNode = try! {
 			if (modelAsset.count == 1) {
 				return SCNNode(mdlObject: modelAsset[0]!)
 			}
@@ -272,8 +278,7 @@ class GameViewController : ViewController
 				return baseNode
 			}
 			else {
-				return SCNNode()
-				// @todo: throw
+				throw Error.assetIsEmpty
 			}
 		}()
 		
