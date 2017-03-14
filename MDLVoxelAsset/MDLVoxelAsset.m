@@ -130,7 +130,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	uint16_t *_vertexIndicesRawData;
 }
 
-@synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors;
+@synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors, meshes=_meshes;
 
 - (uint32_t)voxelCount {
 	return _mvvoxData.voxels_count;

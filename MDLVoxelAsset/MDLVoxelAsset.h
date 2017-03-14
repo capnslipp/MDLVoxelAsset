@@ -86,6 +86,8 @@ FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion;
 
 - (void)calculateShellLevels;
 
+@property (nonatomic, retain, readonly) NSArray<MDLMesh*> *meshes;
+
 
 #pragma mark Sub-MDLObject Access
 
