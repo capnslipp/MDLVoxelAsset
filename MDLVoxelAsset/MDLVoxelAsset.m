@@ -588,6 +588,24 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 				},
 				normalData, textureCoordinateData, colorData,
 			};
+			
+			printf("v %f %f %f\n", _verticesRawData[baseVertI + 0].position.x, _verticesRawData[baseVertI + 0].position.y, _verticesRawData[baseVertI + 0].position.z);
+			printf("v %f %f %f\n", _verticesRawData[baseVertI + 1].position.x, _verticesRawData[baseVertI + 1].position.y, _verticesRawData[baseVertI + 1].position.z);
+			printf("v %f %f %f\n", _verticesRawData[baseVertI + 2].position.x, _verticesRawData[baseVertI + 2].position.y, _verticesRawData[baseVertI + 2].position.z);
+			printf("v %f %f %f\n", _verticesRawData[baseVertI + 3].position.x, _verticesRawData[baseVertI + 3].position.y, _verticesRawData[baseVertI + 3].position.z);
+			printf("\n");
+			
+			printf("n %f %f %f\n", _verticesRawData[baseVertI + 0].normal.x, _verticesRawData[baseVertI + 0].normal.y, _verticesRawData[baseVertI + 0].normal.z);
+			printf("n %f %f %f\n", _verticesRawData[baseVertI + 1].normal.x, _verticesRawData[baseVertI + 1].normal.y, _verticesRawData[baseVertI + 1].normal.z);
+			printf("n %f %f %f\n", _verticesRawData[baseVertI + 2].normal.x, _verticesRawData[baseVertI + 2].normal.y, _verticesRawData[baseVertI + 2].normal.z);
+			printf("n %f %f %f\n", _verticesRawData[baseVertI + 3].normal.x, _verticesRawData[baseVertI + 3].normal.y, _verticesRawData[baseVertI + 3].normal.z);
+			printf("\n");
+			
+			printf("vt %f %f\n", _verticesRawData[baseVertI + 0].textureCoordinate.x, _verticesRawData[baseVertI + 0].textureCoordinate.y);
+			printf("vt %f %f\n", _verticesRawData[baseVertI + 1].textureCoordinate.x, _verticesRawData[baseVertI + 1].textureCoordinate.y);
+			printf("vt %f %f\n", _verticesRawData[baseVertI + 2].textureCoordinate.x, _verticesRawData[baseVertI + 2].textureCoordinate.y);
+			printf("vt %f %f\n", _verticesRawData[baseVertI + 3].textureCoordinate.x, _verticesRawData[baseVertI + 3].textureCoordinate.y);
+			printf("\n");
 		}
 		addVertexIndicesRawDataCallback: ^(uint32_t baseVertIndexI, uint32_t baseVertI, BOOL isBackFace) {
 			if (!isBackFace) {
@@ -595,17 +613,41 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
 				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
 				
+				printf("f ");
+				printf("%d/%d/%d ", (baseVertI + 0) + 1, (baseVertI + 0) + 1, (baseVertI + 0) + 1);
+				printf("%d/%d/%d ", (baseVertI + 1) + 1, (baseVertI + 1) + 1, (baseVertI + 1) + 1);
+				printf("%d/%d/%d ", (baseVertI + 2) + 1, (baseVertI + 2) + 1, (baseVertI + 2) + 1);
+				printf("\n");
+				
 				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 0;
 				_vertexIndicesRawData[baseVertIndexI + 4] = baseVertI + 2;
 				_vertexIndicesRawData[baseVertIndexI + 5] = baseVertI + 3;
+				
+				printf("f ");
+				printf("%d/%d/%d ", (baseVertI + 0) + 1, (baseVertI + 0) + 1, (baseVertI + 0) + 1);
+				printf("%d/%d/%d ", (baseVertI + 2) + 1, (baseVertI + 2) + 1, (baseVertI + 2) + 1);
+				printf("%d/%d/%d ", (baseVertI + 3) + 1, (baseVertI + 3) + 1, (baseVertI + 3) + 1);
+				printf("\n\n");
 			} else {
 				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 2;
 				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
 				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 0;
 				
+				printf("f ");
+				printf("%d/%d/%d ", (baseVertI + 2) + 1, (baseVertI + 2) + 1, (baseVertI + 2) + 1);
+				printf("%d/%d/%d ", (baseVertI + 1) + 1, (baseVertI + 1) + 1, (baseVertI + 1) + 1);
+				printf("%d/%d/%d ", (baseVertI + 0) + 1, (baseVertI + 0) + 1, (baseVertI + 0) + 1);
+				printf("\n");
+				
 				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 3;
 				_vertexIndicesRawData[baseVertIndexI + 4] = baseVertI + 2;
 				_vertexIndicesRawData[baseVertIndexI + 5] = baseVertI + 0;
+				
+				printf("f ");
+				printf("%d/%d/%d ", (baseVertI + 3) + 1, (baseVertI + 3) + 1, (baseVertI + 3) + 1);
+				printf("%d/%d/%d ", (baseVertI + 2) + 1, (baseVertI + 2) + 1, (baseVertI + 2) + 1);
+				printf("%d/%d/%d ", (baseVertI + 0) + 1, (baseVertI + 0) + 1, (baseVertI + 0) + 1);
+				printf("\n\n");
 			}
 		}
 	];
