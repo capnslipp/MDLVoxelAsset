@@ -783,7 +783,7 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 							uint32_t baseVertI = faceI * verticesPerFace;
 							uint32_t baseVertIndexI = faceI * vertexIndicesPerFace;
 							
-							vector_float3 normalData = { 0.0 }; normalData[axisI] = isBackFace ? 1.0 : -1.0;
+							vector_float3 normalData = { 0.0 }; normalData[axisI] = isBackFace ? -1.0 : +1.0;
 							
 							Color *color = _paletteColors[paletteIndex];
 							CGFloat color_cgArray[4];
