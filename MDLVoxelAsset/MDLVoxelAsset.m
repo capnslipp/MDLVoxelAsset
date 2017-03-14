@@ -618,15 +618,15 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 		#endif
 	}
 	
-	uint8_t *voxelPaletteIndices3DRawData = calloc(kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension, sizeof(uint8_t));
+	uint8_t *voxelPaletteIndices3DRawData = calloc(dimensions.x * dimensions.y * dimensions.z, sizeof(uint8_t));
 	
 	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
 	for (int32_t vI = _mvvoxData.voxels_count - 1; vI >= 0; --vI) {
 		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
 		MDLVoxelIndex voxelIndex = _voxelsRawData[vI];
 		voxelPaletteIndices3DRawData[
-			(voxelIndex.x * kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension) +
-			(voxelIndex.y * kMagicaVoxelMaxDimension) +
+			(voxelIndex.x * dimensions.y * dimensions.z) +
+			(voxelIndex.y * dimensions.z) +
 			voxelIndex.z
 		] = voxVoxel->colorIndex;
 	}
@@ -664,8 +664,8 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 						if (x[axisI] >= 0) {
 							vector_short3 i = x;
 							voxelAPaletteIndex = voxelPaletteIndices3DRawData[
-								(i.x * kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension) +
-								(i.y * kMagicaVoxelMaxDimension) +
+								(i.x * dimensions.y * dimensions.z) +
+								(i.y * dimensions.z) +
 								i.z
 							];
 						}
@@ -673,8 +673,8 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 						if (x[axisI] < dimensions[axisI] - 1) {
 							vector_short3 i = x + q;
 							voxelBPaletteIndex = voxelPaletteIndices3DRawData[
-								(i.x * kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension) +
-								(i.y * kMagicaVoxelMaxDimension) +
+								(i.x * dimensions.y * dimensions.z) +
+								(i.y * dimensions.z) +
 								i.z
 							];
 						}
