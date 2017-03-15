@@ -673,16 +673,16 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 	uint32_t faceCapacity = faceCountGuess;
 	
 	{
-		uint32_t vertexCount = faceCapacity * verticesPerFace;
-		_verticesRawData = malloc(vertexCount * sizeof(PerVertexMeshData));
+		uint32_t vertexCapacity = faceCapacity * verticesPerFace;
+		_verticesRawData = malloc(vertexCapacity * sizeof(PerVertexMeshData));
 		#if DEBUG
-			memset(_verticesRawData, '\xFF', &_verticesRawData[faceCapacity] - &_verticesRawData[0]);
+			memset(_verticesRawData, '\xFF', vertexCapacity * sizeof(PerVertexMeshData));
 		#endif
 		
-		uint32_t vertexIndexCount = faceCapacity * vertexIndicesPerFace;
-		_vertexIndicesRawData = malloc(vertexIndexCount * sizeof(uint16_t));
+		uint32_t vertexIndexCapacity = faceCapacity * vertexIndicesPerFace;
+		_vertexIndicesRawData = malloc(vertexIndexCapacity * sizeof(uint16_t));
 		#if DEBUG
-			memset(_vertexIndicesRawData, '\xFF', &_vertexIndicesRawData[faceCapacity] - &_vertexIndicesRawData[0]);
+			memset(_vertexIndicesRawData, '\xFF', vertexIndexCapacity * sizeof(uint16_t));
 		#endif
 	}
 	
@@ -803,24 +803,27 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 						// Add quad
 						
 						if (faceCount == faceCapacity) {
-							uint32_t oldFaceCapacity = faceCapacity;
-							faceCapacity += faceCountGuess;
+							uint32_t oldVertexCapacity = faceCapacity * verticesPerFace;
+							uint32_t oldVertexIndexCapacity = faceCapacity * vertexIndicesPerFace;
 							
-							uint32_t vertexCount = faceCapacity * verticesPerFace;
-							_verticesRawData = realloc(_verticesRawData, vertexCount * sizeof(PerVertexMeshData));
+							faceCapacity += faceCountGuess;
+							uint32_t newVertexCapacity = faceCapacity * verticesPerFace;
+							uint32_t newVertexIndexCapacity = faceCapacity * vertexIndicesPerFace;
+							
+							_verticesRawData = realloc(_verticesRawData, newVertexCapacity * sizeof(PerVertexMeshData));
 							#if DEBUG
-								memset(&_verticesRawData[oldFaceCapacity], '\xFF', &_verticesRawData[faceCapacity] - &_verticesRawData[oldFaceCapacity]);
+								memset(&_verticesRawData[oldVertexCapacity], '\xFF', (newVertexCapacity - oldVertexCapacity) * sizeof(PerVertexMeshData));
 							#endif
 							
 							uint32_t vertexIndexCount = faceCapacity * vertexIndicesPerFace;
 							_vertexIndicesRawData = realloc(_vertexIndicesRawData, vertexIndexCount * sizeof(uint16_t));
 							#if DEBUG
-								memset(&_vertexIndicesRawData[oldFaceCapacity], '\xFF', &_vertexIndicesRawData[faceCapacity] - &_vertexIndicesRawData[oldFaceCapacity]);
+								memset(&_vertexIndicesRawData[oldVertexIndexCapacity], '\xFF', (newVertexIndexCapacity - oldVertexIndexCapacity) * sizeof(uint16_t));
 							#endif
 						}
 						
 						uint32_t faceI = faceCount;
-						faceCount += 1;
+						++faceCount; // NOTE: It's crucial that this only bumps up one at a time; if it were incremented more, the above `(faceCount == faceCapacity)` & `memset()` logic would need to be revised.
 						
 						x[u] = uI;
 						x[v] = vI;
