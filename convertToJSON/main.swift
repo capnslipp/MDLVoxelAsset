@@ -58,15 +58,10 @@ let voxelHexCodes:[[[UInt32]]] = voxelPaletteIndices.map{ yzArray in
 }
 
 let dimensions:(x:Int,y:Int,z:Int) = {
-	let voxelIndexExtent = voxelAsset.voxelArray.voxelIndexExtent
-	let maxExtent = voxelIndexExtent.maximumExtent,
-		minExtent = voxelIndexExtent.minimumExtent
-	return (
-		x: maxExtent.x - minExtent.x + 1,
-		y: maxExtent.y - minExtent.y + 1,
-		z: maxExtent.z - minExtent.z + 1
-	)
+	let voxelDimensions = voxelAsset.voxelDimensions
+	return ( x: Int(voxelDimensions.x), y: Int(voxelDimensions.y), z: Int(voxelDimensions.z) )
 }()
+
 let voxelHexCodesFlat:[UInt32] = {
 	var flat = [UInt32](repeating: 0x000000, count: Int(dimensions.x * dimensions.y * dimensions.z))
 	var flatI = 0

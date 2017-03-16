@@ -30,6 +30,10 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 #pragma clang assume_nonnull begin
 
+typedef struct _MDLVoxelAsset_VoxelDimensions {
+	uint32_t const x, y, z;
+} MDLVoxelAsset_VoxelDimensions;
+
 /// If true, runs `-calculateShellLevels` on initialization.
 ///		Value: Boolean NSNumber
 ///		Default Value: `false`
@@ -61,6 +65,11 @@ FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionConvertZUpToYUp;
 
 FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion;
 
+/// Specifies palette indices that'll be replaced with different indices (prior to mesh generation).
+/// 	Value: A `NSDictionary<NSNumber*,NSNumber*>` where the keys are `uint8_t`-`NSNumber`s representing indices to be replaced, and the values are `uint8_t`-`NSNumber`s representing the value to replace each with.
+/// 		And number provided as a replacement-value may not be listed as a key.  Providing a replacement value that is also provided as key(s) is unsupported behavior (and not checked for; replacement may be incomplete or may livelock).
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionPaletteIndexReplacements;
+
 
 @interface MDLVoxelAsset : MDLObjectContainer <NSCopying>
 
@@ -79,6 +88,7 @@ FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion;
 
 @property (nonatomic, retain, readonly) MDLVoxelArray *voxelArray;
 @property (nonatomic, assign, readonly) uint32_t voxelCount;
+@property (nonatomic, assign, readonly) MDLVoxelAsset_VoxelDimensions voxelDimensions;
 
 @property (nonatomic, retain, readonly) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
 
