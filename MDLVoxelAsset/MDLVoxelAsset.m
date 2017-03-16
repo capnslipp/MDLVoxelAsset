@@ -36,6 +36,7 @@ NSString *const kMDLVoxelAssetOptionVoxelMesh = @"MDLVoxelAssetOptionVoxelMesh";
 NSString *const kMDLVoxelAssetOptionConvertZUpToYUp = @"MDLVoxelAssetOptionConvertZUpToYUp";
 NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion = @"MDLVoxelAssetOptionGenerateAmbientOcclusion";
 NSString *const kMDLVoxelAssetOptionPaletteIndexReplacements = @"MDLVoxelAssetOptionPaletteReplacements";
+NSString *const kMDLVoxelAssetOptionSkipMeshFaceDirections = @"MDLVoxelAssetOptionSkipMeshFaceDirections";
 
 
 typedef NSDictionary<NSNumber*,NSNumber*> PaletteIndexToPaletteIndexDictionary;
@@ -50,6 +51,7 @@ typedef struct _OptionsValues {
 	MDLVoxelAssetMeshGenerationMode meshGenerationMode;
 	id voxelMesh;
 	PaletteIndexToPaletteIndexDictionary *paletteIndexReplacements;
+	MDLVoxelAssetSkipMeshFaceDirections skipMeshFaceDirections;
 } OptionsValues;
 
 
@@ -292,6 +294,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_options.generateAmbientOcclusion = parseBool(kMDLVoxelAssetOptionGenerateAmbientOcclusion, NO);
 	
 	_options.paletteIndexReplacements = [parsePaletteIndexToPaletteIndexDictionary(kMDLVoxelAssetOptionPaletteIndexReplacements, nil) retain];
+	
+	_options.skipMeshFaceDirections = parseNSUIntegerEnum(kMDLVoxelAssetOptionSkipMeshFaceDirections, MDLVoxelAssetSkipMeshFaceDirectionsNone);
 }
 
 
@@ -655,6 +659,10 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 		// Where this implementation diverges, I've added commentary.
 		for (int axisI = 0; axisI < 3; axisI++)
 		{
+			NSUInteger meshFaceDirection = 1 << (axisI * 2 + (isBackFace ? 0 : 1));
+			if ((_options.skipMeshFaceDirections & meshFaceDirection) != 0)
+				continue;
+			
 			vector_short3 x = { 0,0,0 };
 			
 			vector_short3 q = { 0,0,0 }; q[axisI] = 1;

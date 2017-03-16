@@ -70,6 +70,22 @@ FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion;
 /// 		And number provided as a replacement-value may not be listed as a key.  Providing a replacement value that is also provided as key(s) is unsupported behavior (and not checked for; replacement may be incomplete or may livelock).
 FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionPaletteIndexReplacements;
 
+/// Skips mesh generation for faces pointing in the specified direction
+/// 	Value: `MDLVoxelAssetSkipMeshFaceDirections` enum, packed in an `NSNumber`
+/// 	Default Value: `MDLVoxelAssetSkipMeshFaceDirectionsNone` (`0`)
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionSkipMeshFaceDirections;
+typedef NS_OPTIONS(NSUInteger, MDLVoxelAssetSkipMeshFaceDirections) {
+	MDLVoxelAssetSkipMeshFaceDirectionsNone = 0,
+	
+	MDLVoxelAssetSkipMeshFaceDirectionsXNeg = 0b000001,
+	MDLVoxelAssetSkipMeshFaceDirectionsXPos = 0b000010,
+	MDLVoxelAssetSkipMeshFaceDirectionsYNeg = 0b000100,
+	MDLVoxelAssetSkipMeshFaceDirectionsYPos = 0b001000,
+	MDLVoxelAssetSkipMeshFaceDirectionsZNeg = 0b010000,
+	MDLVoxelAssetSkipMeshFaceDirectionsZPos = 0b100000,
+};
+
+
 
 @interface MDLVoxelAsset : MDLObjectContainer <NSCopying>
 
