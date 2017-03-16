@@ -157,7 +157,10 @@ class GameViewController : ViewController
 		lightNode.light = {
 			let l = SCNLight()
 			l.type = .spot
-			l.color = Color(hue: 60.0 / 360.0, saturation: 0.2, brightness: 1.0, alpha: 1.0)
+			l.color = Color(hue: 60.0 / 360.0, saturation: 0.05, brightness: 1.0, alpha: 1.0)
+			if #available(iOS 10.0, tvOS 10.0, macOS 10.12, *) {
+				l.intensity = 1500
+			}
 			l.spotOuterAngle = 135
 			l.spotInnerAngle = l.spotOuterAngle * 0.9
 			l.castsShadow = true
@@ -177,7 +180,7 @@ class GameViewController : ViewController
 		ambientLightNode.light = {
 			let l = SCNLight()
 			l.type = .ambient
-			l.color = Color(hue: 240.0 / 360.0, saturation: 1.0, brightness: 0.1, alpha: 1.0)
+			l.color = Color(hue: 210.0 / 360.0, saturation: 0.4, brightness: 0.4, alpha: 1.0)
 			return l
 		}()
 		scene.rootNode.addChildNode(ambientLightNode)
@@ -240,6 +243,12 @@ class GameViewController : ViewController
 	
 	func loadVoxelModelFile(named filename:String) throws
 	{
+		enum Error : Swift.Error {
+			case assetIsEmpty
+			
+			func trap() { try! { throw self }() }
+		}
+		
 		removeExistingModel()
 		
 		let filenameWithSuffix = filename.hasSuffix(".vox") ? filename : "\(filename).vox"
@@ -260,7 +269,7 @@ class GameViewController : ViewController
 			return MDLAxisAlignedBoundingBox(maxBounds: (centerpoint + halfExtents), minBounds: (centerpoint - halfExtents))
 		}()
 		
-		let modelNode:SCNNode = {
+		let modelNode:SCNNode = try! {
 			if (modelAsset.count == 1) {
 				return SCNNode(mdlObject: modelAsset[0]!)
 			}
@@ -272,8 +281,7 @@ class GameViewController : ViewController
 				return baseNode
 			}
 			else {
-				return SCNNode()
-				// @todo: throw
+				throw Error.assetIsEmpty
 			}
 		}()
 		
@@ -457,6 +465,7 @@ class GameViewController : ViewController
 			kMDLVoxelAssetOptionCalculateShellLevels: false,
 			kMDLVoxelAssetOptionSkipNonZeroShellMesh: false,
 			kMDLVoxelAssetOptionConvertZUpToYUp: true,
+			kMDLVoxelAssetOptionMeshGenerationMode: MDLVoxelAssetMeshGenerationMode.greedyQuad.rawValue,
 		])
 		return asset
 	}

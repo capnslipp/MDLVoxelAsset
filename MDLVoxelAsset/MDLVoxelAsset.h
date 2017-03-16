@@ -50,7 +50,11 @@ typedef NS_ENUM(NSUInteger, MDLVoxelAssetMeshGenerationMode) {
 	MDLVoxelAssetMeshGenerationModeSkip,
 	/// Generates using SceneKit SCNGeometry, assembling them into an `SCNNode` tree, combining them into fewer draw calls with `-flattenedClone`, then packaging that up in an `MDLObject`.
 	///		Not the most efficient approach, but the most straight-forward & reliable, since it relies on SceneKit & ModelIO to take care of all the vertex/normal/material/etc. buffer allocation & arrangement.
-    MDLVoxelAssetMeshGenerationModeSceneKit,
+	MDLVoxelAssetMeshGenerationModeSceneKit,
+	/// Generates exterior quad-faces, greedily-combined.  Ported from Mikola Lysenko's Greedy Meshing method: https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
+	MDLVoxelAssetMeshGenerationModeGreedyTri,
+	/// Generates exterior quad-faces, greedily-combined.  Ported from Mikola Lysenko's Greedy Meshing method: https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
+	MDLVoxelAssetMeshGenerationModeGreedyQuad,
 };
 
 FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionConvertZUpToYUp;
@@ -81,6 +85,8 @@ FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion;
 @property (nonatomic, retain, readonly) NSArray<Color*> *paletteColors;
 
 - (void)calculateShellLevels;
+
+@property (nonatomic, retain, readonly) NSArray<MDLMesh*> *meshes;
 
 
 #pragma mark Sub-MDLObject Access
