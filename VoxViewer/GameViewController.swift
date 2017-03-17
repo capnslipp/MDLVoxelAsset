@@ -466,6 +466,7 @@ class GameViewController : ViewController
 			kMDLVoxelAssetOptionSkipNonZeroShellMesh: false,
 			kMDLVoxelAssetOptionConvertZUpToYUp: true,
 			kMDLVoxelAssetOptionMeshGenerationMode: MDLVoxelAssetMeshGenerationMode.greedyQuad.rawValue,
+			kMDLVoxelAssetOptionSkipMeshFaceDirections: ([ .xNeg, .yNeg, .zNeg ] as MDLVoxelAssetSkipMeshFaceDirections).rawValue,
 		])
 		return asset
 	}
