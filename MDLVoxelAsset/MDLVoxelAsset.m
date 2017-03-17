@@ -523,18 +523,11 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 				normalData, textureCoordinateData, colorData,
 			};
 		}
-		addVertexIndicesRawDataCallback: ^(uint32_t baseVertIndexI, uint32_t baseVertI, BOOL isBackFace) {
-			if (!isBackFace) {
-				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 0;
-				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
-				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
-				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 3;
-			} else {
-				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 3;
-				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 2;
-				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 1;
-				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 0;
-			}
+		addVertexIndicesRawDataCallback: ^(uint32_t baseVertIndexI, uint32_t baseVertI) {
+			_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 0;
+			_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
+			_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
+			_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 3;
 		}
 	];
 }
@@ -580,30 +573,20 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 				normalData, textureCoordinateData, colorData,
 			};
 		}
-		addVertexIndicesRawDataCallback: ^(uint32_t baseVertIndexI, uint32_t baseVertI, BOOL isBackFace) {
-			if (!isBackFace) {
-				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 0;
-				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
-				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
-				
-				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 0;
-				_vertexIndicesRawData[baseVertIndexI + 4] = baseVertI + 2;
-				_vertexIndicesRawData[baseVertIndexI + 5] = baseVertI + 3;
-			} else {
-				_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 2;
-				_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
-				_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 0;
-				
-				_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 3;
-				_vertexIndicesRawData[baseVertIndexI + 4] = baseVertI + 2;
-				_vertexIndicesRawData[baseVertIndexI + 5] = baseVertI + 0;
-			}
+		addVertexIndicesRawDataCallback: ^(uint32_t baseVertIndexI, uint32_t baseVertI) {
+			_vertexIndicesRawData[baseVertIndexI + 0] = baseVertI + 0;
+			_vertexIndicesRawData[baseVertIndexI + 1] = baseVertI + 1;
+			_vertexIndicesRawData[baseVertIndexI + 2] = baseVertI + 2;
+			
+			_vertexIndicesRawData[baseVertIndexI + 3] = baseVertI + 0;
+			_vertexIndicesRawData[baseVertIndexI + 4] = baseVertI + 2;
+			_vertexIndicesRawData[baseVertIndexI + 5] = baseVertI + 3;
 		}
 	];
 }
 
 typedef void(^GenerateGreedyMesh_AddVerticesRawDataCallback)(uint32_t baseVertI, vector_short3 basePosition, vector_short3 positionUDelta, vector_short3 positionVDelta, vector_float3 normalData, vector_float3 colorData, vector_float2 textureCoordinateData);
-typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseVertIndexI, uint32_t baseVertI, BOOL isBackFace);
+typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseVertIndexI, uint32_t baseVertI);
 
 - (void)generateGreedyMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
 	verticesPerFace:(uint32_t)verticesPerFace vertexIndicesPerFace:(uint32_t)vertexIndicesPerFace
@@ -647,110 +630,114 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 	}
 	
 	// Will contain the groups of matching voxel faces as we proceed through the chunk in 6 directions - once for each face.
-	uint8_t paletteIndexMask[kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension] = { 0 };
-
-	// The variable `isBackFace` will be TRUE on the first iteration and FALSE on the second - this allows us to track which direction the indices should run during creation of the quad.
-	// This loop runs twice, and the inner loop 3 times - totally 6 iterations - one for each voxel face.
-	for (signed char backFaceI = 1; backFaceI >= 0; --backFaceI)
+	int16_t paletteIndexMask[kMagicaVoxelMaxDimension * kMagicaVoxelMaxDimension] = { 0 };
+	
+	// Sweep over the 3 dimensions - most of what follows is well described by Mikola Lysenko in his post - and is ported from his Javascript implementation.
+	// Where this implementation diverges, I've added commentary.
+	for (int axisI = 0; axisI < 3; axisI++)
 	{
-		BOOL isBackFace = (BOOL)backFaceI;
+		vector_short3 x = { 0,0,0 };
 		
-		// Sweep over the 3 dimensions - most of what follows is well described by Mikola Lysenko in his post - and is ported from his Javascript implementation.
-		// Where this implementation diverges, I've added commentary.
-		for (int axisI = 0; axisI < 3; axisI++)
+		vector_short3 q = { 0,0,0 }; q[axisI] = 1;
+		
+		int u = (axisI + 1) % 3;
+		int v = (axisI + 2) % 3;
+		
+		// Move through the dimension from front to back
+		for (x[axisI] = -1; x[axisI] < dimensions[axisI];)
 		{
-			NSUInteger meshFaceDirection = 1 << (axisI * 2 + (isBackFace ? 0 : 1));
-			if ((_options.skipMeshFaceDirections & meshFaceDirection) != 0)
-				continue;
+			// Compute the `paletteIndexMask`
+			int n = 0;
 			
-			vector_short3 x = { 0,0,0 };
-			
-			vector_short3 q = { 0,0,0 }; q[axisI] = 1;
-			
-			int u = (axisI + 1) % 3;
-			int v = (axisI + 2) % 3;
-			
-			// Move through the dimension from front to back
-			for (x[axisI] = -1; x[axisI] < dimensions[axisI];)
-			{
-				// Compute the `paletteIndexMask`
-				int n = 0;
-				
-				for (x[v] = 0; x[v] < dimensions[v]; x[v] += 1) {
-					for (x[u] = 0; x[u] < dimensions[u]; x[u] += 1) {
-						// Retrieve two voxel faces for comparison.
-						uint8_t voxelAPaletteIndex = 0;
-						if (x[axisI] >= 0) {
-							vector_short3 i = x;
-							voxelAPaletteIndex = voxelPaletteIndices3DRawData[
-								(i.x * dimensions.y * dimensions.z) +
-								(i.y * dimensions.z) +
-								i.z
-							];
-						}
-						uint8_t voxelBPaletteIndex = 0;
-						if (x[axisI] < dimensions[axisI] - 1) {
-							vector_short3 i = x + q;
-							voxelBPaletteIndex = voxelPaletteIndices3DRawData[
-								(i.x * dimensions.y * dimensions.z) +
-								(i.y * dimensions.z) +
-								i.z
-							];
-						}
-						
-						// Note that we're using the equals function in the voxel face class here, which lets the faces be compared based on any number of attributes.
-						// Also, we choose the face to add to the `paletteIndexMask` depending on whether we're moving through on a backface or not.
-						if (voxelAPaletteIndex != 0 && voxelBPaletteIndex != 0 && voxelAPaletteIndex == voxelBPaletteIndex)
-							paletteIndexMask[n] = 0;
-						else if (isBackFace)
-							paletteIndexMask[n] = voxelBPaletteIndex;
-						else // !isBackFace
-							paletteIndexMask[n] = voxelAPaletteIndex;
-						
-						n += 1;
+			for (x[v] = 0; x[v] < dimensions[v]; x[v] += 1) {
+				for (x[u] = 0; x[u] < dimensions[u]; x[u] += 1) {
+					// Retrieve two voxel faces for comparison.
+					int16_t voxelAPaletteIndex = 0;
+					if (x[axisI] >= 0) {
+						vector_short3 i = x;
+						voxelAPaletteIndex = voxelPaletteIndices3DRawData[
+							(i.x * dimensions.y * dimensions.z) +
+							(i.y * dimensions.z) +
+							i.z
+						];
 					}
+					int16_t voxelBPaletteIndex = 0;
+					if (x[axisI] < dimensions[axisI] - 1) {
+						vector_short3 i = x + q;
+						voxelBPaletteIndex = voxelPaletteIndices3DRawData[
+							(i.x * dimensions.y * dimensions.z) +
+							(i.y * dimensions.z) +
+							i.z
+						];
+					}
+					
+					// Note that we're using the equals function in the voxel face class here, which lets the faces be compared based on any number of attributes.
+					// Also, we choose the face to add to the `paletteIndexMask` depending on whether we're moving through on a backface or not.
+					if ((voxelAPaletteIndex != 0 && voxelBPaletteIndex != 0) || voxelAPaletteIndex == voxelBPaletteIndex)
+						paletteIndexMask[n] = 0;
+					else if (voxelAPaletteIndex != 0)
+						paletteIndexMask[n] = voxelAPaletteIndex;
+					else // `voxelBPaletteIndex != 0`
+						paletteIndexMask[n] = -voxelBPaletteIndex;
+					
+					if (voxelAPaletteIndex > 255 || voxelBPaletteIndex > 255)
+						printf("");
+					if (n == 470)
+						printf("");
+					
+					n += 1;
 				}
-				
-				x[axisI] += 1;
-				
-				// Generate the mesh for the `paletteIndexMask`
-				n = 0;
-				
-				for (int vI = 0; vI < dimensions[v]; ++vI)
+			}
+			
+			
+			x[axisI] += 1;
+			
+			// Generate the mesh for the `paletteIndexMask` using lexicographic ordering
+			n = 0;
+			
+			for (int vI = 0; vI < dimensions[v]; ++vI)
+			{
+				for (int uI = 0; uI < dimensions[u];)
 				{
-					for (int uI = 0; uI < dimensions[u];)
-					{
-						uint8_t paletteIndex = paletteIndexMask[n];
+					int16_t paletteIndex = paletteIndexMask[n];
+					
+					if (paletteIndex == 0) {
+						uI += 1;
+						n += 1;
+						continue;
+					}
+					
+					BOOL isPosFace = paletteIndex > 0;
+					
+					// Compute the quad width
+					int width = 1;
+					while (uI + width < dimensions[u]) {
+						int16_t checkPaletteIndex = paletteIndexMask[n + width];
+						if (checkPaletteIndex != paletteIndex)
+							break;
 						
-						if (paletteIndex == 0) {
-							uI += 1;
-							n += 1;
-							continue;
-						}
-						
-						// Compute the quad width
-						int width = 1;
-						while (uI + width < dimensions[u]) {
-							uint8_t checkPaletteIndex = paletteIndexMask[n + width];
+						width += 1;
+					}
+					
+					// Compute quad height
+					int height = 1;
+					while (vI + height < dimensions[v]) {
+						for (int uCheckI = 0; uCheckI < width; ++uCheckI) {
+							int16_t checkPaletteIndex = paletteIndexMask[n + (height * dimensions[u]) + uCheckI];
 							if (checkPaletteIndex != paletteIndex)
-								break;
-							
-							width += 1;
+								goto breakComputeHeight;
 						}
 						
-						// Compute quad height
-						int height = 1;
-						while (vI + height < dimensions[v]) {
-							for (int uCheckI = 0; uCheckI < width; ++uCheckI) {
-								uint8_t checkPaletteIndex = paletteIndexMask[n + (height * dimensions[u]) + uCheckI];
-								if (checkPaletteIndex != paletteIndex)
-									goto breakComputeHeight;
-							}
-							
-							height += 1;
-						}
-						breakComputeHeight: ;
-						
+						height += 1;
+					}
+					breakComputeHeight: ;
+					
+					if (!isPosFace)
+						paletteIndex = -paletteIndex;
+					
+					NSUInteger meshFaceDirection = 1 << (axisI * 2 + (isPosFace ? 1 : 0));
+					if ((_options.skipMeshFaceDirections & meshFaceDirection) == 0)
+					{
 						// Add quad
 						
 						if (faceCount == faceCapacity) {
@@ -779,8 +766,15 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 						x[u] = uI;
 						x[v] = vI;
 						
-						vector_short3 uDelta = { 0, 0, 0 }; uDelta[u] = width;
-						vector_short3 vDelta = { 0, 0, 0 }; vDelta[v] = height;
+						vector_short3 uDelta = { 0, 0, 0 };
+						vector_short3 vDelta = { 0, 0, 0 };
+						if (isPosFace) {
+							vDelta[v] = height;
+							uDelta[u] = width;
+						} else {
+							uDelta[v] = height;
+							vDelta[u] = width;
+						}
 						
 						// Call the quad function in order to render a merged quad in the scene.
 						// Passing `paletteIndex` to the function, which is an instance of the VoxelFace class containing all the attributes of the face - which allows for variables to be passed to shaders - for example lighting values used to create ambient occlusion.
@@ -788,7 +782,7 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 							uint32_t baseVertI = faceI * verticesPerFace;
 							uint32_t baseVertIndexI = faceI * vertexIndicesPerFace;
 							
-							vector_float3 normalData = { 0.0 }; normalData[axisI] = isBackFace ? -1.0 : +1.0;
+							vector_float3 normal = { 0.0 }; normal[axisI] = isPosFace ? +1.0 : -1.0;
 							
 							Color *color = _paletteColors[paletteIndex];
 							CGFloat color_cgArray[4];
@@ -797,23 +791,23 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 							static const vector_short2 mvvoxPaletteTextureSize = { 256, 1 };
 							vector_float2 textureCoordinateData = { /* x: */ (paletteIndex - 1 + 0.5f) / mvvoxPaletteTextureSize.x, /* y: */ 0.5f }; // NOTE: no special-case for index #0 (transparent)
 							
-							addVerticesRawDataCallback(baseVertI, x, uDelta, vDelta, normalData, colorData, textureCoordinateData);
+							addVerticesRawDataCallback(baseVertI, x, uDelta, vDelta, normal, colorData, textureCoordinateData);
 							
-							addVertexIndicesRawDataCallback(baseVertIndexI, baseVertI, isBackFace);
+							addVertexIndicesRawDataCallback(baseVertIndexI, baseVertI);
 						}
-						
-						// Zero out the `paletteIndexMask`
-						for (int vZeroingI = height - 1; vZeroingI >= 0; --vZeroingI)
-							memset(&paletteIndexMask[n + (vZeroingI * dimensions[u])], 0, width);
-						
-						// Increment the counters and continue
-						uI += width;
-						n += width;
-					} // `uI`
-				} // `vI`
-			} // `x[axisI]`
-		} // `axisI`
-	} // `backFaceI`
+					} // `(_options.skipMeshFaceDirections & meshFaceDirection) == 0`
+					
+					// Zero out the `paletteIndexMask`
+					for (int vZeroingI = height - 1; vZeroingI >= 0; --vZeroingI)
+						memset(&paletteIndexMask[n + (vZeroingI * dimensions[u])], 0, width * sizeof(int16_t));
+					
+					// Increment the counters and continue
+					uI += width;
+					n += width;
+				} // `uI`
+			} // `vI`
+		} // `x[axisI]`
+	} // `axisI`
 	
 	free(voxelPaletteIndices3DRawData);
 	
