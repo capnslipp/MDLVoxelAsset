@@ -353,6 +353,13 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		case MDLVoxelAssetMeshGenerationModeSceneKit:
 			[self generateSceneKitMesh:addMeshDataCallback];
 			break;
+		case MDLVoxelAssetMeshGenerationModeMDLVoxelArrayCoarse:
+			if ([MDLVoxelArray instancesRespondToSelector:@selector(coarseMesh)])
+				[self generateMDLVoxelArrayMesh:NO];
+			break;
+		case MDLVoxelAssetMeshGenerationModeMDLVoxelArraySmooth:
+			[self generateMDLVoxelArrayMesh:YES];
+			break;
 		case MDLVoxelAssetMeshGenerationModeGreedyTri:
 			[self generateGreedyTriMesh:addMeshDataCallback];
 			break;
@@ -480,6 +487,22 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		[verticesData release];
 		[vertexIndicesData release];
 	}
+}
+
+- (void)generateMDLVoxelArrayMesh:(BOOL)smooth
+{
+	MDLMesh *mesh;
+	if (smooth)
+		mesh = [_voxelArray meshUsingAllocator:nil];
+	else
+		mesh = [_voxelArray coarseMesh];
+	
+	if (_options.generateAmbientOcclusion) {
+		BOOL aoSuccess = [mesh generateAmbientOcclusionVertexColorsWithQuality:0.1 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
+	}
+	
+	[_meshes addObject:mesh];
+	[super addObject:mesh];
 }
 
 - (void)generateGreedyQuadMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
