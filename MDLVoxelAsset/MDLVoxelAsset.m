@@ -558,7 +558,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 - (void)generateGreedyTriMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
 {
 	[self generateGreedyMesh:^(NSData *verticesData, uint32_t verticesCount, NSData *vertexIndicesData, uint32_t vertexIndicesCount, MDLGeometryType _) {
-			addMeshDataCallback(verticesData, verticesCount, vertexIndicesData, vertexIndicesCount, MDLGeometryTypeQuads);
+			addMeshDataCallback(verticesData, verticesCount, vertexIndicesData, vertexIndicesCount, MDLGeometryTypeTriangles);
 		}
 		verticesPerFace: 4
 		vertexIndicesPerFace: 6
