@@ -16,7 +16,7 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 
 #import <ModelIO/ModelIO.h>
-#import "MagicaVoxelVoxData.h"
+#import <MDLVoxelAsset/MagicaVoxelVoxData.h>
 
 #if TARGET_OS_IPHONE
 	@class UIColor;
