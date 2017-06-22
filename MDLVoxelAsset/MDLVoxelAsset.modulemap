@@ -1,4 +1,0 @@
-module MDLVoxelAsset {
-	umbrella header "MDLVoxelAsset.h"
-	export *
-}

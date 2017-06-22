@@ -186,7 +186,6 @@
 		FA0ADEED1CF00A280054DCAA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA0ADEF01CF00A280054DCAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA0ADEF21CF00A280054DCAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FA0ADEF61CF00CCA0054DCAA /* MDLVoxelAsset.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = MDLVoxelAsset.modulemap; sourceTree = "<group>"; };
 		FA0ADEFB1CF032590054DCAA /* rgbk_cmyw.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = rgbk_cmyw.vox; sourceTree = "<group>"; };
 		FA0ADEFE1CF04CE70054DCAA /* monu7.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu7.vox; sourceTree = "<group>"; };
 		FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MDLVoxelAsset.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -321,7 +320,6 @@
 		FA2685841CEA9A71003B86C8 /* MDLVoxelAsset */ = {
 			isa = PBXGroup;
 			children = (
-				FA0ADEF61CF00CCA0054DCAA /* MDLVoxelAsset.modulemap */,
 				FA2685871CEA9A71003B86C8 /* Info.plist */,
 				FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */,
 				FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */,
@@ -959,7 +957,6 @@
 				INFOPLIST_FILE = MDLVoxelAsset/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = MDLVoxelAsset/MDLVoxelAsset.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SKIP_INSTALL = YES;
@@ -977,7 +974,6 @@
 				INFOPLIST_FILE = MDLVoxelAsset/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = MDLVoxelAsset/MDLVoxelAsset.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SKIP_INSTALL = YES;
@@ -1054,7 +1050,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MODULEMAP_FILE = MDLVoxelAsset/MDLVoxelAsset.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SDKROOT = macosx;
@@ -1076,7 +1071,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MODULEMAP_FILE = MDLVoxelAsset/MDLVoxelAsset.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAsset;
 				PRODUCT_NAME = MDLVoxelAsset;
 				SDKROOT = macosx;
