@@ -121,7 +121,7 @@ typedef NS_OPTIONS(NSUInteger, MDLVoxelAssetSkipMeshFaceDirections) {
 #pragma mark Sub-MDLObject Access
 
 - (MDLObject *)objectAtIndex:(NSUInteger)index;
-- (nullable MDLObject *)objectAtIndexedSubscript:(NSUInteger)index;
+- (MDLObject *)objectAtIndexedSubscript:(NSUInteger)index;
 
 @property (nonatomic, readonly) NSUInteger count;
 
