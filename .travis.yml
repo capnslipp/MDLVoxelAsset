@@ -1,0 +1,9 @@
+language: swift
+xcode_project: MDLVoxelAsset.xcodeproj
+osx_image: xcode9.2
+matrix:
+  include:
+  - xcode_scheme: "MDLVoxelAsset (iOS)"
+  - xcode_scheme: "MDLVoxelAsset (OS X)"
+  - xcode_scheme: "VoxViewer (iOS)"
+  - xcode_scheme: "VoxViewer (OS X)"
