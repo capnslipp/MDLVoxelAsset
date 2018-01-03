@@ -4,6 +4,14 @@ osx_image: xcode9.2
 matrix:
   include:
   - xcode_scheme: "MDLVoxelAsset (iOS)"
+    script: 'xcodebuild clean &&
+      xcodebuild build -sdk $SDKROOT -project MDLVoxelAsset.xcodeproj -scheme "MDLVoxelAsset (iOS)"'
   - xcode_scheme: "MDLVoxelAsset (OS X)"
+    script: 'xcodebuild clean &&
+      xcodebuild build -sdk $SDKROOT -project MDLVoxelAsset.xcodeproj -scheme "MDLVoxelAsset (OS X)"'
   - xcode_scheme: "VoxViewer (iOS)"
+    script: 'xcodebuild clean &&
+      xcodebuild build -sdk $SDKROOT -project MDLVoxelAsset.xcodeproj -scheme "VoxViewer (iOS)"'
   - xcode_scheme: "VoxViewer (OS X)"
+    script: 'xcodebuild clean &&
+      xcodebuild build -sdk $SDKROOT -project MDLVoxelAsset.xcodeproj -scheme "VoxViewer (OS X)"'
