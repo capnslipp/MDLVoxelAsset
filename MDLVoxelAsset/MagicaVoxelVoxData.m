@@ -42,6 +42,18 @@ static const char kMaterialChunkIdent_string[] = "MATT";
 static const ChunkIdent kMaterialChunkIdent = { .ptr = (uint8_t const *)&kMaterialChunkIdent_string };
 static const char kPackChunkIdent_string[] = "PACK";
 static const ChunkIdent kPackChunkIdent = { .ptr = (uint8_t const *)&kPackChunkIdent_string };
+static const char kNTrnChunkIdent_string[] = "nTRN";
+static const ChunkIdent kNTrnChunkIdent = { .ptr = (uint8_t const *)&kNTrnChunkIdent_string };
+static const char kNGrpChunkIdent_string[] = "nGRP";
+static const ChunkIdent kNGrpChunkIdent = { .ptr = (uint8_t const *)&kNGrpChunkIdent_string };
+static const char kNShpChunkIdent_string[] = "nSHP";
+static const ChunkIdent kNShpChunkIdent = { .ptr = (uint8_t const *)&kNShpChunkIdent_string };
+static const char kLayrChunkIdent_string[] = "LAYR";
+static const ChunkIdent kLayrChunkIdent = { .ptr = (uint8_t const *)&kLayrChunkIdent_string };
+static const char kMatlChunkIdent_string[] = "MATL";
+static const ChunkIdent kMatlChunkIdent = { .ptr = (uint8_t const *)&kMatlChunkIdent_string };
+static const char kRObjChunkIdent_string[] = "rOBJ";
+static const ChunkIdent kRObjChunkIdent = { .ptr = (uint8_t const *)&kRObjChunkIdent_string };
 
 
 #import "MagicaVoxelVoxData_SizeChunkContentsHandle.h"
@@ -198,6 +210,18 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 				return nil; // materials ignored for now
 			else if (*ident.fourCharCode == *kPackChunkIdent.fourCharCode)
 				return nil; // pack (multiple models) ignored for now
+			else if (*ident.fourCharCode == *kNTrnChunkIdent.fourCharCode)
+				return nil; // Mysterious “nTRN” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+			else if (*ident.fourCharCode == *kNGrpChunkIdent.fourCharCode)
+				return nil; // Mysterious “nGRP” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+			else if (*ident.fourCharCode == *kNShpChunkIdent.fourCharCode)
+				return nil; // Mysterious “nSHP” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+			else if (*ident.fourCharCode == *kLayrChunkIdent.fourCharCode)
+				return nil; // Mysterious “LAYR” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+			else if (*ident.fourCharCode == *kMatlChunkIdent.fourCharCode)
+				return nil; // Mysterious “MATL” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+			else if (*ident.fourCharCode == *kRObjChunkIdent.fourCharCode)
+				return nil; // Mysterious “rObj” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
 			else
 				@throw [NSException exceptionWithName: NSInvalidArgumentException
 					reason: [NSString stringWithFormat:@"Unknown chunk ID %c%c%c%c.", (*ident.array)[0], (*ident.array)[1], (*ident.array)[2], (*ident.array)[3]]
