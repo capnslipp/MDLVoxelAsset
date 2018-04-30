@@ -271,7 +271,7 @@ class GameViewController : ViewController
 		
 		let modelNode:SCNNode = try! {
 			if (modelAsset.count == 1) {
-				return SCNNode(mdlObject: modelAsset[0]!)
+				return SCNNode(mdlObject: modelAsset.object(at: 0))
 			}
 			else if (modelAsset.count > 1) {
 				let baseNode = SCNNode()
