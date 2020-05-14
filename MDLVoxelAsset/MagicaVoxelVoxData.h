@@ -28,7 +28,7 @@ typedef struct _MagicaVoxelVoxData_Voxel {
 #pragma clang assume_nonnull begin
 
 
-@interface MagicaVoxelVoxData : NSObject <NSCopying, NSMutableCopying, NSSecureCoding>
+@interface MagicaVoxelVoxData : NSObject <NSCopying, NSMutableCopying>
 
 /// Shouldn't be necessary in normal usage, since `MagicaVoxelVoxData` implements `NSData`s API fully.  Present as a fail-safe.
 @property (nonatomic, retain, readonly) NSData *nsData;
