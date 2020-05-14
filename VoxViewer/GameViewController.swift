@@ -53,8 +53,8 @@ class GameViewController : ViewController
 	@IBOutlet weak var filenameButton:Button!
 	
 	#if os(iOS)
-		var fileSelectorPopoverSequeID:String?
-		var fileSelectorPopoverTableCellReuseID:String?
+		@objc var fileSelectorPopoverSequeID:String!
+		@objc var fileSelectorPopoverTableCellReuseID:String!
 		var isFileSelectorPopoverActive:Bool {
 			return _fileSelectorSegue != nil
 		}
@@ -472,7 +472,7 @@ class GameViewController : ViewController
 	}
 	
 	#if os(iOS)
-		func handleTap(_ gestureRecognize:UIGestureRecognizer) {
+		@IBAction func handleTap(_ gestureRecognize:UIGestureRecognizer) {
 			// retrieve the SCNView
 			let scnView = self.gameView!
 			
@@ -530,16 +530,16 @@ class GameViewController : ViewController
 		
 		@IBAction func openFileSelector(_ sender:Button)
 		{
-			let canPerformSeque = self.shouldPerformSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
+			let canPerformSeque = self.shouldPerformSegue(withIdentifier: self.fileSelectorPopoverSequeID, sender: self)
 			guard canPerformSeque else { return }
 			
-			self.performSegue(withIdentifier: self.fileSelectorPopoverSequeID!, sender: self)
+			self.performSegue(withIdentifier: self.fileSelectorPopoverSequeID, sender: self)
 		}
 		
 		override func shouldPerformSegue(withIdentifier identifier:String, sender:Any?) -> Bool
 		{
 			switch identifier {
-				case self.fileSelectorPopoverSequeID!:
+				case self.fileSelectorPopoverSequeID:
 					return true
 					
 				default:
@@ -551,7 +551,7 @@ class GameViewController : ViewController
 		{
 			guard let identifier = segue.identifier else { return }
 			switch identifier {
-				case self.fileSelectorPopoverSequeID!:
+				case self.fileSelectorPopoverSequeID:
 					let tableController = segue.destination as! UITableViewController
 					
 					let tableView:UITableView = tableController.tableView
@@ -687,7 +687,7 @@ class GameViewController : ViewController
 					}
 				}()
 				
-				let tableCell = tableView.dequeueReusableCell(withIdentifier: self.fileSelectorPopoverTableCellReuseID!)!
+				let tableCell = tableView.dequeueReusableCell(withIdentifier: self.fileSelectorPopoverTableCellReuseID)!
 				tableCell.textLabel!.text = filename
 				
 				return tableCell

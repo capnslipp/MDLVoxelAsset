@@ -572,7 +572,7 @@
 					FA0ADEE11CF00A270054DCAA = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = UQQE2H6P34;
-						LastSwiftMigration = 0820;
+						LastSwiftMigration = 1010;
 					};
 					FA2685811CEA9A71003B86C8 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -583,6 +583,7 @@
 					};
 					FA9694FF1CF1725000DC632A = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 1010;
 					};
 					FA9CACC91CF17E0200B1ABA4 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -838,6 +839,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
 		};
@@ -851,6 +853,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
 		};
@@ -907,7 +910,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -961,7 +964,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1044,6 +1047,7 @@
 				PRODUCT_NAME = VoxViewer;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
 		};
@@ -1060,6 +1064,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
 				SDKROOT = macosx;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
 		};
