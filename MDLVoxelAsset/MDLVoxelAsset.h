@@ -1,8 +1,6 @@
-//  MDLVoxelAsset.h
-//  MDLVoxelAsset
-//
-//  Created by Cap'n Slipp on 5/20/16.
-//  Copyright © 2016 Cap'n Slipp. All rights reserved.
+// MDLVoxelAsset
+// @author: Slipp Douglas Thompson
+// @license: Public Domain per The Unlicense.  See accompanying LICENSE file or <http://unlicense.org/>.
 
 
 #import <Foundation/Foundation.h>

@@ -1,8 +1,6 @@
-//  MDLVoxelAsset.m
-//  MDLVoxelAsset
-//
-//  Created by Cap'n Slipp on 5/20/16.
-//  Copyright © 2016 Cap'n Slipp. All rights reserved.
+// MDLVoxelAsset
+// @author: Slipp Douglas Thompson
+// @license: Public Domain per The Unlicense.  See accompanying LICENSE file or <http://unlicense.org/>.
 
 #import "MDLVoxelAsset.h"
 
@@ -340,7 +338,8 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		[vertexBufferData release];
 		[indexBufferData release];
 		
-		if (_options.generateAmbientOcclusion) {
+		if (_options.generateAmgit push origin master
+		bientOcclusion) {
 			BOOL aoSuccess = [mesh generateAmbientOcclusionVertexColorsWithQuality:0.1 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
 		}
 		

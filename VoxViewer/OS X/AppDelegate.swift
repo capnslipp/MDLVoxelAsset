@@ -1,10 +1,6 @@
-//
-//  AppDelegate.swift
-//  VoxViewer
-//
-//  Created by Cap'n Slipp on 5/21/16.
-//  Copyright (c) 2016 Cap'n Slipp. All rights reserved.
-//
+// MDLVoxelAsset
+// @author: Slipp Douglas Thompson
+// @license: Public Domain per The Unlicense.  See accompanying LICENSE file or <http://unlicense.org/>.
 
 import Cocoa
 

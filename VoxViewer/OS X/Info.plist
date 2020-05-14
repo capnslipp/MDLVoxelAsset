@@ -25,7 +25,7 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2016 Cap'n Slipp. All rights reserved.</string>
+	<string>Public Domain per The Unlicense.  See accompanying LICENSE file or &lt;http://unlicense.org/&gt;.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

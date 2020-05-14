@@ -1,10 +1,6 @@
-//
-//  main.swift
-//  convertToJSON
-//
-//  Created by Cap'n Slipp on 3/11/17.
-//  Copyright © 2017 Cap'n Slipp. All rights reserved.
-//
+// MDLVoxelAsset
+// @author: Slipp Douglas Thompson
+// @license: Public Domain per The Unlicense.  See accompanying LICENSE file or <http://unlicense.org/>.
 
 import Cocoa
 import MDLVoxelAsset
