@@ -395,6 +395,13 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 -(NSUInteger)length { return _data.length; }
 
 
+#pragma mark NSCopying Conformance
+
+
+- (nonnull id)copyWithZone:(nullable NSZone *)zone_unused { 
+	return [self retain]; // MagicaVoxelVoxData is immutable, so this is valid & expected.
+}
+
 @end
 
 
