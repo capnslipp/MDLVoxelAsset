@@ -312,7 +312,7 @@ class GameViewController : ViewController
 		#if os(iOS)
 			self.filenameButton.setTitle(filenameWithSuffix, for: [])
 		#else
-			let index = _voxelFilenames!.index(of: filenameWithSuffix)!
+			let index = _voxelFilenames!.firstIndex(of: filenameWithSuffix)!
 			let tag = (0 << 16) | (index & 0x0000ffff)
 			(self.filenameButton as! NSPopUpButton).selectItem(withTag: tag)
 		#endif
@@ -388,7 +388,7 @@ class GameViewController : ViewController
 		#if os(iOS)
 			self.filenameButton.setTitle(filenameWithSuffix, for: [])
 		#else
-			let index = _meshFilenames!.index(of: filenameWithSuffix)!
+			let index = _meshFilenames!.firstIndex(of: filenameWithSuffix)!
 			let tag = (1 << 16) | (index & 0x0000ffff)
 			(self.filenameButton as! NSPopUpButton).selectItem(withTag: tag)
 		#endif
