@@ -338,8 +338,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		[vertexBufferData release];
 		[indexBufferData release];
 		
-		if (_options.generateAmgit push origin master
-		bientOcclusion) {
+		if (_options.generateAmbientOcclusion) {
 			BOOL aoSuccess = [mesh generateAmbientOcclusionVertexColorsWithQuality:0.1 attenuationFactor:0.1 objectsToConsider:super.objects vertexAttributeNamed:MDLVertexAttributeOcclusionValue];
 		}
 		
