@@ -1,17 +1,13 @@
 language: swift
 xcode_project: MDLVoxelAsset.xcodeproj
-osx_image: xcode9.2
+osx_image: xcode11.4
 matrix:
   include:
   - xcode_scheme: "MDLVoxelAsset (iOS)"
-    script: 'xcodebuild clean &&
-      xcodebuild build -sdk $SDKROOT -project MDLVoxelAsset.xcodeproj -scheme "MDLVoxelAsset (iOS)"'
+    script: 'xcodebuild build -sdk iphoneos -project MDLVoxelAsset.xcodeproj -scheme "MDLVoxelAsset (iOS)"'
   - xcode_scheme: "MDLVoxelAsset (OS X)"
-    script: 'xcodebuild clean &&
-      xcodebuild build -sdk $SDKROOT -project MDLVoxelAsset.xcodeproj -scheme "MDLVoxelAsset (OS X)"'
+    script: 'xcodebuild build -sdk macosx -project MDLVoxelAsset.xcodeproj -scheme "MDLVoxelAsset (OS X)"'
   - xcode_scheme: "VoxViewer (iOS)"
-    script: 'xcodebuild clean &&
-      xcodebuild build -sdk $SDKROOT -project MDLVoxelAsset.xcodeproj -scheme "VoxViewer (iOS)"'
+    script: 'xcodebuild build -sdk iphonesimulator -project MDLVoxelAsset.xcodeproj -scheme "VoxViewer (iOS)"'
   - xcode_scheme: "VoxViewer (OS X)"
-    script: 'xcodebuild clean &&
-      xcodebuild build -sdk $SDKROOT -project MDLVoxelAsset.xcodeproj -scheme "VoxViewer (OS X)"'
+    script: 'xcodebuild build -sdk macosx -project MDLVoxelAsset.xcodeproj -scheme "VoxViewer (OS X)"'
