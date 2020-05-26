@@ -26,8 +26,9 @@ static const ptrdiff_t kInvalidPtrdiff = kPtrdiffMax;
 @implementation ChunkHandle {
 	NSData *_data;
 	ptrdiff_t _baseOffset;
+	
+	NSMutableDictionary<NSString*,NSMutableArray<ChunkHandle*>*> *_childrenChunks;
 }
-@synthesize childrenChunks=_childrenChunks;
 
 
 - (instancetype)initWithData:(NSData *)data offset:(ptrdiff_t)offset
@@ -112,12 +113,26 @@ static const ptrdiff_t kInvalidPtrdiff = kPtrdiffMax;
 
 #pragma “Dumb” Handle-Object-Holder Properties
 
-- (NSMutableDictionary<NSString *,ChunkHandle *> *)childrenChunks
+- (NSDictionary<NSString*,NSArray<ChunkHandle*>*> *)childrenChunks
 {
 	if (_childrenChunks == nil)
-		_childrenChunks = [NSMutableDictionary<NSString*,ChunkHandle*> new];
+		return [NSDictionary<NSString*,NSArray<ChunkHandle*>*> dictionary]; // empty dictionary
 	
 	return [[_childrenChunks retain] autorelease];
+}
+
+- (void)addChildChunk:(NSString *)identString handle:(ChunkHandle *)handle
+{
+	if (_childrenChunks == nil)
+		_childrenChunks = [NSMutableDictionary<NSString*,NSMutableArray<ChunkHandle*>*> new];
+	
+	NSMutableArray<ChunkHandle*>* identEntryArray = _childrenChunks[identString];
+	if (identEntryArray == nil) {
+		identEntryArray = [NSMutableArray<ChunkHandle*> new];
+		[(_childrenChunks[identString] = identEntryArray) release];
+	}
+	
+	[identEntryArray addObject:handle];
 }
 
 

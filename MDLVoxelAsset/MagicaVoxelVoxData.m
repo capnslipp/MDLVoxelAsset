@@ -78,6 +78,7 @@ static const ChunkIdent kRObjChunkIdent = { .ptr = (uint8_t const *)&kRObjChunkI
 #import "MagicaVoxelVoxData_SizeChunkContentsHandle.h"
 #import "MagicaVoxelVoxData_VoxelChunkContentsHandle.h"
 #import "MagicaVoxelVoxData_PaletteChunkContentsHandle.h"
+#import "MagicaVoxelVoxData_PackChunkContentsHandle.h"
 
 
 #import "MagicaVoxelVoxData_ChunkHandle.h"
@@ -148,12 +149,15 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	uint32_t const *_versionNumber_ptr;
 	
 	ChunkHandle *_rootChunk;
+	
+	uint32_t _modelCount;
 }
 
 - (instancetype)initUsingDataInitializer:(void (^)(void))dataInitializer;
 
 - (MagicNumber)magicNumber;
 
+- (void)calculateModelCount;
 @end
 
 
@@ -161,6 +165,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 @implementation MagicaVoxelVoxData
 
 @synthesize nsData=_data;
+@synthesize modelCount=_modelCount;
 
 
 + (void)initialize
@@ -236,7 +241,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			else if (*ident.fourCharCode == *kMaterialChunkIdent.fourCharCode)
 				return nil; // materials ignored for now
 			else if (*ident.fourCharCode == *kPackChunkIdent.fourCharCode)
-				return nil; // pack (multiple models) ignored for now
+				return [self parsePackContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kNTrnChunkIdent.fourCharCode)
 				return nil; // Mysterious “nTRN” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
 			else if (*ident.fourCharCode == *kNGrpChunkIdent.fourCharCode)
@@ -287,6 +292,8 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		DEBUG_sParseDepth = 0;
 	#endif
 	_rootChunk = chunkParser(kRootChunk_Offset);
+	
+	[self calculateModelCount];
 }
 
 - (ChunkHandle *)parseChunkDataAtOffset:(ptrdiff_t)baseOffset withContentsParser:(ChunkContentsParserB)contentsParser childParser:(ChunkChildParserB)childParser
@@ -316,7 +323,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		do {
 			ptrdiff_t endOffset;
 			ChunkHandle *childChunk = childParser(chunk.ident, childOffset, childrenRemainingSize, &endOffset);
-			chunk.childrenChunks[NSStringFromChunkIdent(childChunk.ident)] = childChunk;
+			[chunk addChildChunk:NSStringFromChunkIdent(childChunk.ident) handle:childChunk];
 			
 			size_t childrenSizeParsedThusFar = endOffset - childrenOffset;
 			if (!(childrenSizeParsedThusFar + kChunkPadding_MaxSize < childrenTotalSize))
@@ -350,6 +357,11 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return [[[PaletteChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
 }
 
+- (PackChunkContentsHandle *)parsePackContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
+{
+	return [[[PackChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+}
+
 - (MagicNumber)magicNumber; {
 	return _magicNumber_ptr;
 }
@@ -358,9 +370,34 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return *_versionNumber_ptr;
 }
 
-- (MagicaVoxelVoxData_XYZDimensions)dimensions
+- (void)calculateModelCount
 {
-	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kSizeChunkIdent_string)];
+	NSArray<ChunkHandle*>* sizeChunks = _rootChunk.childrenChunks[@(kSizeChunkIdent_string)];
+	NSArray<ChunkHandle*>* voxelChunks = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)];
+	
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kPackChunkIdent_string)].firstObject;
+	if (chunkHandle) {
+		PackChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+		if (!chunkContents) {
+			_modelCount = 0; return;
+		}
+		
+		_modelCount = *chunkContents.numModels_ptr;
+		
+		NSParameterAssert(sizeChunks.count == _modelCount);
+		NSParameterAssert(voxelChunks.count == _modelCount);
+	}
+	else { // model count deduced from number of size/voxel chunks
+		NSParameterAssert(sizeChunks.count == voxelChunks.count);
+		_modelCount = (uint32_t)sizeChunks.count;
+	}
+}
+
+- (MagicaVoxelVoxData_XYZDimensions)dimensionsForModelID:(uint32_t)modelID
+{
+	NSParameterAssert(modelID >= 0 && modelID < _modelCount);
+	
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kSizeChunkIdent_string)][modelID];
 	if (!chunkHandle)
 		return (MagicaVoxelVoxData_XYZDimensions){ 0, 0, 0 };
 	
@@ -373,7 +410,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 
 - (MagicaVoxelVoxData_PaletteColor *)paletteColors_array
 {
-	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kPaletteChunkIdent_string)];
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kPaletteChunkIdent_string)].firstObject;
 	if (!chunkHandle)
 		chunkHandle = kDefaultPaletteChunk;
 	
@@ -388,9 +425,11 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return 255; // last color is unused
 }
 
-- (MagicaVoxelVoxData_Voxel *)voxels_array
+- (nullable MagicaVoxelVoxData_Voxel *)voxels_arrayForModelID:(uint32_t)modelID
 {
-	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)];
+	NSParameterAssert(modelID >= 0 && modelID < _modelCount);
+	
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)][modelID];
 	if (!chunkHandle)
 		return NULL;
 	
@@ -401,9 +440,11 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return (MagicaVoxelVoxData_Voxel *)chunkContents.voxels_array;
 }
 
-- (uint32_t)voxels_count
+- (uint32_t)voxels_countForModelID:(uint32_t)modelID
 {
-	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)];
+	NSParameterAssert(modelID >= 0 && modelID < _modelCount);
+	
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)][modelID];
 	if (!chunkHandle)
 		return 0;
 	

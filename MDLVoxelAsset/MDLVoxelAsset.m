@@ -138,7 +138,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 @synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors, meshes=_meshes;
 
 - (uint32_t)voxelCount {
-	return _mvvoxData.voxels_count;
+	return [_mvvoxData voxels_countForModelID:0];
 }
 
 - (MDLVoxelAsset_VoxelDimensions)voxelDimensions {
@@ -164,10 +164,10 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	self.URL = URL;
 	
 	_mvvoxData = [[MagicaVoxelVoxData alloc] initWithContentsOfURL:URL];
-	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
+	MagicaVoxelVoxData_Voxel *mvvoxVoxels = [_mvvoxData voxels_arrayForModelID:0];
 	uint32_t voxelCount = self.voxelCount;
 	
-	MagicaVoxelVoxData_XYZDimensions mvvoxDimensions = _mvvoxData.dimensions;
+	MagicaVoxelVoxData_XYZDimensions mvvoxDimensions = [_mvvoxData dimensionsForModelID:0];
 	
 	MDLVoxelAsset_VoxelDimensions voxelDimensions = _options.convertZUpToYUp ?
 		(MDLVoxelAsset_VoxelDimensions){ mvvoxDimensions.x, mvvoxDimensions.z, mvvoxDimensions.y } :
@@ -398,7 +398,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		memset(_vertexIndicesRawData, '\xFF', vertexIndexCount * sizeof(uint16_t));
 	#endif
 	
-	MagicaVoxelVoxData_Voxel *mvvoxVoxels = _mvvoxData.voxels_array;
+	MagicaVoxelVoxData_Voxel *mvvoxVoxels = [_mvvoxData voxels_arrayForModelID:0];
 	
 	{
 		uint32_t voxI = 0;

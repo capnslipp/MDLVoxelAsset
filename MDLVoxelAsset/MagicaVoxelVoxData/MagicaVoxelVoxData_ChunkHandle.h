@@ -39,7 +39,9 @@
 // Dumb sub-Handle holders (not auto-populated):
 
 @property (nonatomic, retain, nullable) id contentsHandle;
-@property (nonatomic, retain, readonly) NSMutableDictionary<NSString*,ChunkHandle*> *childrenChunks;
+
+@property (nonatomic, retain, readonly) NSDictionary<NSString*,NSArray<ChunkHandle*>*> *childrenChunks;
+- (void)addChildChunk:(NSString *)identString handle:(ChunkHandle *)handle;
 
 /// The total size of the chunk.  Calculated as:
 ///		The size of the ID (4 bytes) + the contents-size field (4 bytes) + the children-total-size field (4 bytes) + the size of the contents + the size of the children.
