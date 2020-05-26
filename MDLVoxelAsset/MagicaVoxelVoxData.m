@@ -6,6 +6,27 @@
 
 
 
+#if DEBUG
+	void mvvdLog(NSString *format, ...)
+	{
+		va_list variadicArgs;
+		va_start(variadicArgs, format);
+		NSString *logString = [[[NSString alloc] initWithFormat:format arguments:variadicArgs] autorelease];
+		printf("%s\n", logString.UTF8String);
+		va_end(variadicArgs);
+	}
+#else
+	void mvvdLog(NSString *format, ...) {}
+#endif
+
+#if DEBUG
+	NSString *indentationStringOfLength(int length) {
+		return [@"" stringByPaddingToLength:length withString:@"\t" startingAtIndex:0];
+	}
+#endif
+
+
+
 typedef MagicaVoxelVoxData ThisClass;
 
 typedef uint8_t FourCharDataArray[4];
@@ -180,6 +201,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	[super dealloc];
 }
 
+#if DEBUG
+	static int DEBUG_sParseDepth = 0;
+#endif
+
 - (void)parseData
 {
 	_magicNumber_ptr = (MagicNumber){
@@ -193,10 +218,14 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	{
 		ChunkContentsParserB contentsParser = ^id (ChunkIdent ident, ptrdiff_t contentsStartOffset, uint32_t size)
 		{
-			//NSData *contentsData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[contentsStartOffset] length:size freeWhenDone:NO];
-			//NSLog(@"Parsing contents of size %d for chunk ID %@:\n\t%@",
-			//	size, NSStringFromChunkIdent(ident), contentsData
-			//);
+			#if DEBUG
+				NSData *contentsData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[contentsStartOffset] length:size freeWhenDone:NO];
+				NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+				mvvdLog(@"%@Parsing chunk ID %@'s contents (of size %d):\n" @"%@\tData: %@",
+					indentationString, NSStringFromChunkIdent(ident), size,
+					indentationString, contentsData
+				);
+			#endif
 			
 			if (*ident.fourCharCode == *kSizeChunkIdent.fourCharCode)
 				return [self parseSizeContentsDataAtOffset:contentsStartOffset withDataSize:size];
@@ -228,12 +257,23 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		};
 		ChunkChildParserB childParser = ^(ChunkIdent parentIdent, ptrdiff_t childStartOffset, size_t remainingSizeAllowance, ptrdiff_t *out_endOffset)
 		{
-			//NSData *childData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[childStartOffset] length:remainingSizeAllowance freeWhenDone:NO];
-			//NSLog(@"Parsing child of chunk ID %@:\n\t%@",
-			//	NSStringFromChunkIdent(parentIdent), childData
-			//);
+			#if DEBUG
+				NSData *childData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[childStartOffset] length:remainingSizeAllowance freeWhenDone:NO];
+				NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+				mvvdLog(@"%@Parsing child of chunk ID %@:\n" @"%@\tData: %@",
+					indentationString, NSStringFromChunkIdent(parentIdent),
+					indentationString, childData
+				);
+				
+				int preexistingParseDepth = DEBUG_sParseDepth;
+				++DEBUG_sParseDepth;
+			#endif
 			
 			ChunkHandle *childChunk = chunkParser(childStartOffset);
+			
+			#if DEBUG
+				DEBUG_sParseDepth = preexistingParseDepth;
+			#endif
 			
 			if (out_endOffset != NULL)
 				*out_endOffset = (ptrdiff_t)(childStartOffset + childChunk.totalSize);
@@ -242,6 +282,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		
 		return [self parseChunkDataAtOffset:startOffset withContentsParser:contentsParser childParser:childParser];
 	};
+	
+	#if DEBUG
+		DEBUG_sParseDepth = 0;
+	#endif
 	_rootChunk = chunkParser(kRootChunk_Offset);
 }
 
@@ -249,9 +293,15 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	ChunkHandle *chunk = [[ChunkHandle alloc] initWithData:_data offset:baseOffset];
 	
-	//NSLog(@"Parsing chunk ID %@, with contents sized %d, and children sized %d.",
-	//	NSStringFromChunkIdent(chunk.ident), chunk.contentsSize, chunk.childrenTotalSize
-	//);
+	#if DEBUG
+		NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+		mvvdLog(@"%@Parsing chunk ID %@ (with contents sized %d; children sized %d).",
+			indentationString, NSStringFromChunkIdent(chunk.ident), chunk.contentsSize, chunk.childrenTotalSize
+		);
+		
+		int preexistingParseDepth = DEBUG_sParseDepth;
+		++DEBUG_sParseDepth;
+	#endif
 	
 	uint32_t contentsSize = chunk.contentsSize;
 	if (contentsSize > 0)
@@ -277,6 +327,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			// @assert: childrenRemainingSize^new == childrenRemainingSize^old - (endOffset^old - childOffset^old)
 		} while (true);
 	}
+	
+	#if DEBUG
+		DEBUG_sParseDepth = preexistingParseDepth;
+	#endif
 	
 	return chunk;
 }
