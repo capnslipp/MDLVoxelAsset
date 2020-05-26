@@ -2,6 +2,7 @@
 // @author: Slipp Douglas Thompson
 // @license: Public Domain per The Unlicense.  See accompanying LICENSE file or <http://unlicense.org/>.
 
+#pragma once
 
 #import <Foundation/Foundation.h>
 
@@ -61,6 +62,14 @@ typedef NS_ENUM(NSUInteger, MDLVoxelAssetMeshGenerationMode) {
 	/// Generates exterior quad-faces, greedily-combined.  Ported from Mikola Lysenko's Greedy Meshing method: https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
 	MDLVoxelAssetMeshGenerationModeGreedyQuad,
 };
+
+/// Determines whether to flatten the mesh (?).
+/// TODO: Current seems unused.  Investigate
+///		Value: Boolean NSNumber
+///		Default Value: `true`
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionMeshGenerationFlattening;
+
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionVoxelMesh;
 
 FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionConvertZUpToYUp;
 
