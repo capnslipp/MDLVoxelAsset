@@ -9,7 +9,8 @@
 
 typedef uint32_t NumModelsData;
 
-static const size_t kPackChunk_NumModelsSize = sizeof(NumModelsData);
+static const ptrdiff_t kPackChunk_numModels_offset = 0;
+static const size_t kPackChunk_numModels_size = 4;
 
 
 

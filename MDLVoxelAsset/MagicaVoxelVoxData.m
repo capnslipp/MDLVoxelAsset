@@ -40,11 +40,11 @@ typedef union _MagicNumber {
 static const char kValidMagicNumber_string[] = "VOX ";
 static const MagicNumber kValidMagicNumber = { .ptr = (uint8_t const *)&kValidMagicNumber_string };
 
-static const ptrdiff_t kMagicNumber_Offset = 0;
-static const size_t kMagicNumber_Size = 4;
-static const ptrdiff_t kVersionNumber_Offset = kMagicNumber_Offset + kMagicNumber_Size;
-static const size_t kVersionNumber_Size = 4;
-static const ptrdiff_t kRootChunk_Offset = kVersionNumber_Offset + kVersionNumber_Size;
+static const ptrdiff_t kMagicNumber_offset = 0;
+static const size_t kMagicNumber_size = 4;
+static const ptrdiff_t kVersionNumber_offset = kMagicNumber_offset + kMagicNumber_size;
+static const size_t kVersionNumber_size = 4;
+static const ptrdiff_t kRootChunk_offset = kVersionNumber_offset + kVersionNumber_size;
 
 
 #import "MagicaVoxelVoxData_ChunkIdent.h"
@@ -83,8 +83,7 @@ static const ChunkIdent kRObjChunkIdent = { .ptr = (uint8_t const *)&kRObjChunkI
 
 #import "MagicaVoxelVoxData_ChunkHandle.h"
 
-static const size_t kChunkPadding_MinSize = 0;
-static const size_t kChunkPadding_MaxSize = 1;
+static const size_t kChunkPaddingMaxSize = 1;
 
 //static const RGBAValuesDataArray kDefaultPaletteRGBAValues[256] = ;
 static PaletteChunkContentsHandle *kDefaultPaletteContents;
@@ -213,10 +212,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (void)parseData
 {
 	_magicNumber_ptr = (MagicNumber){
-		.ptr = (uint8_t const *)&_data.bytes[kMagicNumber_Offset]
+		.ptr = (uint8_t const *)&_data.bytes[kMagicNumber_offset]
 	};
 	
-	_versionNumber_ptr = (uint32_t const *)&_data.bytes[kVersionNumber_Offset];
+	_versionNumber_ptr = (uint32_t const *)&_data.bytes[kVersionNumber_offset];
 	
 	// @fixme: This may cause retain cycles of `chunkParser`.  The solution I've found to prevent this is the `__weak` attribute, which isn't allowed in MRC.
 	__block ChunkHandle * (^chunkParser)(ptrdiff_t) = ^(ptrdiff_t startOffset)
@@ -291,7 +290,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	#if DEBUG
 		DEBUG_sParseDepth = 0;
 	#endif
-	_rootChunk = chunkParser(kRootChunk_Offset);
+	_rootChunk = chunkParser(kRootChunk_offset);
 	
 	[self calculateModelCount];
 }
@@ -326,7 +325,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			[chunk addChildChunk:NSStringFromChunkIdent(childChunk.ident) handle:childChunk];
 			
 			size_t childrenSizeParsedThusFar = endOffset - childrenOffset;
-			if (!(childrenSizeParsedThusFar + kChunkPadding_MaxSize < childrenTotalSize))
+			if (!(childrenSizeParsedThusFar + kChunkPaddingMaxSize < childrenTotalSize))
 				break;
 			
 			childOffset = endOffset;
@@ -457,7 +456,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 
 - (BOOL)isValid
 {
-	if (_data.length < (kVersionNumber_Offset + kVersionNumber_Size)) // @tmp: Assuming no chunks; need to be improved considerably.
+	if (_data.length < (kVersionNumber_offset + kVersionNumber_size)) // @tmp: Assuming no chunks; need to be improved considerably.
 		return NO;
 	
 	if (*self.magicNumber.fourCharCode != *kValidMagicNumber.fourCharCode)

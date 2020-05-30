@@ -12,6 +12,12 @@
 }
 
 
++ (void)initialize
+{
+	assert(sizeof(VoxelChunkContentsHandle_Voxel) == 4);
+}
+
+
 - (instancetype)initWithData:(NSData *)data offset:(ptrdiff_t)offset
 {
 	self = [super init];
@@ -21,9 +27,9 @@
 	_data = [data retain];
 	_baseOffset = offset;
 	
-	NSParameterAssert(_data.length >= _baseOffset + kVoxelChunkNumVoxels_Offset + kVoxelChunkNumVoxels_Size);
+	NSParameterAssert(_data.length >= _baseOffset + kVoxelChunk_numVoxels_offset + kVoxelChunk_numVoxels_size);
 	
-	NSParameterAssert(_data.length >= _baseOffset + kVoxelChunkVoxels_Offset + self.voxelsSize);
+	NSParameterAssert(_data.length >= _baseOffset + kVoxelChunk_voxels_offset + self.voxelsSize);
 	
 	NSParameterAssert(_data.length >= _baseOffset + self.totalSize); // redundant; sanity check
 	
@@ -41,28 +47,28 @@
 #pragma Auto-Populated Info Properties
 
 - (ptrdiff_t)numVoxels_offset {
-	return _baseOffset + kVoxelChunkNumVoxels_Offset;
+	return _baseOffset + kVoxelChunk_numVoxels_offset;
 }
 - (const uint32_t *)numVoxels_ptr {
-	return (uint32_t const *)&_data.bytes[_baseOffset + kVoxelChunkNumVoxels_Offset];
+	return (uint32_t const *)&_data.bytes[self.numVoxels_offset];
 }
 - (uint32_t)numVoxels {
 	return *self.numVoxels_ptr;
 }
 
 - (size_t)voxelsSize {
-	return kVoxelChunk_VoxelSize * self.numVoxels;
+	return sizeof(VoxelChunkContentsHandle_Voxel) * self.numVoxels;
 }
 
 - (ptrdiff_t)voxels_offset {
-	return _baseOffset + kVoxelChunkVoxels_Offset;
+	return _baseOffset + kVoxelChunk_voxels_offset;
 }
 - (VoxelChunkContentsHandle_Voxel *)voxels_array {
-	return (VoxelChunkContentsHandle_Voxel *)(uint8_t const (*)[4])&_data.bytes[_baseOffset + kVoxelChunkVoxels_Offset];
+	return (VoxelChunkContentsHandle_Voxel *)(uint8_t const (*)[4])&_data.bytes[self.voxels_offset];
 }
 
 - (size_t)totalSize {
-	return kVoxelChunkNumVoxels_Size + self.voxelsSize;
+	return kVoxelChunk_numVoxels_size + self.voxelsSize;
 }
 
 @end

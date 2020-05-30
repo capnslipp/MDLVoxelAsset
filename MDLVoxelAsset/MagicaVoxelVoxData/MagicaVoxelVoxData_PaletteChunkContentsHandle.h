@@ -12,9 +12,8 @@ typedef struct _PaletteChunkContentsHandle_Color {
 	RGBAValuesDataArray const rgbaValues;
 } PaletteChunkContentsHandle_Color;
 
-static const ptrdiff_t kPaletteChunkColors_Offset = 0;
-static const size_t kPaletteChunk_ColorSize = sizeof(RGBAValuesDataArray);
-static const size_t kPaletteChunk_PaletteSize = kPaletteChunk_ColorSize * 256;
+static const ptrdiff_t kPaletteChunk_colors_offset = 0;
+static const size_t kPaletteChunk_colors_size = sizeof(RGBAValuesDataArray) * 256;
 
 
 

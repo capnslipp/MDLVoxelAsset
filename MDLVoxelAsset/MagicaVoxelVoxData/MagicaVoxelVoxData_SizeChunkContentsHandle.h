@@ -9,7 +9,8 @@
 
 typedef uint32_t XYZSizeDataArray[3];
 
-static const size_t kSizeChunk_XYZSizeSize = sizeof(XYZSizeDataArray);
+static const ptrdiff_t kSizeChunk_xyzSize_offset = 0;
+static const size_t kSizeChunk_xyzSize_size = sizeof(XYZSizeDataArray);
 
 
 

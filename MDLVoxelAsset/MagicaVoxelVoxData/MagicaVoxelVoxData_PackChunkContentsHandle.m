@@ -21,7 +21,7 @@
 	_data = [data retain];
 	_baseOffset = offset;
 	
-	NSParameterAssert(_data.length >= _baseOffset + kPackChunk_NumModelsSize);
+	NSParameterAssert(_data.length >= _baseOffset + kPackChunk_numModels_offset + kPackChunk_numModels_size);
 	
 	NSParameterAssert(_data.length >= _baseOffset + self.totalSize); // redundant; sanity check
 	
@@ -39,14 +39,14 @@
 #pragma Auto-Populated Info Properties
 
 - (ptrdiff_t)numModels_offset {
-	return _baseOffset;
+	return _baseOffset + kPackChunk_numModels_offset;
 }
 - (const NumModelsData *)numModels_ptr {
-	return (uint32_t const (*))&_data.bytes[_baseOffset];
+	return (uint32_t const (*))&_data.bytes[self.numModels_offset];
 }
 
 - (size_t)totalSize {
-	return kPackChunk_NumModelsSize;
+	return kPackChunk_numModels_size;
 }
 
 

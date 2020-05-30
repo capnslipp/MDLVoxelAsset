@@ -21,7 +21,7 @@
 	_data = [data retain];
 	_baseOffset = offset;
 	
-	NSParameterAssert(_data.length >= _baseOffset + kSizeChunk_XYZSizeSize);
+	NSParameterAssert(_data.length >= _baseOffset + kSizeChunk_xyzSize_offset + kSizeChunk_xyzSize_size);
 	
 	NSParameterAssert(_data.length >= _baseOffset + self.totalSize); // redundant; sanity check
 	
@@ -39,14 +39,14 @@
 #pragma Auto-Populated Info Properties
 
 - (ptrdiff_t)xyzSize_offset {
-	return _baseOffset;
+	return _baseOffset + kSizeChunk_xyzSize_offset;
 }
 - (const XYZSizeDataArray *)xyzSize_ptr {
-	return (uint32_t const (*)[3])&_data.bytes[_baseOffset];
+	return (uint32_t const (*)[3])&_data.bytes[self.xyzSize_offset];
 }
 
 - (size_t)totalSize {
-	return kSizeChunk_XYZSizeSize;
+	return kSizeChunk_xyzSize_size;
 }
 
 

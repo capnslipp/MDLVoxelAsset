@@ -13,10 +13,10 @@ typedef struct _VoxelChunkContentsHandle_Voxel {
 	uint8_t const colorIndex;
 } VoxelChunkContentsHandle_Voxel;
 
-static const ptrdiff_t kVoxelChunkNumVoxels_Offset = 0;
-static const size_t kVoxelChunkNumVoxels_Size = 4;
-static const ptrdiff_t kVoxelChunkVoxels_Offset = kVoxelChunkNumVoxels_Offset + kVoxelChunkNumVoxels_Size;
-static const size_t kVoxelChunk_VoxelSize = 4;
+static const ptrdiff_t kVoxelChunk_numVoxels_offset = 0;
+static const size_t kVoxelChunk_numVoxels_size = 4;
+
+static const ptrdiff_t kVoxelChunk_voxels_offset = kVoxelChunk_numVoxels_offset + kVoxelChunk_numVoxels_size;
 
 
 

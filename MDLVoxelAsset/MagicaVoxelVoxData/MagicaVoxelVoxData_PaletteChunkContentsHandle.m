@@ -23,7 +23,7 @@
 	_data = [data retain];
 	_baseOffset = offset;
 	
-	NSParameterAssert(_data.length >= _baseOffset + kPaletteChunkColors_Offset + kPaletteChunk_PaletteSize);
+	NSParameterAssert(_data.length >= _baseOffset + kPaletteChunk_colors_offset + kPaletteChunk_colors_size);
 	
 	NSParameterAssert(_data.length >= _baseOffset + self.totalSize); // redundant; sanity check
 	
@@ -41,14 +41,14 @@
 #pragma Auto-Populated Info Properties
 
 - (ptrdiff_t)colors_offset {
-	return _baseOffset + kPaletteChunkColors_Offset;
+	return _baseOffset + kPaletteChunk_colors_offset;
 }
 - (PaletteChunkContentsHandle_Color *)colors_array {
-	return (PaletteChunkContentsHandle_Color *)(uint8_t const (*)[4])&_data.bytes[_baseOffset + kPaletteChunkColors_Offset];
+	return (PaletteChunkContentsHandle_Color *)(uint8_t const (*)[4])&_data.bytes[self.colors_offset];
 }
 
 - (size_t)totalSize {
-	return kPaletteChunk_PaletteSize;
+	return kPaletteChunk_colors_size;
 }
 
 

@@ -8,13 +8,13 @@
 
 #pragma mark Constants
 
-static const ptrdiff_t kChunkIdent_ChunkOffset = 0;
-static const size_t kChunkIdent_Size = 4;
-static const ptrdiff_t kChunkContentsSize_ChunkOffset = kChunkIdent_ChunkOffset + kChunkIdent_Size;
-static const size_t kChunkContentsSize_Size = 4;
-static const ptrdiff_t kChunkChildrenTotalSize_ChunkOffset = kChunkContentsSize_ChunkOffset + kChunkContentsSize_Size;
-static const size_t kChunkChildrenTotalSize_Size = 4;
-static const ptrdiff_t kChunkContentsOrChildren_Offset = kChunkChildrenTotalSize_ChunkOffset + kChunkChildrenTotalSize_Size;
+static const ptrdiff_t kChunkIdent_chunkOffset = 0;
+static const size_t kChunkIdent_size = 4;
+static const ptrdiff_t kChunkContentsSize_chunkOffset = kChunkIdent_chunkOffset + kChunkIdent_size;
+static const size_t kChunkContentsSize_size = 4;
+static const ptrdiff_t kChunkChildrenTotalSize_chunkOffset = kChunkContentsSize_chunkOffset + kChunkContentsSize_size;
+static const size_t kChunkChildrenTotalSize_size = 4;
+static const ptrdiff_t kChunkContentsOrChildren_offset = kChunkChildrenTotalSize_chunkOffset + kChunkChildrenTotalSize_size;
 
 static const ptrdiff_t kPtrdiffMax = -(((ptrdiff_t)1 << (sizeof(ptrdiff_t) * 8 - 1)) + 1);
 static const ptrdiff_t kInvalidPtrdiff = kPtrdiffMax;
@@ -40,16 +40,16 @@ static const ptrdiff_t kInvalidPtrdiff = kPtrdiffMax;
 	_data = [data retain];
 	_baseOffset = offset;
 	
-	NSParameterAssert(_data.length >= _baseOffset + kChunkIdent_ChunkOffset + kChunkIdent_Size);
+	NSParameterAssert(_data.length >= _baseOffset + kChunkIdent_chunkOffset + kChunkIdent_size);
 	_ident = (ChunkIdent){
-		.ptr = (uint8_t const *)&_data.bytes[_baseOffset + kChunkIdent_ChunkOffset]
+		.ptr = (uint8_t const *)&_data.bytes[_baseOffset + kChunkIdent_chunkOffset]
 	};
 	
-	NSParameterAssert(_data.length >= _baseOffset + kChunkContentsSize_ChunkOffset + kChunkContentsSize_Size);
-	NSParameterAssert(_data.length >= _baseOffset + kChunkChildrenTotalSize_ChunkOffset + kChunkChildrenTotalSize_Size);
+	NSParameterAssert(_data.length >= _baseOffset + kChunkContentsSize_chunkOffset + kChunkContentsSize_size);
+	NSParameterAssert(_data.length >= _baseOffset + kChunkChildrenTotalSize_chunkOffset + kChunkChildrenTotalSize_size);
 	
-	NSParameterAssert(_data.length >= _baseOffset + kChunkContentsOrChildren_Offset + self.contentsSize);
-	NSParameterAssert(_data.length >= _baseOffset + kChunkContentsOrChildren_Offset + self.contentsSize + self.childrenTotalSize);
+	NSParameterAssert(_data.length >= _baseOffset + kChunkContentsOrChildren_offset + self.contentsSize);
+	NSParameterAssert(_data.length >= _baseOffset + kChunkContentsOrChildren_offset + self.contentsSize + self.childrenTotalSize);
 	
 	NSParameterAssert(_data.length >= _baseOffset + self.totalSize); // redundant; sanity check
 	
@@ -71,42 +71,42 @@ static const ptrdiff_t kInvalidPtrdiff = kPtrdiffMax;
 #pragma Auto-Populated Info Properties
 
 - (ptrdiff_t)contentsSize_offset {
-	return _baseOffset + kChunkContentsSize_ChunkOffset;
+	return _baseOffset + kChunkContentsSize_chunkOffset;
 }
 - (const uint32_t *)contentsSize_ptr {
-	return (uint32_t const *)&_data.bytes[_baseOffset + kChunkContentsSize_ChunkOffset];
+	return (uint32_t const *)&_data.bytes[_baseOffset + kChunkContentsSize_chunkOffset];
 }
 - (uint32_t)contentsSize {
 	return *self.contentsSize_ptr;
 }
 
 - (ptrdiff_t)childrenTotalSize_offset {
-	return _baseOffset + kChunkChildrenTotalSize_ChunkOffset;
+	return _baseOffset + kChunkChildrenTotalSize_chunkOffset;
 }
 - (const uint32_t *)childrenTotalSize_ptr {
-	return (uint32_t const *)&_data.bytes[_baseOffset + kChunkChildrenTotalSize_ChunkOffset];
+	return (uint32_t const *)&_data.bytes[_baseOffset + kChunkChildrenTotalSize_chunkOffset];
 }
 - (uint32_t)childrenTotalSize {
 	return *self.childrenTotalSize_ptr;
 }
 
 - (ptrdiff_t)contents_offset {
-	return (self.contentsSize == 0) ? kInvalidPtrdiff : (_baseOffset + kChunkContentsOrChildren_Offset);
+	return (self.contentsSize == 0) ? kInvalidPtrdiff : (_baseOffset + kChunkContentsOrChildren_offset);
 }
 - (const void *)contents_ptr {
-	return (self.contentsSize == 0) ? NULL : (uint32_t const *)&_data.bytes[_baseOffset + kChunkContentsOrChildren_Offset];
+	return (self.contentsSize == 0) ? NULL : (uint32_t const *)&_data.bytes[_baseOffset + kChunkContentsOrChildren_offset];
 }
 
 - (ptrdiff_t)children_offset {
-	return (self.childrenTotalSize == 0) ? kInvalidPtrdiff : (_baseOffset + kChunkContentsOrChildren_Offset + self.contentsSize);
+	return (self.childrenTotalSize == 0) ? kInvalidPtrdiff : (_baseOffset + kChunkContentsOrChildren_offset + self.contentsSize);
 }
 - (const void *)children_ptr {
-	return (self.childrenTotalSize == 0) ? NULL : (uint32_t const *)&_data.bytes[_baseOffset + kChunkContentsOrChildren_Offset + self.contentsSize];
+	return (self.childrenTotalSize == 0) ? NULL : (uint32_t const *)&_data.bytes[_baseOffset + kChunkContentsOrChildren_offset + self.contentsSize];
 }
 
 - (size_t)totalSize
 {
-	return kChunkIdent_Size + kChunkContentsSize_Size + kChunkChildrenTotalSize_Size + // “header”
+	return kChunkIdent_size + kChunkContentsSize_size + kChunkChildrenTotalSize_size + // “header”
 		self.contentsSize + self.childrenTotalSize; // “body”: contents/children
 }
 
