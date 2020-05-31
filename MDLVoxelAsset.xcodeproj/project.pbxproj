@@ -90,6 +90,10 @@
 		FAE7C4AD1CF13DD20075ED7D /* MDLVoxelAsset.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FAF7D4631E73E1B8007CFA66 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF7D4621E73E1B8007CFA66 /* main.swift */; };
 		FAF7D4671E73F966007CFA66 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */; };
+		FAFA382724839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */; };
+		FAFA382824839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */; };
+		FAFA382924839E8500053799 /* MagicaVoxelVoxData_types.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFA382624839E8400053799 /* MagicaVoxelVoxData_types.m */; };
+		FAFA382A24839E8500053799 /* MagicaVoxelVoxData_types.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFA382624839E8400053799 /* MagicaVoxelVoxData_types.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -233,6 +237,8 @@
 		FADD3DE8247CEE0E00369F84 /* MDLVoxelAssetModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MDLVoxelAssetModel.m; sourceTree = "<group>"; };
 		FAF7D4601E73E1B7007CFA66 /* convertToJSON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = convertToJSON; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAF7D4621E73E1B8007CFA66 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_types.h; sourceTree = "<group>"; };
+		FAFA382624839E8400053799 /* MagicaVoxelVoxData_types.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_types.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -365,6 +371,8 @@
 		FA6EECA41CEE59E600818C92 /* MagicaVoxelVoxData */ = {
 			isa = PBXGroup;
 			children = (
+				FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */,
+				FAFA382624839E8400053799 /* MagicaVoxelVoxData_types.m */,
 				FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */,
 				FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */,
 				FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */,
@@ -426,6 +434,7 @@
 				FADD3DE9247CEE0E00369F84 /* MDLVoxelAssetModel.h in Headers */,
 				FA6EECB71CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */,
 				FA64893B1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h in Headers */,
+				FAFA382724839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */,
 				FA6EECB31CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -442,6 +451,7 @@
 				FADD3DEA247CEE0E00369F84 /* MDLVoxelAssetModel.h in Headers */,
 				FA9CACF31CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */,
 				FA9CACE81CF1806600B1ABA4 /* MagicaVoxelVoxData.h in Headers */,
+				FAFA382824839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */,
 				FA9CACEF1CF1807500B1ABA4 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -735,6 +745,7 @@
 				FA6EECB01CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */,
 				FA6EECB81CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */,
 				FA64893C1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m in Sources */,
+				FAFA382924839E8500053799 /* MagicaVoxelVoxData_types.m in Sources */,
 				FADD3DEB247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */,
 				FA0ADEDD1CEFAC660054DCAA /* MDLVoxelAsset.m in Sources */,
 				FA6EECB41CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m in Sources */,
@@ -769,6 +780,7 @@
 				FA9CACE91CF1806D00B1ABA4 /* MagicaVoxelVoxData.m in Sources */,
 				FA9CACEE1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkIdent.m in Sources */,
 				FA9CACEA1CF1807000B1ABA4 /* MDLVoxelAsset.m in Sources */,
+				FAFA382A24839E8500053799 /* MagicaVoxelVoxData_types.m in Sources */,
 				FADD3DEC247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */,
 				FA9CACF21CF1807500B1ABA4 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */,
 				FA9CACEC1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */,
