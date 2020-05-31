@@ -7,10 +7,10 @@
 
 #pragma mark Constants
 
-typedef uint32_t XYZSizeDataArray[3];
+typedef uint32_t XYZSizeData[3];
 
 static const ptrdiff_t kSizeChunk_xyzSize_offset = 0;
-static const size_t kSizeChunk_xyzSize_size = sizeof(XYZSizeDataArray);
+static const size_t kSizeChunk_xyzSize_size = sizeof(XYZSizeData);
 
 
 
@@ -26,7 +26,7 @@ static const size_t kSizeChunk_xyzSize_size = sizeof(XYZSizeDataArray);
 // Auto-populated info properties:
 
 @property (nonatomic, assign, readonly) ptrdiff_t xyzSize_offset;
-@property (nonatomic, assign, readonly) XYZSizeDataArray const *xyzSize_ptr;
+@property (nonatomic, assign, readonly) XYZSizeData const *xyzSize_ptr;
 
 /// The total size of the contents.
 - (size_t)totalSize;

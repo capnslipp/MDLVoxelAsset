@@ -7,9 +7,9 @@
 
 #pragma mark Constants
 
-typedef uint8_t XYZCoordsDataArray[3];
+typedef uint8_t XYZCoordsData[3];
 typedef struct _VoxelChunkContentsHandle_Voxel {
-	XYZCoordsDataArray const xyzCoords;
+	XYZCoordsData const xyzCoords;
 	uint8_t const colorIndex;
 } VoxelChunkContentsHandle_Voxel;
 
@@ -35,10 +35,10 @@ static const ptrdiff_t kVoxelChunk_voxels_offset = kVoxelChunk_numVoxels_offset 
 @property (nonatomic, assign, readonly) uint32_t const *numVoxels_ptr;
 @property (nonatomic, assign, readonly) uint32_t numVoxels;
 
-@property (nonatomic, assign, readonly) size_t voxelsSize;
-
 @property (nonatomic, assign, readonly) ptrdiff_t voxels_offset;
-@property (nonatomic, assign, nullable) VoxelChunkContentsHandle_Voxel *voxels_array;
+@property (nonatomic, assign, readonly) ptrdiff_t voxels_count;
+@property (nonatomic, assign, readonly) size_t voxels_size;
+@property (nonatomic, assign, nullable) VoxelChunkContentsHandle_Voxel *voxels;
 
 /// The total size of the contents.
 - (size_t)totalSize;

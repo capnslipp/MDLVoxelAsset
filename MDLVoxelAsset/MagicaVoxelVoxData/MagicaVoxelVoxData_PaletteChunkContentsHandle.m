@@ -43,7 +43,10 @@
 - (ptrdiff_t)colors_offset {
 	return _baseOffset + kPaletteChunk_colors_offset;
 }
-- (PaletteChunkContentsHandle_Color *)colors_array {
+- (uint32_t)colors_count {
+	return kPaletteChunk_colors_count; // always a full palette
+}
+- (PaletteChunkContentsHandle_Color *)colors {
 	return (PaletteChunkContentsHandle_Color *)(uint8_t const (*)[4])&_data.bytes[self.colors_offset];
 }
 

@@ -121,7 +121,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 @synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors;
 
 - (uint32_t)voxelCount {
-	return [_mvvoxData voxels_countForModelID:0];
+	return [_mvvoxData voxelsForModelID:0].count;
 }
 
 - (MDLVoxelAsset_VoxelDimensions)voxelDimensions {
@@ -160,13 +160,12 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	}
 	
 	
-	uint16_t paletteColorCount = _mvvoxData.paletteColors_count;
-	MagicaVoxelVoxData_PaletteColor *mvvoxPaletteColors = _mvvoxData.paletteColors_array;
+	MagicaVoxelVoxData_PaletteColorArray mvvoxPaletteColors = _mvvoxData.paletteColors;
 	
-	NSMutableArray<Color*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(paletteColorCount + 1)];
+	NSMutableArray<Color*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(mvvoxPaletteColors.count + 1)];
 	paletteColors[0] = [Color clearColor];
-	for (uint16_t pI = 1; pI <= paletteColorCount; ++pI) {
-		MagicaVoxelVoxData_PaletteColor *voxColor = &mvvoxPaletteColors[pI - 1];
+	for (uint16_t pI = 1; pI <= mvvoxPaletteColors.count; ++pI) {
+		const MagicaVoxelVoxData_PaletteColor *voxColor = &mvvoxPaletteColors.array[pI - 1];
 		paletteColors[pI] = [Color
 			colorWithRed: voxColor->r / 255.f
 			green: voxColor->g / 255.f

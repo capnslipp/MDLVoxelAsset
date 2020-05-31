@@ -91,7 +91,7 @@ struct {
 	FourCharDataArray ident;
 	uint32_t contentsSize;
 	uint32_t childrenTotalSize;;
-	RGBAValuesDataArray contents[256];
+	RGBAValuesData contents[256];
 	// `children` is zero-length
 } kDefaultPaletteData = {
 	.ident = {'R','G','B','A'},
@@ -381,7 +381,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			_modelCount = 0; return;
 		}
 		
-		_modelCount = *chunkContents.numModels_ptr;
+		_modelCount = chunkContents.numModels;
 		
 		NSParameterAssert(sizeChunks.count == _modelCount);
 		NSParameterAssert(voxelChunks.count == _modelCount);
@@ -407,7 +407,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return *(MagicaVoxelVoxData_XYZDimensions *)*chunkContents.xyzSize_ptr;
 }
 
-- (MagicaVoxelVoxData_PaletteColor *)paletteColors_array
+- (MagicaVoxelVoxData_PaletteColorArray)paletteColors
 {
 	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kPaletteChunkIdent_string)].firstObject;
 	if (!chunkHandle)
@@ -415,43 +415,30 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	
 	PaletteChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
 	if (!chunkContents)
-		return NULL;
+		return kMagicaVoxelVoxData_PaletteColorArray_invalidSentinel;
 	
-	return (MagicaVoxelVoxData_PaletteColor *)chunkContents.colors_array;
+	return (MagicaVoxelVoxData_PaletteColorArray){
+		.count = 255, // last color is unused
+		.array = (MagicaVoxelVoxData_PaletteColor *)chunkContents.colors
+	};
 }
 
-- (uint8_t)paletteColors_count {
-	return 255; // last color is unused
-}
-
-- (nullable MagicaVoxelVoxData_Voxel *)voxels_arrayForModelID:(uint32_t)modelID
+- (MagicaVoxelVoxData_VoxelArray)voxelsForModelID:(uint32_t)modelID
 {
 	NSParameterAssert(modelID >= 0 && modelID < _modelCount);
 	
 	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)][modelID];
 	if (!chunkHandle)
-		return NULL;
+		return kMagicaVoxelVoxData_VoxelArray_invalidSentinel;
 	
 	VoxelChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
 	if (!chunkContents)
-		return NULL;
+		return kMagicaVoxelVoxData_VoxelArray_invalidSentinel;
 	
-	return (MagicaVoxelVoxData_Voxel *)chunkContents.voxels_array;
-}
-
-- (uint32_t)voxels_countForModelID:(uint32_t)modelID
-{
-	NSParameterAssert(modelID >= 0 && modelID < _modelCount);
-	
-	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kVoxelChunkIdent_string)][modelID];
-	if (!chunkHandle)
-		return 0;
-	
-	VoxelChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
-	if (!chunkContents)
-		return 0;
-	
-	return chunkContents.numVoxels;
+	return (MagicaVoxelVoxData_VoxelArray){
+		.count = chunkContents.numVoxels,
+		.array = (MagicaVoxelVoxData_Voxel *)chunkContents.voxels
+	};
 }
 
 - (BOOL)isValid

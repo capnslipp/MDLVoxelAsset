@@ -41,8 +41,11 @@
 - (ptrdiff_t)numModels_offset {
 	return _baseOffset + kPackChunk_numModels_offset;
 }
-- (const NumModelsData *)numModels_ptr {
+- (uint32_t const *)numModels_ptr {
 	return (uint32_t const (*))&_data.bytes[self.numModels_offset];
+}
+- (uint32_t)numModels {
+	return *self.numModels_ptr;
 }
 
 - (size_t)totalSize {

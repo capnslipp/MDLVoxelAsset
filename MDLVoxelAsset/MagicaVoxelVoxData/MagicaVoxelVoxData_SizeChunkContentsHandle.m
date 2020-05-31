@@ -41,7 +41,7 @@
 - (ptrdiff_t)xyzSize_offset {
 	return _baseOffset + kSizeChunk_xyzSize_offset;
 }
-- (const XYZSizeDataArray *)xyzSize_ptr {
+- (const XYZSizeData *)xyzSize_ptr {
 	return (uint32_t const (*)[3])&_data.bytes[self.xyzSize_offset];
 }
 

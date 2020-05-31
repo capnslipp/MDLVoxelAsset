@@ -29,7 +29,7 @@
 	
 	NSParameterAssert(_data.length >= _baseOffset + kVoxelChunk_numVoxels_offset + kVoxelChunk_numVoxels_size);
 	
-	NSParameterAssert(_data.length >= _baseOffset + kVoxelChunk_voxels_offset + self.voxelsSize);
+	NSParameterAssert(_data.length >= _baseOffset + kVoxelChunk_voxels_offset + self.voxels_size);
 	
 	NSParameterAssert(_data.length >= _baseOffset + self.totalSize); // redundant; sanity check
 	
@@ -56,19 +56,21 @@
 	return *self.numVoxels_ptr;
 }
 
-- (size_t)voxelsSize {
-	return sizeof(VoxelChunkContentsHandle_Voxel) * self.numVoxels;
-}
-
 - (ptrdiff_t)voxels_offset {
 	return _baseOffset + kVoxelChunk_voxels_offset;
 }
-- (VoxelChunkContentsHandle_Voxel *)voxels_array {
+- (ptrdiff_t)voxels_count {
+	return self.numVoxels; // just a method alias
+}
+- (size_t)voxels_size {
+	return sizeof(VoxelChunkContentsHandle_Voxel) * self.numVoxels;
+}
+- (VoxelChunkContentsHandle_Voxel *)voxels {
 	return (VoxelChunkContentsHandle_Voxel *)(uint8_t const (*)[4])&_data.bytes[self.voxels_offset];
 }
 
 - (size_t)totalSize {
-	return kVoxelChunk_numVoxels_size + self.voxelsSize;
+	return kVoxelChunk_numVoxels_size + self.voxels_size;
 }
 
 @end

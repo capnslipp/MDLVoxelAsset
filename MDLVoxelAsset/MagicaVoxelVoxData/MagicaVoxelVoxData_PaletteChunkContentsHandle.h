@@ -7,13 +7,14 @@
 
 #pragma mark Constants
 
-typedef uint8_t RGBAValuesDataArray[4];
+typedef uint8_t RGBAValuesData[4];
 typedef struct _PaletteChunkContentsHandle_Color {
-	RGBAValuesDataArray const rgbaValues;
+	RGBAValuesData const rgbaValues;
 } PaletteChunkContentsHandle_Color;
 
 static const ptrdiff_t kPaletteChunk_colors_offset = 0;
-static const size_t kPaletteChunk_colors_size = sizeof(RGBAValuesDataArray) * 256;
+static const ptrdiff_t kPaletteChunk_colors_count = 256;
+static const size_t kPaletteChunk_colors_size = sizeof(RGBAValuesData) * kPaletteChunk_colors_count;
 
 
 
@@ -29,7 +30,8 @@ static const size_t kPaletteChunk_colors_size = sizeof(RGBAValuesDataArray) * 25
 // Auto-populated info properties:
 
 @property (nonatomic, assign, readonly) ptrdiff_t colors_offset;
-@property (nonatomic, assign, readonly) PaletteChunkContentsHandle_Color *colors_array;
+@property (nonatomic, assign, readonly) uint32_t colors_count;
+@property (nonatomic, assign, readonly) PaletteChunkContentsHandle_Color *colors;
 
 /// The total size of the contents.
 - (size_t)totalSize;

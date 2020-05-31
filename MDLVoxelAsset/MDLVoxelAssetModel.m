@@ -111,7 +111,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 @synthesize modelID=_modelID, voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors, meshes=_meshes;
 
 - (uint32_t)voxelCount {
-	return [_mvvoxData voxels_countForModelID:_modelID];
+	return [_mvvoxData voxelsForModelID:_modelID].count;
 }
 
 - (MDLVoxelAsset_VoxelDimensions)voxelDimensions {
@@ -139,8 +139,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	NSParameterAssert(modelID >= 0 && modelID < _mvvoxData.modelCount);
 	_modelID = modelID;
 	
-	MagicaVoxelVoxData_Voxel *mvvoxVoxels = [_mvvoxData voxels_arrayForModelID:_modelID];
-	uint32_t voxelCount = self.voxelCount;
+	MagicaVoxelVoxData_VoxelArray mvvoxVoxels = [_mvvoxData voxelsForModelID:_modelID];
 	
 	MagicaVoxelVoxData_XYZDimensions mvvoxDimensions = [_mvvoxData dimensionsForModelID:_modelID];
 	
@@ -149,16 +148,16 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		(MDLVoxelAsset_VoxelDimensions){ mvvoxDimensions.x, mvvoxDimensions.y, mvvoxDimensions.z };
 	memcpy(&_voxelDimensions, &voxelDimensions, sizeof(MDLVoxelAsset_VoxelDimensions)); // Obj-C makes it tough to construct const-members, since Obj-C zero-inits members for us; and Clang used to let us do this, but no longer does.  Using this as a cheap hack to restore the older Clang behavior.
 	
-	_voxelsRawData = calloc(voxelCount, sizeof(MDLVoxelIndex));
-	for (int32_t vI = voxelCount - 1; vI >= 0; --vI) {
-		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
+	_voxelsRawData = calloc(mvvoxVoxels.count, sizeof(MDLVoxelIndex));
+	for (int32_t vI = mvvoxVoxels.count - 1; vI >= 0; --vI) {
+		const MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels.array[vI];
 		
 		if (_options.convertZUpToYUp)
 			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->z, (mvvoxDimensions.y - 1 + -voxVoxel->y), 0 };
 		else
 			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->y, voxVoxel->z, 0 };
 	}
-	_voxelsData = [[NSData alloc] initWithBytesNoCopy:_voxelsRawData length:(voxelCount * sizeof(MDLVoxelIndex)) freeWhenDone:NO];
+	_voxelsData = [[NSData alloc] initWithBytesNoCopy:_voxelsRawData length:(mvvoxVoxels.count * sizeof(MDLVoxelIndex)) freeWhenDone:NO];
 	
 	
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
@@ -173,9 +172,9 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 				voxelPaletteIndices[xI][yI][zI] = zeroPaletteIndex;
 		}
 	}
-	//NSMutableArray<NSValue*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:voxelCount];
-	for (int32_t vI = 0; vI < voxelCount; ++vI) {
-		MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels[vI];
+	//NSMutableArray<NSValue*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:mvvoxVoxels.count];
+	for (int32_t vI = 0; vI < mvvoxVoxels.count; ++vI) {
+		const MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels.array[vI];
 		MDLVoxelIndex voxelIndex = _voxelsRawData[vI];
 		
 		uint8_t colorIndex = voxVoxel->colorIndex;
@@ -189,13 +188,12 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_voxelPaletteIndices = voxelPaletteIndices;
 	
 	
-	uint16_t paletteColorCount = _mvvoxData.paletteColors_count;
-	MagicaVoxelVoxData_PaletteColor *mvvoxPaletteColors = _mvvoxData.paletteColors_array;
+	MagicaVoxelVoxData_PaletteColorArray mvvoxPaletteColors = _mvvoxData.paletteColors;
 	
-	NSMutableArray<Color*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(paletteColorCount + 1)];
+	NSMutableArray<Color*> *paletteColors = [[NSMutableArray alloc] initWithCapacity:(mvvoxPaletteColors.count + 1)];
 	paletteColors[0] = [Color clearColor];
-	for (uint16_t pI = 1; pI <= paletteColorCount; ++pI) {
-		MagicaVoxelVoxData_PaletteColor *voxColor = &mvvoxPaletteColors[pI - 1];
+	for (uint16_t pI = 1; pI <= mvvoxPaletteColors.count; ++pI) {
+		const MagicaVoxelVoxData_PaletteColor *voxColor = &mvvoxPaletteColors.array[pI - 1];
 		paletteColors[pI] = [Color
 			colorWithRed: voxColor->r / 255.f
 			green: voxColor->g / 255.f
@@ -346,12 +344,12 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 	if (_options.calculateShellLevels)
 		[self calculateShellLevels];
 	
-	uint32_t voxelCount = self.voxelCount;
+	MagicaVoxelVoxData_VoxelArray mvvoxVoxels = [_mvvoxData voxelsForModelID:_modelID];
 	
 	static uint32_t const kFacesPerVoxel = 6;
 	
 	static uint32_t const kVerticesPerVoxel = 4 * kFacesPerVoxel;
-	uint32_t vertexCount = self.voxelCount * kVerticesPerVoxel;
+	uint32_t vertexCount = mvvoxVoxels.count * kVerticesPerVoxel;
 	NSAssert(sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData) == kVerticesPerVoxel,
 		@"`sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData)` must equal %lu.", (unsigned long)kVerticesPerVoxel
 	);
@@ -361,7 +359,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 	#endif
 	
 	static uint32_t const kVertexIndicesPerVoxel = 6 * kFacesPerVoxel;
-	uint32_t vertexIndexCount = self.voxelCount * kVertexIndicesPerVoxel;
+	uint32_t vertexIndexCount = mvvoxVoxels.count * kVertexIndicesPerVoxel;
 	NSAssert(sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t) == kVertexIndicesPerVoxel,
 		@"`sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t)` must equal %lu.", (unsigned long)kVertexIndicesPerVoxel
 	);
@@ -370,7 +368,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		memset(_vertexIndicesRawData, '\xFF', vertexIndexCount * sizeof(uint16_t));
 	#endif
 	
-	MagicaVoxelVoxData_Voxel *mvvoxVoxels = [_mvvoxData voxels_arrayForModelID:_modelID];
+	uint32_t voxelCount = mvvoxVoxels.count;
 	
 	{
 		uint32_t voxI = 0;
@@ -392,7 +390,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 			for (uint32_t vertI = 0; vertI < kVerticesPerVoxel; ++vertI)
 				_verticesRawData[baseVertI + vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
 			
-			uint8_t colorIndex = mvvoxVoxels[voxI].colorIndex;
+			uint8_t colorIndex = mvvoxVoxels.array[voxI].colorIndex;
 			if (_options.paletteIndexReplacements != nil) {
 				NSNumber *replacementValue = _options.paletteIndexReplacements[@(colorIndex)];
 				if (replacementValue != nil)

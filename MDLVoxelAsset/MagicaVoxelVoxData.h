@@ -14,14 +14,28 @@ typedef struct _MagicaVoxelVoxData_XYZDimensions {
 	uint32_t const x, y, z;
 } MagicaVoxelVoxData_XYZDimensions;
 
+
 typedef struct _MagicaVoxelVoxData_PaletteColor {
 	uint8_t const r, g, b, a;
 } MagicaVoxelVoxData_PaletteColor;
+
+typedef struct _MagicaVoxelVoxData_PaletteColorArray {
+	uint32_t const count;
+	MagicaVoxelVoxData_PaletteColor const * _Nullable array;
+} MagicaVoxelVoxData_PaletteColorArray;
+static const MagicaVoxelVoxData_PaletteColorArray kMagicaVoxelVoxData_PaletteColorArray_invalidSentinel = { .count = 0, .array = NULL };
+
 
 typedef struct _MagicaVoxelVoxData_Voxel {
 	uint8_t const x, y, z;
 	uint8_t const colorIndex;
 } MagicaVoxelVoxData_Voxel;
+
+typedef struct _MagicaVoxelVoxData_VoxelArray {
+	uint32_t const count;
+	MagicaVoxelVoxData_Voxel const * _Nullable array;
+} MagicaVoxelVoxData_VoxelArray;
+static const MagicaVoxelVoxData_VoxelArray kMagicaVoxelVoxData_VoxelArray_invalidSentinel = { .count = 0, .array = NULL };
 
 
 
@@ -41,11 +55,9 @@ typedef struct _MagicaVoxelVoxData_Voxel {
 
 - (MagicaVoxelVoxData_XYZDimensions)dimensionsForModelID:(uint32_t)modelID;
 
-@property (nonatomic, assign, readonly) MagicaVoxelVoxData_PaletteColor *paletteColors_array;
-@property (nonatomic, assign, readonly) uint8_t paletteColors_count;
+@property (nonatomic, assign, readonly) MagicaVoxelVoxData_PaletteColorArray paletteColors;
 
-- (nullable MagicaVoxelVoxData_Voxel *)voxels_arrayForModelID:(uint32_t)modelID;
-- (uint32_t)voxels_countForModelID:(uint32_t)modelID;
+- (MagicaVoxelVoxData_VoxelArray)voxelsForModelID:(uint32_t)modelID;
 
 #pragma mark NSData-Mirroring Interface
 

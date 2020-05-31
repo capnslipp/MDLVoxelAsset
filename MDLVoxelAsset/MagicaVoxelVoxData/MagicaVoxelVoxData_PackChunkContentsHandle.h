@@ -7,8 +7,6 @@
 
 #pragma mark Constants
 
-typedef uint32_t NumModelsData;
-
 static const ptrdiff_t kPackChunk_numModels_offset = 0;
 static const size_t kPackChunk_numModels_size = 4;
 
@@ -26,7 +24,8 @@ static const size_t kPackChunk_numModels_size = 4;
 // Auto-populated info properties:
 
 @property (nonatomic, assign, readonly) ptrdiff_t numModels_offset;
-@property (nonatomic, assign, readonly) NumModelsData const *numModels_ptr;
+@property (nonatomic, assign, readonly) uint32_t const *numModels_ptr;
+@property (nonatomic, assign, readonly) uint32_t numModels;
 
 /// The total size of the contents.
 - (size_t)totalSize;
