@@ -57,20 +57,20 @@ static const char kVoxelChunkIdent_string[] = "XYZI";
 static const ChunkIdent kVoxelChunkIdent = { .ptr = (uint8_t const *)&kVoxelChunkIdent_string };
 static const char kPaletteChunkIdent_string[] = "RGBA";
 static const ChunkIdent kPaletteChunkIdent = { .ptr = (uint8_t const *)&kPaletteChunkIdent_string };
-static const char kMaterialChunkIdent_string[] = "MATT";
-static const ChunkIdent kMaterialChunkIdent = { .ptr = (uint8_t const *)&kMaterialChunkIdent_string };
+static const char kMaterialOldChunkIdent_string[] = "MATT";
+static const ChunkIdent kMaterialOldChunkIdent = { .ptr = (uint8_t const *)&kMaterialOldChunkIdent_string };
 static const char kPackChunkIdent_string[] = "PACK";
 static const ChunkIdent kPackChunkIdent = { .ptr = (uint8_t const *)&kPackChunkIdent_string };
-static const char kNTrnChunkIdent_string[] = "nTRN";
-static const ChunkIdent kNTrnChunkIdent = { .ptr = (uint8_t const *)&kNTrnChunkIdent_string };
-static const char kNGrpChunkIdent_string[] = "nGRP";
-static const ChunkIdent kNGrpChunkIdent = { .ptr = (uint8_t const *)&kNGrpChunkIdent_string };
-static const char kNShpChunkIdent_string[] = "nSHP";
-static const ChunkIdent kNShpChunkIdent = { .ptr = (uint8_t const *)&kNShpChunkIdent_string };
-static const char kLayrChunkIdent_string[] = "LAYR";
-static const ChunkIdent kLayrChunkIdent = { .ptr = (uint8_t const *)&kLayrChunkIdent_string };
-static const char kMatlChunkIdent_string[] = "MATL";
-static const ChunkIdent kMatlChunkIdent = { .ptr = (uint8_t const *)&kMatlChunkIdent_string };
+static const char kTransformNodeChunkIdent_string[] = "nTRN";
+static const ChunkIdent kTransformNodeChunkIdent = { .ptr = (uint8_t const *)&kTransformNodeChunkIdent_string };
+static const char kGroupNodeChunkIdent_string[] = "nGRP";
+static const ChunkIdent kGroupNodeChunkIdent = { .ptr = (uint8_t const *)&kGroupNodeChunkIdent_string };
+static const char kShapeNodeChunkIdent_string[] = "nSHP";
+static const ChunkIdent kShapeNodeChunkIdent = { .ptr = (uint8_t const *)&kShapeNodeChunkIdent_string };
+static const char kLayerChunkIdent_string[] = "LAYR";
+static const ChunkIdent kLayerChunkIdent = { .ptr = (uint8_t const *)&kLayerChunkIdent_string };
+static const char kMaterialChunkIdent_string[] = "MATL";
+static const ChunkIdent kMaterialChunkIdent = { .ptr = (uint8_t const *)&kMaterialChunkIdent_string };
 static const char kRObjChunkIdent_string[] = "rOBJ";
 static const ChunkIdent kRObjChunkIdent = { .ptr = (uint8_t const *)&kRObjChunkIdent_string };
 
@@ -237,19 +237,19 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 				return [self parseVoxelContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kPaletteChunkIdent.fourCharCode)
 				return [self parsePaletteContentsDataAtOffset:contentsStartOffset withDataSize:size];
-			else if (*ident.fourCharCode == *kMaterialChunkIdent.fourCharCode)
+			else if (*ident.fourCharCode == *kMaterialOldChunkIdent.fourCharCode)
 				return nil; // materials ignored for now
 			else if (*ident.fourCharCode == *kPackChunkIdent.fourCharCode)
 				return [self parsePackContentsDataAtOffset:contentsStartOffset withDataSize:size];
-			else if (*ident.fourCharCode == *kNTrnChunkIdent.fourCharCode)
+			else if (*ident.fourCharCode == *kTransformNodeChunkIdent.fourCharCode)
 				return nil; // Mysterious “nTRN” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
-			else if (*ident.fourCharCode == *kNGrpChunkIdent.fourCharCode)
+			else if (*ident.fourCharCode == *kGroupNodeChunkIdent.fourCharCode)
 				return nil; // Mysterious “nGRP” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
-			else if (*ident.fourCharCode == *kNShpChunkIdent.fourCharCode)
+			else if (*ident.fourCharCode == *kShapeNodeChunkIdent.fourCharCode)
 				return nil; // Mysterious “nSHP” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
-			else if (*ident.fourCharCode == *kLayrChunkIdent.fourCharCode)
+			else if (*ident.fourCharCode == *kLayerChunkIdent.fourCharCode)
 				return nil; // Mysterious “LAYR” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
-			else if (*ident.fourCharCode == *kMatlChunkIdent.fourCharCode)
+			else if (*ident.fourCharCode == *kMaterialChunkIdent.fourCharCode)
 				return nil; // Mysterious “MATL” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
 			else if (*ident.fourCharCode == *kRObjChunkIdent.fourCharCode)
 				return nil; // Mysterious “rObj” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
