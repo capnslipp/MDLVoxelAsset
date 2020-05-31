@@ -146,7 +146,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	MDLVoxelAsset_VoxelDimensions voxelDimensions = _options.convertZUpToYUp ?
 		(MDLVoxelAsset_VoxelDimensions){ mvvoxDimensions.x, mvvoxDimensions.z, mvvoxDimensions.y } :
 		(MDLVoxelAsset_VoxelDimensions){ mvvoxDimensions.x, mvvoxDimensions.y, mvvoxDimensions.z };
-	memcpy(&_voxelDimensions, &voxelDimensions, sizeof(MDLVoxelAsset_VoxelDimensions)); // Obj-C makes it tough to construct const-members, since Obj-C zero-inits members for us; and Clang used to let us do this, but no longer does.  Using this as a cheap hack to restore the older Clang behavior.
+	_voxelDimensions = voxelDimensions;
 	
 	_voxelsRawData = calloc(mvvoxVoxels.count, sizeof(MDLVoxelIndex));
 	for (int32_t vI = mvvoxVoxels.count - 1; vI >= 0; --vI) {

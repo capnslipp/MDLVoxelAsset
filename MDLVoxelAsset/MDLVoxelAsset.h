@@ -30,7 +30,7 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 #pragma clang assume_nonnull begin
 
 typedef struct _MDLVoxelAsset_VoxelDimensions {
-	uint32_t const x, y, z;
+	uint32_t x, y, z;
 } MDLVoxelAsset_VoxelDimensions;
 
 /// If true, runs `-calculateShellLevels` on initialization.

@@ -154,6 +154,11 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		MDLVoxelAssetModel *model = [[MDLVoxelAssetModel alloc] initWithMVVoxData:_mvvoxData modelID:modelI options:options_dict];
 		[_models addObject:model];
 		
+		MDLVoxelAsset_VoxelDimensions modelVoxelDimensions = model.voxelDimensions;
+		_voxelDimensions.x = MAX(_voxelDimensions.x, modelVoxelDimensions.x);
+		_voxelDimensions.y = MAX(_voxelDimensions.y, modelVoxelDimensions.y);
+		_voxelDimensions.z = MAX(_voxelDimensions.z, modelVoxelDimensions.z);
+		
 		for (MDLMesh *modelMesh in model.meshes) {
 			[super addObject:modelMesh];
 		}
