@@ -94,6 +94,35 @@
 }
 @synthesize nodeAttributes_size=_nodeAttributes_size, nodeAttributes=_nodeAttributes;
 
+- (VoxString)nodeAttributeName
+{
+	static const char kNameKey_CString[] = "_name";
+	static const VoxString kNameKey_VoxString = {
+		.size = sizeof(kNameKey_CString) / sizeof(char) - 1,
+		.array = (int8_t *)&kNameKey_CString
+	};
+	
+	VoxString valueString;
+	BOOL didFindValue = VoxDictGetValue(_nodeAttributes, kNameKey_VoxString, &valueString);
+	return didFindValue ? valueString : kVoxString_invalidValue;
+}
+
+- (BOOL)nodeAttributeHidden
+{
+	static const char kNameKey_CString[] = "_hidden";
+	static const VoxString kNameKey_VoxString = {
+		.size = sizeof(kNameKey_CString) / sizeof(char) - 1,
+		.array = (int8_t *)&kNameKey_CString
+	};
+	
+	VoxString valueString;
+	BOOL didFindValue = VoxDictGetValue(_nodeAttributes, kNameKey_VoxString, &valueString);
+	if (!didFindValue)
+		return NO;
+	
+	return valueString.array[0] == '1' ? YES : NO;
+}
+
 
 #pragma mark childNodeID
 

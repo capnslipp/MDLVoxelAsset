@@ -50,6 +50,9 @@ static const ptrdiff_t kTransformNodeChunk_frames_afterNodeAttributesOffset = (k
 @property (nonatomic, assign, readonly) size_t nodeAttributes_size;
 @property (nonatomic, assign, readonly) VoxDict nodeAttributes;
 
+@property (nonatomic, assign, readonly) VoxString nodeAttributeName;
+@property (nonatomic, assign, readonly) BOOL nodeAttributeHidden;
+
 @property (nonatomic, assign, readonly) ptrdiff_t childNodeID_offset;
 @property (nonatomic, assign, readonly) int32_t const *childNodeID_ptr;
 @property (nonatomic, assign, readonly) int32_t childNodeID;

@@ -374,6 +374,8 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		
 		NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(transformNodeContents.nodeAttributes);
 		mvvdLog(@"%@nodeAttributes: %@", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
+		mvvdLog(@"%@nodeAttributesName: %@", indentationString, NSStringFromVoxString(transformNodeContents.nodeAttributeName));
+		mvvdLog(@"%@nodeAttributesHidden: %@", indentationString, @(transformNodeContents.nodeAttributeHidden));
 		
 		for (int frameI = 0; frameI < transformNodeContents.numFrames; ++frameI) {
 			NSDictionary<NSString*,NSString*> *frameAttributes = NSDictionaryFromVoxDict([transformNodeContents frameAttributesForFrame:frameI]);
