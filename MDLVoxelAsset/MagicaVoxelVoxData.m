@@ -81,6 +81,7 @@ static const ChunkIdent kRObjChunkIdent = { .ptr = (uint8_t const *)&kRObjChunkI
 #import "MagicaVoxelVoxData_PackChunkContentsHandle.h"
 #import "MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h"
 #import "MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h"
+#import "MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.h"
 
 
 #import "MagicaVoxelVoxData_ChunkHandle.h"
@@ -248,7 +249,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			else if (*ident.fourCharCode == *kGroupNodeChunkIdent.fourCharCode)
 				return [self parseGroupNodeContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kShapeNodeChunkIdent.fourCharCode)
-				return nil; // Mysterious “nSHP” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+				return [self parseShapeNodeContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kLayerChunkIdent.fourCharCode)
 				return nil; // Mysterious “LAYR” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
 			else if (*ident.fourCharCode == *kMaterialChunkIdent.fourCharCode)
@@ -416,6 +417,33 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return groupNodeContents;
 }
 
+- (ShapeNodeChunkContentsHandle *)parseShapeNodeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
+{
+	ShapeNodeChunkContentsHandle *shapeNodeContents = [[[ShapeNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	#if DEBUG
+		int preexistingParseDepth = DEBUG_sParseDepth;
+		++DEBUG_sParseDepth;
+		NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+		
+		mvvdLog(@"%@nodeID: %d", indentationString, shapeNodeContents.nodeID);
+		
+		NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(shapeNodeContents.nodeAttributes);
+		mvvdLog(@"%@nodeAttributes: %@", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
+		
+		for (int modelI = 0; modelI < shapeNodeContents.numModels; ++modelI) {
+			int32_t modelID = [shapeNodeContents modelIDForModel:modelI];
+			mvvdLog(@"%@modelIDs[%d]: %d", indentationString, modelI, modelID);
+			
+			NSDictionary<NSString*,NSString*> *modelAttributes = NSDictionaryFromVoxDict([shapeNodeContents modelAttributesForModel:modelI]);
+			mvvdLog(@"%@modelAttributes[%d]: %@", indentationString, modelI, [modelAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
+		}
+		
+		DEBUG_sParseDepth = preexistingParseDepth;
+	#endif
+	
+	return shapeNodeContents;
+}
+
 - (MagicNumber)magicNumber; {
 	return _magicNumber_ptr;
 }
@@ -522,6 +550,24 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	
 	for (ChunkHandle *chunkHandle in chunkHandles) {
 		GroupNodeChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+		if (!chunkContents)
+			continue;
+		
+		if (chunkContents.nodeID == nodeID)
+			return chunkContents;
+	}
+	
+	return nil; // `nodeID` not found
+}
+
+- (ShapeNodeChunkContentsHandle *)shapeNodeForNodeID:(uint32_t)nodeID
+{
+	NSArray<ChunkHandle*> *chunkHandles = _rootChunk.childrenChunks[@(kShapeNodeChunkIdent_string)];
+	if (!chunkHandles)
+		return nil;
+	
+	for (ChunkHandle *chunkHandle in chunkHandles) {
+		ShapeNodeChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
 		if (!chunkContents)
 			continue;
 		
