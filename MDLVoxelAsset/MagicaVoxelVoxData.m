@@ -80,6 +80,7 @@ static const ChunkIdent kRObjChunkIdent = { .ptr = (uint8_t const *)&kRObjChunkI
 #import "MagicaVoxelVoxData_PaletteChunkContentsHandle.h"
 #import "MagicaVoxelVoxData_PackChunkContentsHandle.h"
 #import "MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h"
+#import "MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h"
 
 
 #import "MagicaVoxelVoxData_ChunkHandle.h"
@@ -245,7 +246,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			else if (*ident.fourCharCode == *kTransformNodeChunkIdent.fourCharCode)
 				return [self parseTransformNodeContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kGroupNodeChunkIdent.fourCharCode)
-				return nil; // Mysterious “nGRP” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+				return [self parseGroupNodeContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kShapeNodeChunkIdent.fourCharCode)
 				return nil; // Mysterious “nSHP” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
 			else if (*ident.fourCharCode == *kLayerChunkIdent.fourCharCode)
@@ -396,6 +397,25 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return transformNodeContents;
 }
 
+- (GroupNodeChunkContentsHandle *)parseGroupNodeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
+{
+	GroupNodeChunkContentsHandle *groupNodeContents = [[[GroupNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	#if DEBUG
+		int preexistingParseDepth = DEBUG_sParseDepth;
+		++DEBUG_sParseDepth;
+		NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+		
+		mvvdLog(@"%@nodeID: %d", indentationString, groupNodeContents.nodeID);
+		
+		NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(groupNodeContents.nodeAttributes);
+		mvvdLog(@"%@nodeAttributes: %@", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
+		
+		DEBUG_sParseDepth = preexistingParseDepth;
+	#endif
+	
+	return groupNodeContents;
+}
+
 - (MagicNumber)magicNumber; {
 	return _magicNumber_ptr;
 }
@@ -484,6 +504,24 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	
 	for (ChunkHandle *chunkHandle in chunkHandles) {
 		TransformNodeChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+		if (!chunkContents)
+			continue;
+		
+		if (chunkContents.nodeID == nodeID)
+			return chunkContents;
+	}
+	
+	return nil; // `nodeID` not found
+}
+
+- (GroupNodeChunkContentsHandle *)groupNodeForNodeID:(uint32_t)nodeID
+{
+	NSArray<ChunkHandle*> *chunkHandles = _rootChunk.childrenChunks[@(kGroupNodeChunkIdent_string)];
+	if (!chunkHandles)
+		return nil;
+	
+	for (ChunkHandle *chunkHandle in chunkHandles) {
+		GroupNodeChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
 		if (!chunkContents)
 			continue;
 		
