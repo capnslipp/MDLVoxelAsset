@@ -11,6 +11,13 @@
 @implementation TransformNodeChunkContentsHandle {
 	NSData *_data;
 	ptrdiff_t _baseOffset;
+	
+	VoxDict _nodeAttributes;
+	size_t _nodeAttributes_size;
+	
+	int32_t _frames_count;
+	size_t _frames_size;
+	VoxDict *_frameAttributesForFrames_array;
 }
 
 
@@ -40,10 +47,17 @@
 	
 	NSParameterAssert(_data.length >= _baseOffset + self.totalSize); // redundant; sanity check
 	
+	[self calculateNodeAttributes];
+	[self calculateFramesCount];
+	[self createFrameAttributesForFramesArray];
+	
 	return self;
 }
 - (void)dealloc
 {
+	free(_frameAttributesForFrames_array);
+	_frameAttributesForFrames_array = NULL;
+	
 	[_data release];
 	_data = nil;
 	
@@ -74,12 +88,11 @@
 - (void const *)nodeAttributes_ptr {
 	return (void const *)&_data.bytes[self.nodeAttributes_offset];
 }
-- (size_t)nodeAttributes_size {
-	return SizeOfVoxDict(self.nodeAttributes);
+- (void)calculateNodeAttributes {
+	_nodeAttributes = VoxDictAtPtr(self.nodeAttributes_ptr);
+	_nodeAttributes_size = SizeOfVoxDict(_nodeAttributes);
 }
-- (VoxDict)nodeAttributes {
-	return VoxDictAtPtr(self.nodeAttributes_ptr);
-}
+@synthesize nodeAttributes_size=_nodeAttributes_size, nodeAttributes=_nodeAttributes;
 
 
 #pragma mark childNodeID
@@ -139,39 +152,36 @@
 - (ptrdiff_t)frames_offset {
 	return (self.nodeAttributes_offset + self.nodeAttributes_size) + kTransformNodeChunk_frames_afterNodeAttributesOffset;
 }
-- (int32_t)frames_count {
-	return self.numFrames; // just a method alias
+- (void)calculateFramesCount {
+	_frames_count = self.numFrames;
 }
+@synthesize frames_count=_frames_count;
 - (void const *)frames_ptr {
 	return (void const *)&_data.bytes[self.frames_offset];
 }
-- (size_t)frames_size
+
+- (void)createFrameAttributesForFramesArray
 {
-	size_t size = 0;
+	_frameAttributesForFrames_array = calloc(_frames_count, sizeof(VoxDict));
+	_frames_size = 0;
 	
-	int32_t frameCount = self.frames_count;
 	void const *framePtr = self.frames_ptr;
-	for (int frameI = 0; frameI < frameCount; ++frameI) {
-		size_t dictSize = SizeOfVoxDict(VoxDictAtPtr(framePtr));
+	for (int frameI = 0; frameI < _frames_count; ++frameI) {
+		VoxDict frameDict = VoxDictAtPtr(framePtr);
+		_frameAttributesForFrames_array[frameI] = frameDict;
+		
+		size_t dictSize = SizeOfVoxDict(frameDict);
+		_frames_size += dictSize;
+		
 		framePtr += (ptrdiff_t)dictSize;
-		size += dictSize;
 	}
-	
-	return size;
 }
+@synthesize frames_size=_frames_size;
 
 - (VoxDict)frameAttributesForFrame:(uint32_t)frameIndex
 {
-	int32_t frameCount = self.frames_count;
-	NSParameterAssert(frameIndex >= 0 && frameIndex < frameCount);
-	
-	void const *framePtr = self.frames_ptr;
-	for (int frameI = 0; frameI < frameIndex; ++frameI) {
-		size_t dictSize = SizeOfVoxDict(VoxDictAtPtr(framePtr));
-		framePtr += (ptrdiff_t)dictSize;
-	}
-	
-	return VoxDictAtPtr(framePtr);
+	NSParameterAssert(frameIndex >= 0 && frameIndex < _frames_count);
+	return _frameAttributesForFrames_array[frameIndex];
 }
 
 - (VoxString)frameAttributeTranslationStringForFrame:(uint32_t)frameIndex
