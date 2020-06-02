@@ -79,6 +79,7 @@ static const ChunkIdent kRObjChunkIdent = { .ptr = (uint8_t const *)&kRObjChunkI
 #import "MagicaVoxelVoxData_VoxelChunkContentsHandle.h"
 #import "MagicaVoxelVoxData_PaletteChunkContentsHandle.h"
 #import "MagicaVoxelVoxData_PackChunkContentsHandle.h"
+#import "MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h"
 
 
 #import "MagicaVoxelVoxData_ChunkHandle.h"
@@ -242,7 +243,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			else if (*ident.fourCharCode == *kPackChunkIdent.fourCharCode)
 				return [self parsePackContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kTransformNodeChunkIdent.fourCharCode)
-				return nil; // Mysterious “nTRN” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+				return [self parseTransformNodeContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kGroupNodeChunkIdent.fourCharCode)
 				return nil; // Mysterious “nGRP” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
 			else if (*ident.fourCharCode == *kShapeNodeChunkIdent.fourCharCode)
@@ -361,6 +362,38 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return [[[PackChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
 }
 
+- (TransformNodeChunkContentsHandle *)parseTransformNodeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
+{
+	TransformNodeChunkContentsHandle *transformNodeContents = [[[TransformNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	#if DEBUG
+		int preexistingParseDepth = DEBUG_sParseDepth;
+		++DEBUG_sParseDepth;
+		NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+		
+		mvvdLog(@"%@nodeID: %d", indentationString, transformNodeContents.nodeID);
+		
+		NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(transformNodeContents.nodeAttributes);
+		mvvdLog(@"%@nodeAttributes: %@", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
+		
+		for (int frameI = 0; frameI < transformNodeContents.numFrames; ++frameI) {
+			NSDictionary<NSString*,NSString*> *frameAttributes = NSDictionaryFromVoxDict([transformNodeContents frameAttributesForFrame:frameI]);
+			mvvdLog(@"%@frameAttributes[%d]: %@", indentationString, frameI, [frameAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
+			simd_int3 translation = [transformNodeContents frameAttributeSIMDTranslationForFrame:frameI];
+			mvvdLog(@"%@frameAttributes[%d] SIMDTranslation: (x: %d, y: %d, z: %d)", indentationString, frameI, translation.x, translation.y, translation.z);
+			simd_float3x3 rotation = [transformNodeContents frameAttributeSIMDRotationForFrame:frameI];
+			mvvdLog(@"%@frameAttributes[%d] SIMDRotation: (00: %f, 01: %f, 02: %f, 10: %f, 11: %f, 12: %f, 20: %f, 21: %f, 22: %f)", indentationString, frameI,
+				rotation.columns[0][0], rotation.columns[0][1], rotation.columns[0][2],
+				rotation.columns[1][0], rotation.columns[1][1], rotation.columns[2][2],
+				rotation.columns[2][0], rotation.columns[2][1], rotation.columns[2][2]
+			);
+		}
+		
+		DEBUG_sParseDepth = preexistingParseDepth;
+	#endif
+	
+	return transformNodeContents;
+}
+
 - (MagicNumber)magicNumber; {
 	return _magicNumber_ptr;
 }
@@ -439,6 +472,24 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		.count = chunkContents.numVoxels,
 		.array = (MagicaVoxelVoxData_Voxel *)chunkContents.voxels
 	};
+}
+
+- (TransformNodeChunkContentsHandle *)transformNodeForNodeID:(uint32_t)nodeID
+{
+	NSArray<ChunkHandle*> *chunkHandles = _rootChunk.childrenChunks[@(kTransformNodeChunkIdent_string)];
+	if (!chunkHandles)
+		return nil;
+	
+	for (ChunkHandle *chunkHandle in chunkHandles) {
+		TransformNodeChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+		if (!chunkContents)
+			continue;
+		
+		if (chunkContents.nodeID == nodeID)
+			return chunkContents;
+	}
+	
+	return nil; // `nodeID` not found
 }
 
 - (BOOL)isValid

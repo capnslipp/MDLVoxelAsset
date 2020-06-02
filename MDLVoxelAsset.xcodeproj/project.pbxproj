@@ -28,6 +28,10 @@
 		FA67ABFC1D015B4D00A8A852 /* ship_1.2.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA67ABF81D015B4100A8A852 /* ship_1.2.vox */; };
 		FA67ABFD1D015B4F00A8A852 /* ship_1.1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA67ABF71D015B4100A8A852 /* ship_1.1.vox */; };
 		FA67ABFE1D015B4F00A8A852 /* ship_1.2.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA67ABF81D015B4100A8A852 /* ship_1.2.vox */; };
+		FA6C76A8247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6C76A6247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h */; };
+		FA6C76A9247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6C76A6247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h */; };
+		FA6C76AA247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6C76A7247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m */; };
+		FA6C76AB247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6C76A7247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m */; };
 		FA6EECAF1CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */; };
 		FA6EECB01CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */; };
 		FA6EECB11CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */; };
@@ -210,6 +214,8 @@
 		FA64893D1CEAF99B00B6AEB1 /* chr_sword.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = chr_sword.vox; sourceTree = "<group>"; };
 		FA67ABF71D015B4100A8A852 /* ship_1.1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = ship_1.1.vox; sourceTree = "<group>"; };
 		FA67ABF81D015B4100A8A852 /* ship_1.2.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = ship_1.2.vox; sourceTree = "<group>"; };
+		FA6C76A6247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h; sourceTree = "<group>"; };
+		FA6C76A7247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m; sourceTree = "<group>"; };
 		FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_ChunkHandle.h; sourceTree = "<group>"; };
 		FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_ChunkHandle.m; sourceTree = "<group>"; };
 		FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_ChunkIdent.h; sourceTree = "<group>"; };
@@ -385,6 +391,8 @@
 				FA6EECAC1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m */,
 				FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */,
 				FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */,
+				FA6C76A6247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h */,
+				FA6C76A7247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m */,
 			);
 			path = MagicaVoxelVoxData;
 			sourceTree = "<group>";
@@ -435,6 +443,7 @@
 				FA6EECB71CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */,
 				FA64893B1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h in Headers */,
 				FAFA382724839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */,
+				FA6C76A8247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h in Headers */,
 				FA6EECB31CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -452,6 +461,7 @@
 				FA9CACF31CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */,
 				FA9CACE81CF1806600B1ABA4 /* MagicaVoxelVoxData.h in Headers */,
 				FAFA382824839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */,
+				FA6C76A9247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h in Headers */,
 				FA9CACEF1CF1807500B1ABA4 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -746,6 +756,7 @@
 				FA6EECB81CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */,
 				FA64893C1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m in Sources */,
 				FAFA382924839E8500053799 /* MagicaVoxelVoxData_types.m in Sources */,
+				FA6C76AA247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m in Sources */,
 				FADD3DEB247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */,
 				FA0ADEDD1CEFAC660054DCAA /* MDLVoxelAsset.m in Sources */,
 				FA6EECB41CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m in Sources */,
@@ -781,6 +792,7 @@
 				FA9CACEE1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkIdent.m in Sources */,
 				FA9CACEA1CF1807000B1ABA4 /* MDLVoxelAsset.m in Sources */,
 				FAFA382A24839E8500053799 /* MagicaVoxelVoxData_types.m in Sources */,
+				FA6C76AB247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m in Sources */,
 				FADD3DEC247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */,
 				FA9CACF21CF1807500B1ABA4 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */,
 				FA9CACEC1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */,
