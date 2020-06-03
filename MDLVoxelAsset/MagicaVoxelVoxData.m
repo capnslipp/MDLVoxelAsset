@@ -179,11 +179,11 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
     dispatch_once(&sOnceToken, ^{
 		
 		kDefaultPaletteChunk = [[ChunkHandle alloc]
-			initWithData: [NSData dataWithBytesNoCopy:&kDefaultPaletteData length:sizeof(kDefaultPaletteData)]
+			initWithData: [NSData dataWithBytes:&kDefaultPaletteData length:sizeof(kDefaultPaletteData)]
 			offset: 0
 		];
 		kDefaultPaletteContents = [[PaletteChunkContentsHandle alloc]
-			initWithData: [NSData dataWithBytesNoCopy:&kDefaultPaletteData.contents length:sizeof(kDefaultPaletteData.contents)]
+			initWithData: [NSData dataWithBytes:&kDefaultPaletteData.contents length:sizeof(kDefaultPaletteData.contents)]
 			offset: 0
 		];
 		kDefaultPaletteChunk.contentsHandle = kDefaultPaletteContents;
@@ -297,7 +297,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	#if DEBUG
 		DEBUG_sParseDepth = 0;
 	#endif
-	_rootChunk = chunkParser(kRootChunk_offset);
+	_rootChunk = [chunkParser(kRootChunk_offset) retain];
 	
 	[self calculateModelCount];
 	
@@ -350,7 +350,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		DEBUG_sParseDepth = preexistingParseDepth;
 	#endif
 	
-	return chunk;
+	return [chunk autorelease];
 }
 
 - (SizeChunkContentsHandle *)parseSizeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
@@ -547,6 +547,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		[model release];
 	}
 	node.models = models;
+	[models release];
 	
 	return [node autorelease];
 }
@@ -571,6 +572,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		[childrenNodes addObject:childNode];
 	}
 	node.childrenNodes = childrenNodes;
+	[childrenNodes release];
 	
 	return [node autorelease];
 }
@@ -748,7 +750,8 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (BOOL)writeToFile:(NSString *)path options:(NSDataWritingOptions)writeOptionsMask error:(NSError **)errorPtr
 {
 	if (!self.valid) {
-		*errorPtr = [self.class invalidDataErrorForActionVerb:@"write to file"];
+		if (errorPtr)
+			*errorPtr = [self.class invalidDataErrorForActionVerb:@"write to file"];
 		return NO;
 	}
 	
@@ -758,7 +761,8 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (BOOL)writeToURL:(NSURL *)url options:(NSDataWritingOptions)writeOptionsMask error:(NSError **)errorPtr
 {
 	if (!self.valid) {
-		*errorPtr = [self.class invalidDataErrorForActionVerb:@"write to URL"];
+		if (errorPtr)
+			*errorPtr = [self.class invalidDataErrorForActionVerb:@"write to URL"];
 		return NO;
 	}
 	

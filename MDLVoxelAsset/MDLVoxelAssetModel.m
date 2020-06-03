@@ -126,15 +126,17 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 }
 
 
-- (instancetype)initWithMVVoxData:(MagicaVoxelVoxData *)mvvoxData modelID:(uint32_t)modelID options:(nullable NSDictionary<NSString*,id> *)options_dict;
+- (instancetype)initWithMVVoxData:(MagicaVoxelVoxData *)mvvoxData modelID:(uint32_t)modelID optionsValues:(const OptionsValues)optionsValues
 {
 	self = [super init];
 	if (self == nil)
 		return nil;
 	
-	[self parseOptions:options_dict];
+	_options = optionsValues;
+	[_options.voxelMesh retain];
+	[_options.paletteIndexReplacements retain];
 	
-	_mvvoxData = mvvoxData;
+	_mvvoxData = [mvvoxData retain];
 	
 	NSParameterAssert(modelID >= 0 && modelID < _mvvoxData.modelCount);
 	_modelID = modelID;
@@ -210,65 +212,6 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 
 - (id)copyWithZone:(NSZone *)_ {
 	return [self retain]; // MDLVoxelAssetModel is immutable, so just keep using the same instance.
-}
-
-- (void)parseOptions:(NSDictionary<NSString*,id> *)options_dict
-{
-	BOOL (^parseBool)(NSString *, BOOL) = ^BOOL(NSString *optionKey, BOOL defaultValue){
-		id dictValue = [options_dict objectForKey:optionKey];
-		BOOL isNonNilAndOfCorrectType = dictValue != nil && [dictValue isKindOfClass:NSNumber.class];
-		return isNonNilAndOfCorrectType ?
-			((NSNumber *)dictValue).boolValue :
-			defaultValue;
-	};
-	NSUInteger (^parseNSUIntegerEnum)(NSString *, NSUInteger) = ^(NSString *optionKey, NSUInteger defaultValue){
-		id dictValue = [options_dict objectForKey:optionKey];
-		BOOL isNonNilAndOfCorrectType = dictValue != nil && [dictValue isKindOfClass:NSNumber.class];
-		return isNonNilAndOfCorrectType ?
-			((NSNumber *)dictValue).unsignedIntegerValue :
-			defaultValue;
-	};
-	id (^parseSCNGeometryOrMDLMesh)(NSString *, id) = ^(NSString *optionKey, id defaultValue){
-		id dictValue = [options_dict objectForKey:optionKey];
-		BOOL isNonNilAndOfCorrectType = dictValue != nil && ([dictValue isKindOfClass:SCNGeometry.class] || [dictValue isKindOfClass:MDLMesh.class]);
-		return isNonNilAndOfCorrectType ?
-			dictValue :
-			defaultValue;
-	};
-	PaletteIndexToPaletteIndexDictionary * (^parsePaletteIndexToPaletteIndexDictionary)(NSString *, PaletteIndexToPaletteIndexDictionary *) = ^(NSString *optionKey, PaletteIndexToPaletteIndexDictionary *defaultValue){
-		id dictValue = [options_dict objectForKey:optionKey];
-		BOOL isNonNilAndOfCorrectType = dictValue != nil && [dictValue isKindOfClass:[PaletteIndexToPaletteIndexDictionary class]];
-		return isNonNilAndOfCorrectType ? dictValue : defaultValue;
-	};
-	
-	_options.calculateShellLevels = parseBool(kMDLVoxelAssetOptionCalculateShellLevels, NO);
-	
-	if (_options.calculateShellLevels)
-		_options.skipNonZeroShellMesh = parseBool(kMDLVoxelAssetOptionSkipNonZeroShellMesh, NO);
-	else
-		_options.skipNonZeroShellMesh = NO;
-	
-	_options.meshGenerationMode = parseNSUIntegerEnum(kMDLVoxelAssetOptionMeshGenerationMode, MDLVoxelAssetMeshGenerationModeSceneKit);
-	
-	if (_options.meshGenerationMode != MDLVoxelAssetMeshGenerationModeSkip) {
-		_options.meshGenerationFlattening = parseBool(kMDLVoxelAssetOptionMeshGenerationFlattening, YES);
-		
-		_options.voxelMesh = [parseSCNGeometryOrMDLMesh(kMDLVoxelAssetOptionVoxelMesh, 
-			[SCNBox boxWithWidth:1 height:1 length:1 chamferRadius:0.0]
-		) retain];
-	}
-	else {
-		_options.meshGenerationFlattening = NO;
-		_options.voxelMesh = nil;
-	}
-	
-	_options.convertZUpToYUp = parseBool(kMDLVoxelAssetOptionConvertZUpToYUp, NO);
-	
-	_options.generateAmbientOcclusion = parseBool(kMDLVoxelAssetOptionGenerateAmbientOcclusion, NO);
-	
-	_options.paletteIndexReplacements = [parsePaletteIndexToPaletteIndexDictionary(kMDLVoxelAssetOptionPaletteIndexReplacements, nil) retain];
-	
-	_options.skipMeshFaceDirections = parseNSUIntegerEnum(kMDLVoxelAssetOptionSkipMeshFaceDirections, MDLVoxelAssetSkipMeshFaceDirectionsNone);
 }
 
 
@@ -847,10 +790,7 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 	_mvvoxData = nil;
 	
 	[_options.voxelMesh release];
-	_options.voxelMesh = nil;
-	
 	[_options.paletteIndexReplacements release];
-	_options.paletteIndexReplacements = nil;
 	
 	[super dealloc];
 }

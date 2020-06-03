@@ -64,6 +64,8 @@ static const ptrdiff_t kInvalidPtrdiff = kPtrdiffMax;
 	[_data release];
 	_data = nil;
 	
+	self.contentsHandle = nil;
+	
 	[super dealloc];
 }
 

@@ -155,7 +155,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	uint32_t modelCount = _mvvoxData.modelCount;
 	_models = [[NSMutableArray<MDLVoxelAssetModel*> alloc] initWithCapacity:modelCount];
 	for (uint32_t modelI = 0; modelI < modelCount; ++modelI) {
-		MDLVoxelAssetModel *model = [[MDLVoxelAssetModel alloc] initWithMVVoxData:_mvvoxData modelID:modelI options:options_dict];
+		MDLVoxelAssetModel *model = [[MDLVoxelAssetModel alloc] initWithMVVoxData:_mvvoxData modelID:modelI optionsValues:_options];
 		[_models addObject:model];
 		
 		MDLVoxelAsset_VoxelDimensions modelVoxelDimensions = model.voxelDimensions;
@@ -166,6 +166,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		for (MDLMesh *modelMesh in model.meshes) {
 			[super addObject:modelMesh];
 		}
+		
+		[model release];
 	}
 	
 	
@@ -278,6 +280,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	
 	[_options.paletteIndexReplacements release];
 	_options.paletteIndexReplacements = nil;
+	
+	self.URL = nil;
 	
 	[super dealloc];
 }

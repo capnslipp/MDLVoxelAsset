@@ -35,8 +35,8 @@ typedef struct _OptionsValues {
 	BOOL generateAmbientOcclusion : 1;
 	
 	MDLVoxelAssetMeshGenerationMode meshGenerationMode;
-	id voxelMesh;
-	PaletteIndexToPaletteIndexDictionary *paletteIndexReplacements;
+	id _Nullable voxelMesh;
+	PaletteIndexToPaletteIndexDictionary *_Nullable paletteIndexReplacements;
 	MDLVoxelAssetSkipMeshFaceDirections skipMeshFaceDirections;
 } OptionsValues;
 
@@ -46,7 +46,7 @@ typedef struct _OptionsValues {
 
 
 /// @param options: A dictionary of MDLVoxelArray & MDLMesh initialization options.
-- (instancetype)initWithMVVoxData:(MagicaVoxelVoxData *)mvvoxData modelID:(uint32_t)modelID options:(nullable NSDictionary<NSString*,id> *)options;
+- (instancetype)initWithMVVoxData:(MagicaVoxelVoxData *)mvvoxData modelID:(uint32_t)modelID optionsValues:(const OptionsValues)optionsValues;
 
 @property (nonatomic, assign, readonly) uint32_t modelID;
 
