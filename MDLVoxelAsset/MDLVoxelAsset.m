@@ -150,26 +150,33 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	
 	_mvvoxData = [[MagicaVoxelVoxData alloc] initWithContentsOfURL:URL];
 	
+	_models = [NSMutableArray<MDLVoxelAssetModel*> new];
+	
 	_nodeSceneGraph = [_mvvoxData.sceneGraphRootNode retain];
-	
-	uint32_t modelCount = _mvvoxData.modelCount;
-	_models = [[NSMutableArray<MDLVoxelAssetModel*> alloc] initWithCapacity:modelCount];
-	for (uint32_t modelI = 0; modelI < modelCount; ++modelI) {
-		MDLVoxelAssetModel *model = [[MDLVoxelAssetModel alloc] initWithMVVoxData:_mvvoxData modelID:modelI optionsValues:_options];
-		[_models addObject:model];
-		
-		MDLVoxelAsset_VoxelDimensions modelVoxelDimensions = model.voxelDimensions;
-		_voxelDimensions.x = MAX(_voxelDimensions.x, modelVoxelDimensions.x);
-		_voxelDimensions.y = MAX(_voxelDimensions.y, modelVoxelDimensions.y);
-		_voxelDimensions.z = MAX(_voxelDimensions.z, modelVoxelDimensions.z);
-		
-		for (MDLMesh *modelMesh in model.meshes) {
-			[super addObject:modelMesh];
-		}
-		
-		[model release];
+	if (_nodeSceneGraph)
+	{
+		MDLObject *objectHierarchy = [self mdlObjectHierarchyForMVVDSceneGraph:_nodeSceneGraph];
+		//if (_options.convertZUpToYUp) {
+		//	simd_float4x4 matrix = objectHierarchy.transform.matrix;
+		//	objectHierarchy.transform.matrix = simd_matrix(matrix.columns[0], matrix.columns[2], matrix.columns[1], matrix.columns[3]); // swap Y & Z columns
+		//}
+		[super addObject:objectHierarchy];
 	}
-	
+	else // !_nodeSceneGraph
+	{
+		uint32_t modelCount = _mvvoxData.modelCount;
+		for (uint32_t modelI = 0; modelI < modelCount; ++modelI) {
+			MDLVoxelAssetModel *model = [self loadModelWithModelID:modelI];
+			
+			MDLVoxelAsset_VoxelDimensions modelVoxelDimensions = model.voxelDimensions;
+			_voxelDimensions.x = MAX(_voxelDimensions.x, modelVoxelDimensions.x);
+			_voxelDimensions.y = MAX(_voxelDimensions.y, modelVoxelDimensions.y);
+			_voxelDimensions.z = MAX(_voxelDimensions.z, modelVoxelDimensions.z);
+			
+			for (MDLMesh *modelMesh in model.meshes)
+				[super addObject:modelMesh];
+		}
+	}
 	
 	MagicaVoxelVoxData_PaletteColorArray mvvoxPaletteColors = _mvvoxData.paletteColors;
 	
@@ -187,6 +194,116 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_paletteColors = paletteColors;
 	
 	return self;
+}
+
+- (MDLVoxelAssetModel *)loadModelWithModelID:(int32_t)modelID
+{
+	MDLVoxelAssetModel *model = [[MDLVoxelAssetModel alloc] initWithMVVoxData:_mvvoxData modelID:modelID optionsValues:_options];
+	[_models addObject:model];
+	return [model autorelease];
+}
+
+- (MDLObject *)mdlObjectHierarchyForMVVDSceneGraph:(MagicaVoxelVoxData_TransformNode *)transformNode
+{
+	MDLObject *baseObject = [MDLObject new];
+	baseObject.name = transformNode.name;
+	
+	simd_float4x4 zToYBasisConversionMatrix = simd_matrix(
+		simd_make_float4(1, 0, 0, 0),
+		simd_make_float4(0, 0, 1, 0),
+		simd_make_float4(0, 1, 0, 0),
+		simd_make_float4(0, 0, 0, 1)
+	);
+	
+	simd_float3x3 rotationMatrix = transformNode.frames[0].rotation;
+	//if (_options.convertZUpToYUp)
+	//	rotationMatrix = simd_matrix(rotationMatrix.columns[0], -rotationMatrix.columns[2], rotationMatrix.columns[1]); // swap Y & Z columns
+	simd_float3 translationVector = simd_float(transformNode.frames[0].translation);
+	//if (_options.convertZUpToYUp)
+	//	translationVector = simd_make_float3(translationVector.x, translationVector.z, translationVector.y); // swap Y & Z
+	
+	MagicaVoxelVoxData_Node *childNode = transformNode.childNode;
+	if ([childNode isMemberOfClass:MagicaVoxelVoxData_GroupNode.class]) {
+		MagicaVoxelVoxData_GroupNode *groupNode = (MagicaVoxelVoxData_GroupNode *)childNode;
+		
+		simd_float4x4 matrix = simd_matrix(
+			simd_make_float4(rotationMatrix.columns[0], 0.0),
+			simd_make_float4(rotationMatrix.columns[1], 0.0),
+			simd_make_float4(rotationMatrix.columns[2], 0.0),
+			simd_make_float4(translationVector, 1.0)
+		);
+		if (_options.convertZUpToYUp)
+			matrix = simd_mul(simd_mul(zToYBasisConversionMatrix, matrix), simd_inverse(zToYBasisConversionMatrix));
+		// fix to make sure MDLTransform recognizes it as an affine matrix
+		matrix.columns[0] = round(matrix.columns[0] * 100) * 0.01;
+		matrix.columns[1] = round(matrix.columns[1] * 100) * 0.01;
+		matrix.columns[2] = round(matrix.columns[2] * 100) * 0.01;
+		matrix.columns[3] = round(matrix.columns[3] * 100) * 0.01;
+		
+		baseObject.transform = [[[MDLTransform alloc] initWithMatrix:matrix] autorelease];
+		
+		for (MagicaVoxelVoxData_TransformNode *childTransformNode in groupNode.childrenNodes) {
+			MDLObject *child = [self mdlObjectHierarchyForMVVDSceneGraph:childTransformNode];
+			[baseObject addChild:child];
+		}
+	}
+	else if ([childNode isMemberOfClass:MagicaVoxelVoxData_ShapeNode.class]) {
+		MagicaVoxelVoxData_ShapeNode *shapeNode = (MagicaVoxelVoxData_ShapeNode *)childNode;
+		
+		for (MagicaVoxelVoxData_Model *modelNode in shapeNode.models) {
+			MDLVoxelAssetModel *model = [self loadModelWithModelID:modelNode.modelID];
+			
+			// re-pivot the transform
+			
+			MDLVoxelAsset_VoxelDimensions modelVoxelDimensions = model.voxelDimensions;
+			simd_float3 halfDimensions = (_options.convertZUpToYUp ? // un-YZ-swap already-swapped dimensinos
+				(simd_float3){ (float)modelVoxelDimensions.x, (float)modelVoxelDimensions.z, (float)modelVoxelDimensions.y } :
+				(simd_float3){ (float)modelVoxelDimensions.x, (float)modelVoxelDimensions.y, (float)modelVoxelDimensions.z }
+			) * 0.5;
+			simd_float4x4 transformPivotMatrix = simd_matrix(
+				(simd_float4){ 1, 0, 0, 0 },
+				(simd_float4){ 0, 1, 0, 0 },
+				(simd_float4){ 0, 0, 1, 0 },
+				simd_make_float4(-halfDimensions, 1)
+			);
+			simd_float4x4 transformRotationMatrix = simd_matrix(
+				simd_make_float4(rotationMatrix.columns[0], 0),
+				simd_make_float4(rotationMatrix.columns[1], 0),
+				simd_make_float4(rotationMatrix.columns[2], 0),
+				simd_make_float4(0, 0, 0, 1)
+			);
+			if (_options.convertZUpToYUp)
+				;//translationVector.y = -translationVector.y;
+			simd_float4x4 transformTranslationMatrix = simd_matrix(
+				(simd_float4){ 1, 0, 0, 0 },
+				(simd_float4){ 0, 1, 0, 0 },
+				(simd_float4){ 0, 0, 1, 0 },
+				simd_make_float4(translationVector, 1)
+			);
+			simd_float4x4 matrix = simd_mul(transformTranslationMatrix, simd_mul(transformRotationMatrix, transformPivotMatrix));
+			if (_options.convertZUpToYUp) {
+				matrix = simd_mul(simd_mul(zToYBasisConversionMatrix, matrix), simd_inverse(zToYBasisConversionMatrix));
+				//matrix.columns[3].y = -matrix.columns[3].y; // invert Y (up); can't tell you why
+			}
+			// fix to make sure MDLTransform recognizes it as an affine matrix
+			matrix.columns[0] = round(matrix.columns[0] * 100) * 0.01;
+			matrix.columns[1] = round(matrix.columns[1] * 100) * 0.01;
+			matrix.columns[2] = round(matrix.columns[2] * 100) * 0.01;
+			matrix.columns[3] = round(matrix.columns[3] * 100) * 0.01;
+			
+			baseObject.transform = [[[MDLTransform alloc] initWithMatrix:matrix] autorelease];
+			
+			// TODO: _voxelDimensions = …
+			
+			for (MDLMesh *modelMesh in model.meshes)
+				[baseObject addChild:modelMesh];
+		}
+	}
+	else {
+		NSAssert(false, @"Unhandled childNode %@", childNode);
+	}
+	
+	return [baseObject autorelease];
 }
 
 - (id)copyWithZone:(NSZone *)_ {

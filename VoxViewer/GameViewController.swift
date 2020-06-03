@@ -62,7 +62,7 @@ class GameViewController : ViewController
 	#endif
 	
 	
-	let lightOffset = SCNVector3(0, 10, 10)
+	let lightOffset = SCNVector3(0, -10, 10)
 	
 	
 	var _currentFilename:String?
@@ -123,6 +123,7 @@ class GameViewController : ViewController
 	{
 		// create a new scene
 		let scene = SCNScene()
+		scene.setAttribute(SCNVector3(0, 0, 1), forKey: SCNScene.Attribute.upAxis.rawValue)
 		_scene = scene
 		
 		
@@ -134,7 +135,7 @@ class GameViewController : ViewController
 			c.automaticallyAdjustsZRange = true
 			return c
 		}()
-		cameraNode.eulerAngles = SCNVector3(0, 0, 0)
+		cameraNode.eulerAngles = SCNVector3(GLKMathDegreesToRadians(90), 0, 0)
 		scene.rootNode.addChildNode(cameraNode)
 		_cameraNode = cameraNode
 		
@@ -165,9 +166,6 @@ class GameViewController : ViewController
 			l.shadowMapSize = CGSize(width: 4096, height: 4096)
 			return l
 		}()
-		if lightNode.constraints == nil {
-			lightNode.constraints = [SCNConstraint]()
-		}
 		scene.rootNode.addChildNode(lightNode)
 		_lightNode = lightNode
 		
@@ -211,8 +209,8 @@ class GameViewController : ViewController
 		
 		// create and add the .vox node
 		
-		//try! loadVoxelModelFile(named: "ship_1")
-		try! loadMeshModelFile(named: "ship_1_design")
+		try! loadVoxelModelFile(named: "testscene2")
+		//try! loadMeshModelFile(named: "ship_1_design")
 		
 		//// animate the 3d object
 		//modelNode.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
@@ -231,6 +229,9 @@ class GameViewController : ViewController
 		
 		// configure the view
 		gameView.backgroundColor = .black
+		
+		gameView.debugOptions.insert(.showWireframe)
+		gameView.debugOptions.insert(.showBoundingBoxes)
 		
 		#if os(iOS)
 			// add a tap gesture recognizer
@@ -413,8 +414,8 @@ class GameViewController : ViewController
 	{
 		_cameraNode!.position = SCNVector3(
 			0.0,
-			Float(centerpoint.y),
-			bbox.maxBounds.z + (bbox.maxBounds.z - bbox.minBounds.z) * 0.5 + 15
+			bbox.maxBounds.y + (bbox.maxBounds.y - bbox.minBounds.y) * 0.5 + 15,
+			Float(centerpoint.z)
 		)
 	}
 	
@@ -427,12 +428,12 @@ class GameViewController : ViewController
 		lightNode.position = {
 			return SCNVector3(
 				Float(bbox.maxBounds.x) + Float(lightOffset.x),
-				Float(bbox.maxBounds.y) + Float(lightOffset.y),
+				Float(bbox.minBounds.y) + Float(lightOffset.y),
 				Float(bbox.maxBounds.z) + Float(lightOffset.z)
 			)
 		}()
 		
-		lightNode.constraints!.append(SCNLookAtConstraint(target: _modelNode!))
+		lightNode.constraints = [ SCNLookAtConstraint(target: _modelNode!) ]
 		
 		let light:SCNLight = lightNode.light!
 		light.zNear = sqrt(
@@ -462,9 +463,9 @@ class GameViewController : ViewController
 		let asset = MDLVoxelAsset(url: URL(fileURLWithPath: path), options:[
 			kMDLVoxelAssetOptionCalculateShellLevels: false,
 			kMDLVoxelAssetOptionSkipNonZeroShellMesh: false,
-			kMDLVoxelAssetOptionConvertZUpToYUp: true,
+			kMDLVoxelAssetOptionConvertZUpToYUp: false,
 			kMDLVoxelAssetOptionMeshGenerationMode: MDLVoxelAssetMeshGenerationMode.greedyQuad.rawValue,
-			kMDLVoxelAssetOptionSkipMeshFaceDirections: ([ .xNeg, .yNeg, .zNeg ] as MDLVoxelAssetSkipMeshFaceDirections).rawValue,
+			//kMDLVoxelAssetOptionSkipMeshFaceDirections: ([ .xNeg, .yNeg, .zNeg ] as MDLVoxelAssetSkipMeshFaceDirections).rawValue,
 		])
 		return asset
 	}
