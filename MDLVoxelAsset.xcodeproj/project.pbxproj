@@ -100,6 +100,14 @@
 		FADD3DEC247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DE8247CEE0E00369F84 /* MDLVoxelAssetModel.m */; };
 		FAE7C4AC1CF13DD20075ED7D /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
 		FAE7C4AD1CF13DD20075ED7D /* MDLVoxelAsset.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FAF54B152487606D00B283EB /* testscene1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAF54B112487606C00B283EB /* testscene1.vox */; };
+		FAF54B162487606D00B283EB /* testscene1.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAF54B112487606C00B283EB /* testscene1.vox */; };
+		FAF54B172487606D00B283EB /* testscene2.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAF54B122487606D00B283EB /* testscene2.vox */; };
+		FAF54B182487606D00B283EB /* testscene2.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAF54B122487606D00B283EB /* testscene2.vox */; };
+		FAF54B192487606D00B283EB /* chr_sword.old.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAF54B132487606D00B283EB /* chr_sword.old.vox */; };
+		FAF54B1A2487606D00B283EB /* chr_sword.old.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAF54B132487606D00B283EB /* chr_sword.old.vox */; };
+		FAF54B1B2487606D00B283EB /* chr_sword.new.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAF54B142487606D00B283EB /* chr_sword.new.vox */; };
+		FAF54B1C2487606D00B283EB /* chr_sword.new.vox in Resources */ = {isa = PBXBuildFile; fileRef = FAF54B142487606D00B283EB /* chr_sword.new.vox */; };
 		FAF7D4631E73E1B8007CFA66 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF7D4621E73E1B8007CFA66 /* main.swift */; };
 		FAF7D4671E73F966007CFA66 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */; };
 		FAFA382724839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */; };
@@ -253,6 +261,10 @@
 		FADD3DDC247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_PackChunkContentsHandle.m; sourceTree = "<group>"; };
 		FADD3DE7247CEE0E00369F84 /* MDLVoxelAssetModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDLVoxelAssetModel.h; sourceTree = "<group>"; };
 		FADD3DE8247CEE0E00369F84 /* MDLVoxelAssetModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MDLVoxelAssetModel.m; sourceTree = "<group>"; };
+		FAF54B112487606C00B283EB /* testscene1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = testscene1.vox; sourceTree = "<group>"; };
+		FAF54B122487606D00B283EB /* testscene2.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = testscene2.vox; sourceTree = "<group>"; };
+		FAF54B132487606D00B283EB /* chr_sword.old.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = chr_sword.old.vox; sourceTree = "<group>"; };
+		FAF54B142487606D00B283EB /* chr_sword.new.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = chr_sword.new.vox; sourceTree = "<group>"; };
 		FAF7D4601E73E1B7007CFA66 /* convertToJSON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = convertToJSON; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAF7D4621E73E1B8007CFA66 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_types.h; sourceTree = "<group>"; };
@@ -371,6 +383,10 @@
 		FA2685901CEA9A72003B86C8 /* MDLVoxelAssetTests */ = {
 			isa = PBXGroup;
 			children = (
+				FAF54B142487606D00B283EB /* chr_sword.new.vox */,
+				FAF54B132487606D00B283EB /* chr_sword.old.vox */,
+				FAF54B112487606C00B283EB /* testscene1.vox */,
+				FAF54B122487606D00B283EB /* testscene2.vox */,
 				FAC050631D0664D400D18B8B /* ship_1_design.mtl */,
 				FAC050641D0664D400D18B8B /* ship_1_design.obj */,
 				FAA13CA71D027A270099B085 /* ship_1.vox */,
@@ -694,11 +710,15 @@
 				FA0ADF001CF04D400054DCAA /* monu7.vox in Resources */,
 				FA67ABFC1D015B4D00A8A852 /* ship_1.2.vox in Resources */,
 				FAC050671D06669600D18B8B /* ship_1_design.mtl in Resources */,
+				FAF54B172487606D00B283EB /* testscene2.vox in Resources */,
+				FAF54B152487606D00B283EB /* testscene1.vox in Resources */,
+				FAF54B192487606D00B283EB /* chr_sword.old.vox in Resources */,
 				FAA13CA81D027A270099B085 /* ship_1.vox in Resources */,
 				FA0ADEEE1CF00A280054DCAA /* Assets.xcassets in Resources */,
 				FA0ADEEC1CF00A280054DCAA /* Main.storyboard in Resources */,
 				FA67ABFB1D015B4D00A8A852 /* ship_1.1.vox in Resources */,
 				FA0ADEFA1CF00DE80054DCAA /* chr_sword.vox in Resources */,
+				FAF54B1B2487606D00B283EB /* chr_sword.new.vox in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,8 +750,12 @@
 				FAC5F7B31CF1889900B30B58 /* rgbk_cmyw.vox in Resources */,
 				FAC0506A1D06669700D18B8B /* ship_1_design.obj in Resources */,
 				FAA719D51E76A48D00B1E2FE /* Assets.xcassets in Resources */,
+				FAF54B1C2487606D00B283EB /* chr_sword.new.vox in Resources */,
 				FAC050691D06669700D18B8B /* ship_1_design.mtl in Resources */,
 				FA96950E1CF1725000DC632A /* MainMenu.xib in Resources */,
+				FAF54B1A2487606D00B283EB /* chr_sword.old.vox in Resources */,
+				FAF54B162487606D00B283EB /* testscene1.vox in Resources */,
+				FAF54B182487606D00B283EB /* testscene2.vox in Resources */,
 				FA67ABFE1D015B4F00A8A852 /* ship_1.2.vox in Resources */,
 				FAC5F7B51CF1889D00B30B58 /* chr_sword.vox in Resources */,
 				FA67ABFD1D015B4F00A8A852 /* ship_1.1.vox in Resources */,
