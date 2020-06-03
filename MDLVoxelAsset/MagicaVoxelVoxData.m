@@ -153,6 +153,8 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	ChunkHandle *_rootChunk;
 	
 	uint32_t _modelCount;
+	
+	MagicaVoxelVoxData_TransformNode *_sceneGraphRootNode;
 }
 
 - (instancetype)initUsingDataInitializer:(void (^)(void))dataInitializer;
@@ -168,6 +170,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 
 @synthesize nsData=_data;
 @synthesize modelCount=_modelCount;
+@synthesize sceneGraphRootNode=_sceneGraphRootNode;
 
 
 + (void)initialize
@@ -204,6 +207,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	[_rootChunk release];
 	[_data release];
+	[_sceneGraphRootNode release];
 	
 	[super dealloc];
 }
@@ -296,6 +300,11 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	_rootChunk = chunkParser(kRootChunk_offset);
 	
 	[self calculateModelCount];
+	
+	
+	TransformNodeChunkContentsHandle *rootTransformNodeContents = [self transformNodeForNodeID:0];
+	if (rootTransformNodeContents)
+		_sceneGraphRootNode = [[self sceneGraphNodeForTransformChunkContents:rootTransformNodeContents] retain];
 }
 
 - (ChunkHandle *)parseChunkDataAtOffset:(ptrdiff_t)baseOffset withContentsParser:(ChunkContentsParserB)contentsParser childParser:(ChunkChildParserB)childParser
@@ -490,22 +499,6 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	return *(MagicaVoxelVoxData_XYZDimensions *)*chunkContents.xyzSize_ptr;
 }
 
-- (MagicaVoxelVoxData_PaletteColorArray)paletteColors
-{
-	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kPaletteChunkIdent_string)].firstObject;
-	if (!chunkHandle)
-		chunkHandle = kDefaultPaletteChunk;
-	
-	PaletteChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
-	if (!chunkContents)
-		return kMagicaVoxelVoxData_PaletteColorArray_invalidSentinel;
-	
-	return (MagicaVoxelVoxData_PaletteColorArray){
-		.count = 255, // last color is unused
-		.array = (MagicaVoxelVoxData_PaletteColor *)chunkContents.colors
-	};
-}
-
 - (MagicaVoxelVoxData_VoxelArray)voxelsForModelID:(uint32_t)modelID
 {
 	NSParameterAssert(modelID >= 0 && modelID < _modelCount);
@@ -522,6 +515,107 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		.count = chunkContents.numVoxels,
 		.array = (MagicaVoxelVoxData_Voxel *)chunkContents.voxels
 	};
+}
+
+- (MagicaVoxelVoxData_PaletteColorArray)paletteColors
+{
+	ChunkHandle *chunkHandle = _rootChunk.childrenChunks[@(kPaletteChunkIdent_string)].firstObject;
+	if (!chunkHandle)
+		chunkHandle = kDefaultPaletteChunk;
+	
+	PaletteChunkContentsHandle *chunkContents = chunkHandle.contentsHandle;
+	if (!chunkContents)
+		return kMagicaVoxelVoxData_PaletteColorArray_invalidSentinel;
+	
+	return (MagicaVoxelVoxData_PaletteColorArray){
+		.count = 255, // last color is unused
+		.array = (MagicaVoxelVoxData_PaletteColor *)chunkContents.colors
+	};
+}
+
+- (MagicaVoxelVoxData_ShapeNode *)sceneGraphNodeForShapeChunkContents:(ShapeNodeChunkContentsHandle *)chunkContents
+{
+	MagicaVoxelVoxData_ShapeNode *node = [MagicaVoxelVoxData_ShapeNode new];
+	
+	int modelCount = chunkContents.models_count;
+	NSMutableArray<MagicaVoxelVoxData_Model*> *models = [[NSMutableArray alloc] initWithCapacity:modelCount];
+	for (int modelI = 0; modelI < modelCount; ++modelI) {
+		MagicaVoxelVoxData_Model *model = [MagicaVoxelVoxData_Model new];
+		model.modelID = [chunkContents modelIDForModel:modelI];
+		
+		[models addObject:model];
+		[model release];
+	}
+	node.models = models;
+	
+	return [node autorelease];
+}
+
+- (MagicaVoxelVoxData_GroupNode *)sceneGraphNodeForGroupChunkContents:(GroupNodeChunkContentsHandle *)chunkContents
+{
+	MagicaVoxelVoxData_GroupNode *node = [MagicaVoxelVoxData_GroupNode new];
+	
+	int childCount = chunkContents.childNodes_count;
+	NSMutableArray<MagicaVoxelVoxData_TransformNode*> *childrenNodes = [[NSMutableArray alloc] initWithCapacity:childCount];
+	GroupNodeChunkContentsHandle_Child const *childChunkDatums = chunkContents.childNodes;
+	for (int childI = 0; childI < childCount; ++childI) {
+		int32_t childNodeID = childChunkDatums[childI].childID;
+		
+		TransformNodeChunkContentsHandle *transformChunkContents = [self transformNodeForNodeID:childNodeID];
+		if (!transformChunkContents) {
+			NSLog(@"Error: Unexpectedly could not find TransformNodeChunkContentsHandle #%d child of GroupNodeChunkContentsHandle #%d.", childNodeID, chunkContents.nodeID);
+			continue;
+		}
+		
+		MagicaVoxelVoxData_TransformNode *childNode = [self sceneGraphNodeForTransformChunkContents:transformChunkContents];
+		[childrenNodes addObject:childNode];
+	}
+	node.childrenNodes = childrenNodes;
+	
+	return [node autorelease];
+}
+
+- (MagicaVoxelVoxData_TransformNode *)sceneGraphNodeForTransformChunkContents:(TransformNodeChunkContentsHandle *)chunkContents
+{
+	MagicaVoxelVoxData_TransformNode *node = [MagicaVoxelVoxData_TransformNode new];
+	
+	node.name = NSStringFromVoxString(chunkContents.nodeAttributeName);
+	node.hidden = chunkContents.nodeAttributeHidden;
+	
+	int frameCount = chunkContents.frames_count;
+	NSMutableArray<MagicaVoxelVoxData_Frame*> *frames = [[NSMutableArray alloc] initWithCapacity:frameCount];
+	for (int frameI = 0; frameI < frameCount; ++frameI) {
+		MagicaVoxelVoxData_Frame *frame = [MagicaVoxelVoxData_Frame new];
+		frame.translation = [chunkContents frameAttributeSIMDTranslationForFrame:frameI];
+		frame.rotation = [chunkContents frameAttributeSIMDRotationForFrame:frameI];
+		
+		[frames addObject:frame];
+		[frame release];
+	}
+	node.frames = frames;
+	[frames release];
+	
+	int32_t childNodeID = chunkContents.childNodeID;
+	do {
+		GroupNodeChunkContentsHandle *groupChunkContents = [self groupNodeForNodeID:childNodeID];
+		if (groupChunkContents) {
+			node.childNode = [self sceneGraphNodeForGroupChunkContents:groupChunkContents];
+			break;
+		}
+		ShapeNodeChunkContentsHandle *shapeChunkContents = [self shapeNodeForNodeID:childNodeID];
+		if (shapeChunkContents) {
+			node.childNode = [self sceneGraphNodeForShapeChunkContents:shapeChunkContents];
+			break;
+		}
+		// else:
+		NSLog(@"Error: Unexpectedly could not find GroupNodeChunkContentsHandle or ShapeNodeChunkContentsHandle #%d child of TransformNodeChunkContentsHandle #%d.", childNodeID, chunkContents.nodeID);
+	} while (0);
+	
+	return [node autorelease];
+}
+
+- (MagicaVoxelVoxData_TransformNode *)sceneGraphRootNode {
+	return [[_sceneGraphRootNode copy] autorelease];
 }
 
 - (TransformNodeChunkContentsHandle *)transformNodeForNodeID:(uint32_t)nodeID

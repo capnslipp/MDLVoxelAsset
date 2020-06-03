@@ -5,6 +5,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import <MDLVoxelAsset/MagicaVoxelVoxData_SceneGraphTypes.h>
 
 
 
@@ -52,12 +53,13 @@ static const MagicaVoxelVoxData_VoxelArray kMagicaVoxelVoxData_VoxelArray_invali
 @property (nonatomic, assign, readonly) uint32_t versionNumber;
 
 @property (nonatomic, assign, readonly) uint32_t modelCount;
-
 - (MagicaVoxelVoxData_XYZDimensions)dimensionsForModelID:(uint32_t)modelID;
+- (MagicaVoxelVoxData_VoxelArray)voxelsForModelID:(uint32_t)modelID;
 
 @property (nonatomic, assign, readonly) MagicaVoxelVoxData_PaletteColorArray paletteColors;
 
-- (MagicaVoxelVoxData_VoxelArray)voxelsForModelID:(uint32_t)modelID;
+@property (nonatomic, copy, readonly) MagicaVoxelVoxData_TransformNode *sceneGraphRootNode;
+
 
 #pragma mark NSData-Mirroring Interface
 

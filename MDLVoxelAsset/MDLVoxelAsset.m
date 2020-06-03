@@ -115,6 +115,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	NSArray<Color*> *_paletteColors;
 	MDLVoxelAsset_VoxelDimensions _voxelDimensions;
 	
+	MagicaVoxelVoxData_TransformNode *_nodeSceneGraph;
+	
 	NSMutableArray<MDLVoxelAssetModel*> *_models;
 }
 
@@ -147,6 +149,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	self.URL = URL;
 	
 	_mvvoxData = [[MagicaVoxelVoxData alloc] initWithContentsOfURL:URL];
+	
+	_nodeSceneGraph = [_mvvoxData.sceneGraphRootNode retain];
 	
 	uint32_t modelCount = _mvvoxData.modelCount;
 	_models = [[NSMutableArray<MDLVoxelAssetModel*> alloc] initWithCapacity:modelCount];
@@ -250,6 +254,9 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 {
 	[_models release];
 	_models = nil;
+	
+	[_nodeSceneGraph release];
+	_nodeSceneGraph = nil;
 	
 	free(_voxelsRawData);
 	_voxelsRawData = NULL;
