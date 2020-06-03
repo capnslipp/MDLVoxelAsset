@@ -286,7 +286,7 @@
 	
 	uint8_t rotation_packed = atoi(rotation_CString);
 	VoxRotation *rotation = (VoxRotation *)&rotation_packed;
-	simd_float3x3 rotation_simd = SIMDMatrixDFromVoxRotation(*rotation);
+	simd_float3x3 rotation_simd = SIMDMatrixFromVoxRotation(*rotation);
 	return rotation_simd;
 }
 

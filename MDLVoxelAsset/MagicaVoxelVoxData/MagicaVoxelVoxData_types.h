@@ -69,4 +69,4 @@ typedef struct _VoxRotation {
 	uint8_t signInRow3 : 1;
 } VoxRotation;
 
-simd_float3x3 SIMDMatrixDFromVoxRotation(const VoxRotation rotation);
+simd_float3x3 SIMDMatrixFromVoxRotation(const VoxRotation rotation);

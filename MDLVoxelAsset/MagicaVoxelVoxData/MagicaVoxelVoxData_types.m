@@ -120,7 +120,7 @@ size_t SizeOfVoxDictPair(const VoxDictPair pair)
 
 // MARK: VoxRotation
 
-simd_float3x3 SIMDMatrixDFromVoxRotation(const VoxRotation rotation)
+simd_float3x3 SIMDMatrixFromVoxRotation(const VoxRotation rotation)
 {
 	simd_float3 matrixRow1 = { 0 }, matrixRow2 = { 0 }, matrixRow3 = { 0 };
 	
