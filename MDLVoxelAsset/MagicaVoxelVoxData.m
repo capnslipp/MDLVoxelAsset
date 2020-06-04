@@ -396,7 +396,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			simd_float3x3 rotation = [transformNodeContents frameAttributeSIMDRotationForFrame:frameI];
 			mvvdLog(@"%@frameAttributes[%d] SIMDRotation: (00: %f, 01: %f, 02: %f, 10: %f, 11: %f, 12: %f, 20: %f, 21: %f, 22: %f)", indentationString, frameI,
 				rotation.columns[0][0], rotation.columns[0][1], rotation.columns[0][2],
-				rotation.columns[1][0], rotation.columns[1][1], rotation.columns[2][2],
+				rotation.columns[1][0], rotation.columns[1][1], rotation.columns[1][2],
 				rotation.columns[2][0], rotation.columns[2][1], rotation.columns[2][2]
 			);
 		}
