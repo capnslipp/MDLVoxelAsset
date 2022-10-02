@@ -73,6 +73,12 @@ static const char kMaterialChunkIdent_string[] = "MATL";
 static const ChunkIdent kMaterialChunkIdent = { .ptr = (uint8_t const *)&kMaterialChunkIdent_string };
 static const char kRObjChunkIdent_string[] = "rOBJ";
 static const ChunkIdent kRObjChunkIdent = { .ptr = (uint8_t const *)&kRObjChunkIdent_string };
+static const char kRCamChunkIdent_string[] = "rCAM";
+static const ChunkIdent kRCamChunkIdent = { .ptr = (uint8_t const *)&kRCamChunkIdent_string };
+static const char kNoteChunkIdent_string[] = "NOTE";
+static const ChunkIdent kNoteChunkIdent = { .ptr = (uint8_t const *)&kNoteChunkIdent_string };
+static const char kIMapChunkIdent_string[] = "IMAP";
+static const ChunkIdent kIMapChunkIdent = { .ptr = (uint8_t const *)&kIMapChunkIdent_string };
 
 
 #import "MagicaVoxelVoxData_SizeChunkContentsHandle.h"
@@ -255,11 +261,17 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			else if (*ident.fourCharCode == *kShapeNodeChunkIdent.fourCharCode)
 				return [self parseShapeNodeContentsDataAtOffset:contentsStartOffset withDataSize:size];
 			else if (*ident.fourCharCode == *kLayerChunkIdent.fourCharCode)
-				return nil; // Mysterious “LAYR” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+				return nil; // Layer “LAYR” chunk, found in newer vox files.  Not currently implemented.
 			else if (*ident.fourCharCode == *kMaterialChunkIdent.fourCharCode)
-				return nil; // Mysterious “MATL” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+				return nil; // Material “MATL” chunk, found in newer vox files.  Not currently implemented.
 			else if (*ident.fourCharCode == *kRObjChunkIdent.fourCharCode)
-				return nil; // Mysterious “rObj” chunk, found in newer vox files.  Isn't in the spec, so I don't know what it is nor how to parse it.
+				return nil; // Render Objects “rOBJ” chunk, found in newer vox files.  Not currently implemented.
+			else if (*ident.fourCharCode == *kRCamChunkIdent.fourCharCode)
+				return nil; // Render Camera “rCAM” chunk, found in newer vox files.  Not currently implemented.
+			else if (*ident.fourCharCode == *kNoteChunkIdent.fourCharCode)
+				return nil; // Palette Note “NOTE” chunk, found in newer vox files.  Not currently implemented.
+			else if (*ident.fourCharCode == *kIMapChunkIdent.fourCharCode)
+				return nil; // Index Map “IMAP” chunk, found in newer vox files.  Not currently implemented.
 			else
 				@throw [NSException exceptionWithName: NSInvalidArgumentException
 					reason: [NSString stringWithFormat:@"Unknown chunk ID %c%c%c%c.", (*ident.array)[0], (*ident.array)[1], (*ident.array)[2], (*ident.array)[3]]
