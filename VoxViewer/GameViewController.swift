@@ -136,6 +136,7 @@ class GameViewController : ViewController
 			return c
 		}()
 		cameraNode.eulerAngles = SCNVector3(GLKMathDegreesToRadians(90), 0, 0)
+		cameraNode.name = "\(Self.self) Camera"
 		scene.rootNode.addChildNode(cameraNode)
 		_cameraNode = cameraNode
 		
@@ -147,6 +148,7 @@ class GameViewController : ViewController
 			f.reflectivity = 0
 			return f
 		}())
+		floorNode.name = "\(Self.self) Floor"
 		scene.rootNode.addChildNode(floorNode)
 		
 		
@@ -166,6 +168,7 @@ class GameViewController : ViewController
 			l.shadowMapSize = CGSize(width: 4096, height: 4096)
 			return l
 		}()
+		lightNode.name = "\(Self.self) Spot Light"
 		scene.rootNode.addChildNode(lightNode)
 		_lightNode = lightNode
 		
@@ -179,13 +182,14 @@ class GameViewController : ViewController
 			l.color = Color(hue: 210.0 / 360.0, saturation: 0.4, brightness: 0.4, alpha: 1.0)
 			return l
 		}()
+		ambientLightNode.name = "\(Self.self) Ambient Light"
 		scene.rootNode.addChildNode(ambientLightNode)
 		
 		
 		// axis widget
 		
 		let axisSphere = SCNSphere(radius: 0.25)
-		let coloredSphereNode = {(position:SCNVector3, color:Color) -> SCNNode in
+		let coloredSphereNode = {(position:SCNVector3, color:Color, name:String) -> SCNNode in
 			let s = (axisSphere.copy() as! SCNSphere)
 			s.firstMaterial = {
 				let material = SCNMaterial()
@@ -193,14 +197,15 @@ class GameViewController : ViewController
 				return material
 			}()
 			let n = SCNNode(geometry: s)
+			n.name = "\(Self.self) Axis \(shortName)"
 			n.position = position
 			return n
 		}
 		let axisSphereNodes = [
-			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), .white),
-			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), .red),
-			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), .green),
-			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), .blue),
+			coloredSphereNode(SCNVector3(0.0, 0.0, 0.0), .white, "Origin"),
+			coloredSphereNode(SCNVector3(+1.0, 0.0, 0.0), .red, "X+"),
+			coloredSphereNode(SCNVector3(0.0, +1.0, 0.0), .green, "Y+"),
+			coloredSphereNode(SCNVector3(0.0, 0.0, +1.0), .blue, "Z+"),
 		]
 		for node in axisSphereNodes {
 			scene.rootNode.addChildNode(node)
@@ -270,10 +275,13 @@ class GameViewController : ViewController
 		
 		let modelNode:SCNNode = try! {
 			if (modelAsset.count == 1) {
-				return SCNNode(mdlObject: modelAsset.object(at: 0))
+				let node = SCNNode(mdlObject: modelAsset.object(at: 0))
+				node.name = "MDLVoxelAsset"
+				return node
 			}
 			else if (modelAsset.count > 1) {
 				let baseNode = SCNNode()
+				baseNode.name = "MDLVoxelAsset"
 				for assetSubObject:MDLObject in modelAsset.objects {
 					baseNode.addChildNode(SCNNode(mdlObject: assetSubObject))
 				}

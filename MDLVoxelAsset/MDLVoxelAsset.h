@@ -15,7 +15,9 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 
 #import <ModelIO/ModelIO.h>
+#import <MDLVoxelAsset/MDLColoredVoxelArray.h>
 #import <MDLVoxelAsset/MagicaVoxelVoxData.h>
+@class SCNScene;
 
 #if TARGET_OS_IPHONE
 	@class UIColor;
@@ -32,6 +34,9 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 typedef struct _MDLVoxelAsset_VoxelDimensions {
 	uint32_t x, y, z;
 } MDLVoxelAsset_VoxelDimensions;
+
+
+#pragma mark Options
 
 /// If true, runs `-calculateShellLevels` on initialization.
 ///		Value: Boolean NSNumber
@@ -96,6 +101,13 @@ typedef NS_OPTIONS(NSUInteger, MDLVoxelAssetSkipMeshFaceDirections) {
 };
 
 
+#pragma mark VoxelizationParams
+
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetVoxelizationParamsModelMappings;
+
+
+
+#pragma mark - MDLVoxelAsset
 
 @interface MDLVoxelAsset : MDLObjectContainer <NSCopying>
 
@@ -107,12 +119,15 @@ typedef NS_OPTIONS(NSUInteger, MDLVoxelAssetSkipMeshFaceDirections) {
 - (instancetype)initWithURL:(NSURL *)URL options:(nullable NSDictionary<NSString*,id> *)options;
 @property(nonatomic, readonly, retain) NSURL *URL;
 
+/// @param voxelizationParams: A dictionary of MDLVoxelArray voxelization args.
++ (instancetype)assetWithSCNScene:(SCNScene *)scnScene voxelizationParams:(nullable NSDictionary<NSString*,id> *)voxelizationParams options:(nullable NSDictionary<NSString*,id> *)options dimensions:(MDLVoxelAsset_VoxelDimensions)dimensions palette:(NSArray<Color*> *)paletteColors;
+
 
 #pragma mark Working with Asset Content
 
 @property (nonatomic, assign, readonly) MDLAxisAlignedBoundingBox boundingBox;
 
-@property (nonatomic, retain, readonly) MDLVoxelArray *voxelArray;
+@property (nonatomic, retain, readonly) MDLColoredVoxelArray *voxelArray;
 @property (nonatomic, assign, readonly) uint32_t voxelCount;
 @property (nonatomic, assign, readonly) MDLVoxelAsset_VoxelDimensions voxelDimensions;
 

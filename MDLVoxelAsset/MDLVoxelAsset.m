@@ -15,6 +15,7 @@
 #import <SceneKit/SCNMaterialProperty.h>
 #import <SceneKit/SCNNode.h>
 #import <SceneKit/SCNParametricGeometry.h>
+#import <SceneKit/SceneKitTypes.h>
 #import <objc/message.h> // @for: objc_msgSendSuper()
 
 #if TARGET_OS_IPHONE
@@ -36,6 +37,7 @@ NSString *const kMDLVoxelAssetOptionConvertZUpToYUp = @"MDLVoxelAssetOptionConve
 NSString *const kMDLVoxelAssetOptionGenerateAmbientOcclusion = @"MDLVoxelAssetOptionGenerateAmbientOcclusion";
 NSString *const kMDLVoxelAssetOptionPaletteIndexReplacements = @"MDLVoxelAssetOptionPaletteReplacements";
 NSString *const kMDLVoxelAssetOptionSkipMeshFaceDirections = @"MDLVoxelAssetOptionSkipMeshFaceDirections";
+NSString *const kMDLVoxelAssetVoxelizationParamsModelMappings = @"MDLVoxelAssetVoxelizationParamsModelMappings";
 
 
 typedef struct _PerVertexMeshData {
@@ -110,7 +112,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	MDLVoxelIndex *_voxelsRawData;
 	NSData *_voxelsData;
 	
-	MDLVoxelArray *_voxelArray;
+	MDLColoredVoxelArray *_voxelArray;
 	NSArray<NSArray<NSArray<NSNumber*>*>*> *_voxelPaletteIndices;
 	NSArray<Color*> *_paletteColors;
 	MDLVoxelAsset_VoxelDimensions _voxelDimensions;
@@ -194,6 +196,163 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_paletteColors = paletteColors;
 	
 	return self;
+}
+
+- (instancetype)initWithSCNScene:(SCNScene *)scnScene
+	voxelizationParams:(nullable NSDictionary<NSString*,id> *)voxelizationParams
+	options:(nullable NSDictionary<NSString*,id> *)options_dict
+	dimensions:(MDLVoxelAsset_VoxelDimensions)dimensions
+	palette:(NSArray<Color*> *)paletteColors
+{
+	self = [super init];
+	if (self == nil)
+		return nil;
+	
+	[self parseOptions:options_dict];
+	
+	_paletteColors = [paletteColors retain];
+	
+	_models = [NSMutableArray<MDLVoxelAssetModel*> new];
+	
+	SCNVector3 scnSceneBoundsMin, scnSceneBoundsMax;
+	BOOL scnSceneBoundsSucess = [scnScene.rootNode getBoundingBoxMin:&scnSceneBoundsMin max:&scnSceneBoundsMax];
+	simd_float3 scnSceneBoundsSize = SCNVector3ToFloat3(scnSceneBoundsMax) - SCNVector3ToFloat3(scnSceneBoundsMin);
+	NSLog(@"scnSceneBounds:\n\t" @"min: (%f, %f, %f)\n\t" @"max: (%f, %f, %f)\n\t" @"size: (%f, %f, %f)",
+		scnSceneBoundsMin.x, scnSceneBoundsMin.y, scnSceneBoundsMin.z,
+		scnSceneBoundsMax.x, scnSceneBoundsMax.y, scnSceneBoundsMax.z,
+		scnSceneBoundsSize.x, scnSceneBoundsSize.y, scnSceneBoundsSize.z
+	);
+	
+	
+	MDLAsset *sceneMDLAsset = [MDLAsset assetWithSCNScene:scnScene];
+	
+	// Use the MDLAsset's bounding box, because the SCNScene's rootNode's bounding box is garbage (apparent bad data with near-0 values).
+	MDLAxisAlignedBoundingBox mdlAssetBounds = sceneMDLAsset.boundingBox;
+	simd_float3 mdlAssetBoundsSize = mdlAssetBounds.maxBounds - mdlAssetBounds.minBounds;
+	NSLog(@"mdlAssetBounds:\n\t" @"min: (%f, %f, %f)\n\t" @"max: (%f, %f, %f)\n\t" @"size: (%f, %f, %f)",
+		mdlAssetBounds.minBounds.x, mdlAssetBounds.minBounds.y, mdlAssetBounds.minBounds.z,
+		mdlAssetBounds.maxBounds.x, mdlAssetBounds.maxBounds.y, mdlAssetBounds.maxBounds.z,
+		mdlAssetBoundsSize.x, mdlAssetBoundsSize.y, mdlAssetBoundsSize.z
+	);
+	
+	// Except (!) the MDLAsset itself gives us incorrect values, so total up every top-level MDLObject's bounds instead.
+	MDLAxisAlignedBoundingBox mdlTopObjectsBounds;
+	for (int objectI = 0; objectI < sceneMDLAsset.count; ++objectI) {
+		MDLObject *topObject = sceneMDLAsset[objectI];
+		
+		MDLAxisAlignedBoundingBox objectBounds = [topObject boundingBoxAtTime:0];
+		if (objectI == 0) {
+			mdlTopObjectsBounds = objectBounds;
+		} else {
+			mdlTopObjectsBounds.minBounds = simd_min(mdlTopObjectsBounds.minBounds, objectBounds.minBounds);
+			mdlTopObjectsBounds.maxBounds = simd_max(mdlTopObjectsBounds.maxBounds, objectBounds.maxBounds);
+		}
+	}
+	simd_float3 mdlTopObjectsBoundsSize = mdlTopObjectsBounds.maxBounds - mdlTopObjectsBounds.minBounds;
+	NSLog(@"mdlTopObjectsBounds:\n\t" @"min: (%f, %f, %f)\n\t" @"max: (%f, %f, %f)\n\t" @"size: (%f, %f, %f)",
+		mdlTopObjectsBounds.minBounds.x, mdlTopObjectsBounds.minBounds.y, mdlTopObjectsBounds.minBounds.z,
+		mdlTopObjectsBounds.maxBounds.x, mdlTopObjectsBounds.maxBounds.y, mdlTopObjectsBounds.maxBounds.z,
+		mdlTopObjectsBoundsSize.x, mdlTopObjectsBoundsSize.y, mdlTopObjectsBoundsSize.z
+	);
+	
+	MDLAxisAlignedBoundingBox sceneBounds = (MDLAxisAlignedBoundingBox){ .minBounds = SCNVector3ToFloat3(scnSceneBoundsMin), .maxBounds = SCNVector3ToFloat3(scnSceneBoundsMax) };
+	simd_float3 sceneSize = sceneBounds.maxBounds - sceneBounds.minBounds;
+	
+	simd_float4x4 transformPivotMatrix = simd_matrix(
+		simd_make_float4(1, 0, 0, 0),
+		simd_make_float4(0, 1, 0, 0),
+		simd_make_float4(0, 0, 1, 0),
+		simd_make_float4(-sceneBounds.minBounds, 1)
+	);
+	simd_float4x4 transformRotationMatrix = simd_matrix(
+		simd_make_float4(1, 0, 0, 0),
+		simd_make_float4(0, 1, 0, 0),
+		simd_make_float4(0, 0, 1, 0),
+		simd_make_float4(0, 0, 0, 1)
+	);
+	float uniformScale = simd_reduce_min(simd_make_float3(dimensions.x, dimensions.y, dimensions.z) / sceneSize);
+	simd_float4x4 transformScaleMatrix = simd_diagonal_matrix(simd_make_float4(uniformScale, uniformScale, uniformScale, 1));
+	
+	simd_float4x4 transformMatrix = simd_mul(transformScaleMatrix, simd_mul(transformRotationMatrix, transformPivotMatrix));
+	
+	for (MDLObject *topObject in sceneMDLAsset) {
+		id<MDLTransformComponent> transform = topObject.transform;
+		simd_float4x4 matrix = simd_mul(transformMatrix, transform.matrix);
+		// fix to make sure MDLTransform recognizes it as an affine matrix
+		matrix.columns[0] = round(matrix.columns[0] * 10000) * 0.0001;
+		matrix.columns[1] = round(matrix.columns[1] * 10000) * 0.0001;
+		matrix.columns[2] = round(matrix.columns[2] * 10000) * 0.0001;
+		matrix.columns[3] = round(matrix.columns[3] * 10000) * 0.0001;
+		transform.matrix = matrix;
+	}
+	
+	SCNScene *transformedScene = [SCNScene scene];
+	for (SCNNode *child in scnScene.rootNode.childNodes) {
+		SCNNode *transformedChild = [child clone];
+		
+		simd_float4x4 matrix = simd_mul(transformMatrix, child.simdTransform);
+		// fix to make sure MDLTransform recognizes it as an affine matrix
+		matrix.columns[0] = round(matrix.columns[0] * 10000) * 0.0001;
+		matrix.columns[1] = round(matrix.columns[1] * 10000) * 0.0001;
+		matrix.columns[2] = round(matrix.columns[2] * 10000) * 0.0001;
+		matrix.columns[3] = round(matrix.columns[3] * 10000) * 0.0001;
+		transformedChild.simdTransform = matrix;
+		
+		[transformedScene.rootNode addChildNode:transformedChild];
+	}
+	
+	
+	NSArray<NSString*> *modelNames = [voxelizationParams objectForKey:kMDLVoxelAssetVoxelizationParamsModelMappings];
+	if (modelNames) {
+		for (NSString *modelName in modelNames) {
+			SCNNode *modelNode = [scnScene.rootNode childNodeWithName:modelName recursively:YES];
+			if (!modelNode) {
+				NSLog(@"Error: Unable to find child node with name %@ of %@.", modelName, scnScene);
+				return nil;
+			}
+			
+			//SCNNode *modelTempNode = [modelNode flattenedClone];
+			SCNNode *modelTempNode = modelNode;
+			
+			SCNVector3 modelMinBounds, modelMaxBounds;
+			[modelNode getBoundingBoxMin:&modelMinBounds max:&modelMaxBounds];
+			
+			MDLVoxelAsset_VoxelDimensions modelDimensions = {
+				.x = round((modelMaxBounds.x - modelMinBounds.x) / sceneSize.x * dimensions.x),
+				.y = round((modelMaxBounds.y - modelMinBounds.y) / sceneSize.y * dimensions.y),
+				.z = round((modelMaxBounds.z - modelMinBounds.z) / sceneSize.z * dimensions.z)
+			};
+			
+			SCNScene *modelTempScene = [SCNScene scene];
+			[modelTempScene.rootNode addChildNode:modelTempNode];
+			modelTempNode.worldTransform = modelNode.worldTransform;
+			
+			MDLVoxelAssetModel *model = [[[MDLVoxelAssetModel alloc] initWithSCNScene:modelTempScene voxelizationParams:voxelizationParams optionsValues:_options dimensions:modelDimensions palette:paletteColors] autorelease];
+			[_models addObject:model];
+			for (MDLMesh *modelMesh in model.meshes)
+				[super addObject:modelMesh];
+			
+			MDLObject *mdlObject = [MDLAsset assetWithSCNScene:scnScene][0];
+			[super addObject:mdlObject];
+		}
+	}
+	else {
+		MDLVoxelAssetModel *model = [[[MDLVoxelAssetModel alloc] initWithSCNScene:transformedScene voxelizationParams:voxelizationParams optionsValues:_options dimensions:dimensions palette:paletteColors] autorelease];
+		[_models addObject:model];
+		for (MDLMesh *modelMesh in model.meshes)
+			[super addObject:modelMesh];
+		
+		[super addObject:sceneMDLAsset[0]];
+		
+		//MDLObject *mdlObject = [MDLAsset assetWithSCNScene:scnScene][0];
+		//[super addObject:mdlObject];
+	}
+	
+	return self;
+}
+
++ (instancetype)assetWithSCNScene:(SCNScene *)scnScene voxelizationParams:(nullable NSDictionary<NSString*,id> *)voxelizationParams options:(nullable NSDictionary<NSString*,id> *)options_dict dimensions:(MDLVoxelAsset_VoxelDimensions)dimensions palette:(NSArray<Color*> *)paletteColors {
+	return [[[MDLVoxelAsset alloc] initWithSCNScene:scnScene voxelizationParams:voxelizationParams options:options_dict dimensions:dimensions palette:paletteColors] autorelease];
 }
 
 - (MDLVoxelAssetModel *)loadModelWithModelID:(int32_t)modelID

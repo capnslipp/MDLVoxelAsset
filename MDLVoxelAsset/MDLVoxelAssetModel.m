@@ -98,7 +98,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	MDLVoxelIndex *_voxelsRawData;
 	NSData *_voxelsData;
 	
-	MDLVoxelArray *_voxelArray;
+	MDLColoredVoxelArray *_voxelArray;
 	NSArray<NSArray<NSArray<NSNumber*>*>*> *_voxelPaletteIndices;
 	NSArray<Color*> *_paletteColors;
 	MDLVoxelAsset_VoxelDimensions _voxelDimensions;
@@ -162,7 +162,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_voxelsData = [[NSData alloc] initWithBytesNoCopy:_voxelsRawData length:(mvvoxVoxels.count * sizeof(MDLVoxelIndex)) freeWhenDone:NO];
 	
 	
-	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
+	_voxelArray = [[MDLColoredVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
 	
 	NSNumber *zeroPaletteIndex = @(0);
 	NSMutableArray<NSMutableArray<NSMutableArray<NSNumber*>*>*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:_voxelDimensions.x];
@@ -210,6 +210,166 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	return self;
 }
 
+- (instancetype)initWithSCNScene:(SCNScene *)scnScene
+	voxelizationParams:(nullable NSDictionary<NSString*,id> *)voxelizationParams
+	optionsValues:(const OptionsValues)optionsValues
+	dimensions:(MDLVoxelAsset_VoxelDimensions)dimensions
+	palette:(NSArray<Color*> *)paletteColors
+{
+	self = [super init];
+	if (self == nil)
+		return nil;
+	
+	_options = optionsValues;
+	[_options.voxelMesh retain];
+	[_options.paletteIndexReplacements retain];
+	
+	_paletteColors = [paletteColors retain];
+	
+	_voxelDimensions = dimensions;
+	
+	NSArray<SCNNode*> *scnNodesWithGeometry = [scnScene.rootNode childNodesPassingTest:^BOOL(SCNNode * _Nonnull child, BOOL * _Nonnull _){
+		return (child.geometry != nil);
+	}];
+	
+	NSMutableArray<SCNGeometry*> *scnGeometries = [NSMutableArray arrayWithCapacity:scnNodesWithGeometry.count];
+	simd_float4x4 *scnGeometryTransforms = (simd_float4x4 *)calloc(scnNodesWithGeometry.count, sizeof(simd_float4x4));
+	for (int geometryI = 0; geometryI < scnNodesWithGeometry.count; ++geometryI) {
+		SCNNode *node = scnNodesWithGeometry[geometryI];
+		[scnGeometries addObject:node.geometry];
+		scnGeometryTransforms[geometryI] = node.simdWorldTransform;
+		
+		SCNVector3 scnBoundsMin, scnBoundsMax;
+		BOOL scnBoundsSucess = [scnGeometries[geometryI] getBoundingBoxMin:&scnBoundsMin max:&scnBoundsMax];
+		MDLAxisAlignedBoundingBox boundingBox = (MDLAxisAlignedBoundingBox){ .minBounds = SCNVector3ToFloat3(scnBoundsMin), .maxBounds = SCNVector3ToFloat3(scnBoundsMax) };
+		simd_float3 boundingBoxSize = boundingBox.maxBounds - boundingBox.minBounds;
+		NSLog(@"scnGeometries[%d].boundingBox:\n\t" @"min: (%f, %f, %f)\n\t" @"max: (%f, %f, %f)\n\t" @"size: (%f, %f, %f)",
+			geometryI,
+			boundingBox.minBounds.x, boundingBox.minBounds.y, boundingBox.minBounds.z,
+			boundingBox.maxBounds.x, boundingBox.maxBounds.y, boundingBox.maxBounds.z,
+			boundingBoxSize.x, boundingBoxSize.y, boundingBoxSize.z
+		);
+	}
+	
+	
+	NSMutableArray<MDLMesh*> *mdlMeshes = [NSMutableArray arrayWithCapacity:scnGeometries.count];
+	for (int geometryI = 0; geometryI < scnGeometries.count; ++geometryI) {
+		SCNGeometry *geometry = scnGeometries[geometryI];
+		MDLMesh *mesh = [MDLMesh meshWithSCNGeometry:geometry];
+		[mdlMeshes addObject:mesh];
+		
+		MDLAxisAlignedBoundingBox boundingBox = mesh.boundingBox;
+		simd_float3 boundingBoxSize = boundingBox.maxBounds - boundingBox.minBounds;
+		NSLog(@"mdlMeshes[%d].boundingBox:\n\t" @"min: (%f, %f, %f)\n\t" @"max: (%f, %f, %f)\n\t" @"size: (%f, %f, %f)",
+			geometryI,
+			boundingBox.minBounds.x, boundingBox.minBounds.y, boundingBox.minBounds.z,
+			boundingBox.maxBounds.x, boundingBox.maxBounds.y, boundingBox.maxBounds.z,
+			boundingBoxSize.x, boundingBoxSize.y, boundingBoxSize.z
+		);
+	}
+	
+	int voxelCount = _voxelDimensions.x * _voxelDimensions.y * _voxelDimensions.z;
+	_voxelsRawData = (simd_int4 *)calloc(voxelCount, sizeof(MDLVoxelIndex));
+	for (int32_t vI = voxelCount - 1; vI >= 0; --vI)
+		_voxelsRawData[vI] = (MDLVoxelIndex){ 0, 0, 0, 0 };
+	_voxelsData = [[NSData alloc] initWithBytesNoCopy:_voxelsRawData length:(voxelCount * sizeof(MDLVoxelIndex)) freeWhenDone:NO];
+	
+	
+	//_voxelArray = [[MDLColoredVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
+	_voxelArray = [[MDLColoredVoxelArray alloc] init];
+	MDLVoxelArray *uncoloredVoxelArray = [[MDLVoxelArray alloc] init];
+	
+	[_voxelArray setVoxelsForMesh:mdlMeshes[0] divisions:MAX((dimensions.y - 1), 1) patchRadius:0.0f];
+	{
+		MDLAxisAlignedBoundingBox boundingBox = _voxelArray.boundingBox;
+		simd_float3 boundingBoxSize = boundingBox.maxBounds - boundingBox.minBounds;
+		NSLog(@"_voxelArray.boundingBox:\n\t" @"min: (%f, %f, %f)\n\t" @"max: (%f, %f, %f)\n\t" @"size: (%f, %f, %f)",
+			boundingBox.minBounds.x, boundingBox.minBounds.y, boundingBox.minBounds.z,
+			boundingBox.maxBounds.x, boundingBox.maxBounds.y, boundingBox.maxBounds.z,
+			boundingBoxSize.x, boundingBoxSize.y, boundingBoxSize.z
+		);
+		
+		MDLVoxelIndexExtent voxelIndexExtent = _voxelArray.voxelIndexExtent;
+		simd_int4 voxelIndexExtentSize = voxelIndexExtent.maximumExtent - voxelIndexExtent.minimumExtent + simd_make_int4(1, 1, 1, 0);
+		NSLog(@"_voxelArray.voxelIndexExtent:\n\t" @"min: (%d, %d, %d)\n\t" @"max: (%d, %d, %d)\n\t" @"size: (%d, %d, %d)",
+			voxelIndexExtent.minimumExtent.x, voxelIndexExtent.minimumExtent.y, voxelIndexExtent.minimumExtent.z,
+			voxelIndexExtent.maximumExtent.x, voxelIndexExtent.maximumExtent.y, voxelIndexExtent.maximumExtent.z,
+			voxelIndexExtentSize.x, voxelIndexExtentSize.y, voxelIndexExtentSize.z
+		);
+	}
+	
+	[uncoloredVoxelArray setVoxelsForMesh:mdlMeshes[0] divisions:MAX((dimensions.y - 1), 1) patchRadius:0.0f];
+	{
+		MDLAxisAlignedBoundingBox boundingBox = uncoloredVoxelArray.boundingBox;
+		simd_float3 boundingBoxSize = boundingBox.maxBounds - boundingBox.minBounds;
+		NSLog(@"uncoloredVoxelArray.boundingBox:\n\t" @"min: (%f, %f, %f)\n\t" @"max: (%f, %f, %f)\n\t" @"size: (%f, %f, %f)",
+			boundingBox.minBounds.x, boundingBox.minBounds.y, boundingBox.minBounds.z,
+			boundingBox.maxBounds.x, boundingBox.maxBounds.y, boundingBox.maxBounds.z,
+			boundingBoxSize.x, boundingBoxSize.y, boundingBoxSize.z
+		);
+		
+		MDLVoxelIndexExtent voxelIndexExtent = uncoloredVoxelArray.voxelIndexExtent;
+		simd_int4 voxelIndexExtentSize = voxelIndexExtent.maximumExtent - voxelIndexExtent.minimumExtent + simd_make_int4(1, 1, 1, 0);
+		NSLog(@"uncoloredVoxelArray.voxelIndexExtent:\n\t" @"min: (%d, %d, %d)\n\t" @"max: (%d, %d, %d)\n\t" @"size: (%d, %d, %d)",
+			voxelIndexExtent.minimumExtent.x, voxelIndexExtent.minimumExtent.y, voxelIndexExtent.minimumExtent.z,
+			voxelIndexExtent.maximumExtent.x, voxelIndexExtent.maximumExtent.y, voxelIndexExtent.maximumExtent.z,
+			voxelIndexExtentSize.x, voxelIndexExtentSize.y, voxelIndexExtentSize.z
+		);
+	}
+	
+	
+	//MDLAsset *sceneAsset = [MDLAsset assetWithSCNScene:scnScene];
+	
+	
+	//SCNVector3 scnSceneBoundsMin, scnSceneBoundsMax;
+	//BOOL scnSceneBoundsSucess = [scnScene.rootNode getBoundingBoxMin:&scnSceneBoundsMin max:&scnSceneBoundsMax];
+	//simd_float3 scnSceneBoundsSize = SCNVector3ToFloat3(scnSceneBoundsMax) - SCNVector3ToFloat3(scnSceneBoundsMin);
+	//
+	//MDLAxisAlignedBoundingBox boundingBox = (MDLAxisAlignedBoundingBox){ .minBounds = SCNVector3ToFloat3(scnSceneBoundsMin), .maxBounds = SCNVector3ToFloat3(scnSceneBoundsMax) };
+	//MDLAxisAlignedBoundingBox boundingBox = sceneAsset.boundingBox;
+	//simd_float3 boundingBoxSize = boundingBox.maxBounds - boundingBox.minBounds;
+	//NSLog(@"boundingBox:\n\t" @"min: (%f, %f, %f)\n\t" @"max: (%f, %f, %f)\n\t" @"size: (%f, %f, %f)",
+	//	boundingBox.minBounds.x, boundingBox.minBounds.y, boundingBox.minBounds.z,
+	//	boundingBox.maxBounds.x, boundingBox.maxBounds.y, boundingBox.maxBounds.z,
+	//	boundingBoxSize.x, boundingBoxSize.y, boundingBoxSize.z
+	//);
+	
+	//_voxelArray = [[MDLColoredVoxelArray alloc] initWithAsset:sceneAsset divisions:(dimensions.y - 1) patchRadius:0.0f];
+	
+	unsigned int ivarCount = 0;
+	Ivar *ivarList = class_copyIvarList(MDLVoxelArray.class, &ivarCount);
+	for (int ivarI = 0; ivarI < ivarCount; ++ivarI) {
+		Ivar ivar = ivarList[ivarI];
+		printf("0x%04x: %s (encoding: %s)\n", ivar_getOffset(ivar), ivar_getName(ivar), ivar_getTypeEncoding(ivar));
+	}
+	
+	MDLVoxelIndex const *voxelsRawData = (MDLVoxelIndex const *)_voxelArray.voxelIndices.bytes;
+	
+	NSNumber *zeroPaletteIndex = @(0);
+	NSMutableArray<NSMutableArray<NSMutableArray<NSNumber*>*>*> *voxelPaletteIndices = [[NSMutableArray alloc] initWithCapacity:_voxelDimensions.x];
+	for (uint32_t xI = 0; xI < _voxelDimensions.x; ++xI) {
+		[(voxelPaletteIndices[xI] = [[NSMutableArray alloc] initWithCapacity:_voxelDimensions.y]) release];
+		for (uint32_t yI = 0; yI < _voxelDimensions.y; ++yI) {
+			[(voxelPaletteIndices[xI][yI] = [[NSMutableArray alloc] initWithCapacity:_voxelDimensions.z]) release];
+			for (uint32_t zI = 0; zI < _voxelDimensions.z; ++zI)
+				voxelPaletteIndices[xI][yI][zI] = zeroPaletteIndex;
+		}
+	}
+	for (int32_t vI = 0; vI < _voxelArray.count; ++vI) {
+		MDLVoxelIndex voxelIndex = voxelsRawData[vI] - _voxelArray.voxelIndexExtent.minimumExtent;
+		if (voxelIndex.x > dimensions.x - 1 || voxelIndex.y > dimensions.y - 1 || voxelIndex.z > dimensions.z - 1)
+			continue;
+		
+		uint8_t colorIndex = 1; // TODO: temp
+		voxelPaletteIndices[voxelIndex.x][voxelIndex.y][voxelIndex.z] = @(colorIndex);
+	}
+	_voxelPaletteIndices = voxelPaletteIndices;
+	
+	[self generateMesh];
+	
+	return self;
+}
+
 - (id)copyWithZone:(NSZone *)_ {
 	return [self retain]; // MDLVoxelAssetModel is immutable, so just keep using the same instance.
 }
@@ -250,6 +410,10 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		[submesh release];
 		[vertexBufferData release];
 		[indexBufferData release];
+		
+		
+		MDLVertexAttributeData *vertexesPositionData = [mesh vertexAttributeDataForAttributeNamed:MDLVertexAttributePosition];
+		NSLog(@"vertexesPositionData: %@", vertexesPositionData);
 		
 		if (_options.generateAmbientOcclusion) {
 			// TODO: Figure out `objectsToConsider:`
@@ -867,7 +1031,7 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 	} while (didAddShell);
 	
 	[_voxelArray release];
-	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
+	_voxelArray = [[MDLColoredVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
 }
 
 
