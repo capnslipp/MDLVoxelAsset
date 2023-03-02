@@ -3,27 +3,7 @@
 // @license: Public Domain per The Unlicense.  See accompanying LICENSE file or <http://unlicense.org/>.
 
 #import "MagicaVoxelVoxData.h"
-
-
-
-#if DEBUG
-	void mvvdLog(NSString *format, ...)
-	{
-		va_list variadicArgs;
-		va_start(variadicArgs, format);
-		NSString *logString = [[[NSString alloc] initWithFormat:format arguments:variadicArgs] autorelease];
-		printf("%s\n", logString.UTF8String);
-		va_end(variadicArgs);
-	}
-#else
-	void mvvdLog(NSString *format, ...) {}
-#endif
-
-#if DEBUG
-	NSString *indentationStringOfLength(int length) {
-		return [@"" stringByPaddingToLength:length withString:@"\t" startingAtIndex:0];
-	}
-#endif
+#import "MagicaVoxelVoxData_utilities.h"
 
 
 
@@ -218,10 +198,6 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	[super dealloc];
 }
 
-#if DEBUG
-	static int DEBUG_sParseDepth = 0;
-#endif
-
 - (void)parseData
 {
 	_magicNumber_ptr = (MagicNumber){
@@ -237,7 +213,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		{
 			#if DEBUG
 				NSData *contentsData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[contentsStartOffset] length:size freeWhenDone:NO];
-				NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+				NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
 				mvvdLog(@"%@Parsing chunk ID %@'s contents (of size %d):\n" @"%@\tData: %@",
 					indentationString, NSStringFromChunkIdent(ident), size,
 					indentationString, contentsData
@@ -282,20 +258,20 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		{
 			#if DEBUG
 				NSData *childData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[childStartOffset] length:remainingSizeAllowance freeWhenDone:NO];
-				NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+				NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
 				mvvdLog(@"%@Parsing child of chunk ID %@:\n" @"%@\tData: %@",
 					indentationString, NSStringFromChunkIdent(parentIdent),
 					indentationString, childData
 				);
 				
-				int preexistingParseDepth = DEBUG_sParseDepth;
-				++DEBUG_sParseDepth;
+				int preexistingParseDepth = sDebugLogParseDepth;
+				++sDebugLogParseDepth;
 			#endif
 			
 			ChunkHandle *childChunk = chunkParser(childStartOffset);
 			
 			#if DEBUG
-				DEBUG_sParseDepth = preexistingParseDepth;
+				sDebugLogParseDepth = preexistingParseDepth;
 			#endif
 			
 			if (out_endOffset != NULL)
@@ -307,7 +283,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	};
 	
 	#if DEBUG
-		DEBUG_sParseDepth = 0;
+		sDebugLogParseDepth = 0;
 	#endif
 	_rootChunk = [chunkParser(kRootChunk_offset) retain];
 	
@@ -324,13 +300,13 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	ChunkHandle *chunk = [[ChunkHandle alloc] initWithData:_data offset:baseOffset];
 	
 	#if DEBUG
-		NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+		NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
 		mvvdLog(@"%@Parsing chunk ID %@ (with contents sized %d; children sized %d).",
 			indentationString, NSStringFromChunkIdent(chunk.ident), chunk.contentsSize, chunk.childrenTotalSize
 		);
 		
-		int preexistingParseDepth = DEBUG_sParseDepth;
-		++DEBUG_sParseDepth;
+		int preexistingParseDepth = sDebugLogParseDepth;
+		++sDebugLogParseDepth;
 	#endif
 	
 	uint32_t contentsSize = chunk.contentsSize;
@@ -359,7 +335,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	}
 	
 	#if DEBUG
-		DEBUG_sParseDepth = preexistingParseDepth;
+		sDebugLogParseDepth = preexistingParseDepth;
 	#endif
 	
 	return [chunk autorelease];
@@ -423,16 +399,16 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	GroupNodeChunkContentsHandle *groupNodeContents = [[[GroupNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
 	#if DEBUG
-		int preexistingParseDepth = DEBUG_sParseDepth;
-		++DEBUG_sParseDepth;
-		NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+		int preexistingParseDepth = sDebugLogParseDepth;
+		++sDebugLogParseDepth;
+		NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
 		
 		mvvdLog(@"%@nodeID: %d", indentationString, groupNodeContents.nodeID);
 		
 		NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(groupNodeContents.nodeAttributes);
 		mvvdLog(@"%@nodeAttributes: %@", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
 		
-		DEBUG_sParseDepth = preexistingParseDepth;
+		sDebugLogParseDepth = preexistingParseDepth;
 	#endif
 	
 	return groupNodeContents;
@@ -442,9 +418,9 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	ShapeNodeChunkContentsHandle *shapeNodeContents = [[[ShapeNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
 	#if DEBUG
-		int preexistingParseDepth = DEBUG_sParseDepth;
-		++DEBUG_sParseDepth;
-		NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
+		int preexistingParseDepth = sDebugLogParseDepth;
+		++sDebugLogParseDepth;
+		NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
 		
 		mvvdLog(@"%@nodeID: %d", indentationString, shapeNodeContents.nodeID);
 		
@@ -459,7 +435,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			mvvdLog(@"%@modelAttributes[%d]: %@", indentationString, modelI, [modelAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
 		}
 		
-		DEBUG_sParseDepth = preexistingParseDepth;
+		sDebugLogParseDepth = preexistingParseDepth;
 	#endif
 	
 	return shapeNodeContents;
