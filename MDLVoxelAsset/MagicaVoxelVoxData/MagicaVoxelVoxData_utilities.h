@@ -8,7 +8,7 @@
 
 
 
-extern int sDebugLogParseDepth;
+FOUNDATION_EXPORT int sDebugLogParseDepth;
 
 
 
