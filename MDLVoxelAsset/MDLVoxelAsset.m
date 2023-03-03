@@ -429,6 +429,11 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	return allMeshes;
 }
 
+- (NSArray<MDLVoxelAssetModel*> *)models
+{
+	return _models;
+}
+
 
 #pragma mark Sub-MDLObject Access
 

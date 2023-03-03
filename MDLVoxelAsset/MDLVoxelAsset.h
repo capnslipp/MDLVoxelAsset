@@ -51,6 +51,8 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 @property (nonatomic, retain, readonly) NSArray<MDLMesh*> *meshes;
 
+@property (nonatomic, retain, readonly) NSArray<MDLVoxelAssetModel*> *models;
+
 
 #pragma mark Sub-MDLObject Access
 
