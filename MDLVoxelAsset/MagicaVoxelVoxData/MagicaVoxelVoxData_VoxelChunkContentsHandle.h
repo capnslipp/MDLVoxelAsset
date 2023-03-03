@@ -43,6 +43,11 @@ static const ptrdiff_t kVoxelChunk_voxels_offset = kVoxelChunk_numVoxels_offset 
 /// The total size of the contents.
 - (size_t)totalSize;
 
+
+// Description
+
+@property (readonly, copy) NSString *debugDescription;
+
 @end
 
 

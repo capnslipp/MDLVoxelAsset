@@ -5,6 +5,7 @@
 #import "MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h"
 
 #import "MagicaVoxelVoxData_types.h"
+#import "MagicaVoxelVoxData_utilities.h"
 
 
 
@@ -116,6 +117,22 @@
 
 - (size_t)totalSize {
 	return kGroupNodeChunk_nodeID_size + self.nodeAttributes_size + kGroupNodeChunk_numChildNodes_size + self.childNodes_size;
+}
+
+
+#pragma mark debugDescription
+
+- (NSString *)debugDescription
+{
+	NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
+	NSMutableString *outputString = [[NSMutableString alloc] initWithCapacity:400]; // capacity is a rough estimate, based on output from test files
+	
+	[outputString appendFormat:@"%@nodeID: %d\n", indentationString, self.nodeID];
+	
+	NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(self.nodeAttributes);
+	[outputString appendFormat:@"%@nodeAttributes: %@\n", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
+	
+	return [outputString autorelease];
 }
 
 

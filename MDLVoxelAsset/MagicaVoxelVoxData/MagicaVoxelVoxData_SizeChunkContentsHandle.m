@@ -4,6 +4,8 @@
 
 #import "MagicaVoxelVoxData_SizeChunkContentsHandle.h"
 
+#import "MagicaVoxelVoxData_utilities.h"
+
 
 
 @implementation SizeChunkContentsHandle {
@@ -41,12 +43,29 @@
 - (ptrdiff_t)xyzSize_offset {
 	return _baseOffset + kSizeChunk_xyzSize_offset;
 }
-- (const XYZSizeData *)xyzSize_ptr {
-	return (uint32_t const (*)[3])&_data.bytes[self.xyzSize_offset];
+- (const SizeChunkContentsHandle_Size *)xyzSize_ptr {
+	return (SizeChunkContentsHandle_Size *)(uint32_t const (*)[3])&_data.bytes[self.xyzSize_offset];
+}
+- (SizeChunkContentsHandle_Size)xyzSize {
+	return *self.xyzSize_ptr;
 }
 
 - (size_t)totalSize {
 	return kSizeChunk_xyzSize_size;
+}
+
+
+#pragma mark debugDescription
+
+- (NSString *)debugDescription
+{
+	NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
+	NSMutableString *outputString = [[NSMutableString alloc] initWithCapacity:400]; // capacity is a rough estimate, based on output from test files
+	
+	SizeChunkContentsHandle_Size xyzSize = self.xyzSize;
+	[outputString appendFormat:@"%@xyzSize: (x: %d, y: %d, z: %d)\n", indentationString, xyzSize.x, xyzSize.y, xyzSize.z];
+	
+	return [outputString autorelease];
 }
 
 

@@ -57,6 +57,11 @@ static const ptrdiff_t kGroupNodeChunk_childNodes_afterNodeAttributesOffset = (k
 /// The total size of the contents.
 - (size_t)totalSize;
 
+
+// Description
+
+@property (readonly, copy) NSString *debugDescription;
+
 @end
 
 

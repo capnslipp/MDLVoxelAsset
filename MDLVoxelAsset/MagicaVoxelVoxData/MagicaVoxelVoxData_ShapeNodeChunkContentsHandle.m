@@ -5,6 +5,7 @@
 #import "MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.h"
 
 #import "MagicaVoxelVoxData_types.h"
+#import "MagicaVoxelVoxData_utilities.h"
 
 
 
@@ -154,6 +155,30 @@
 
 - (size_t)totalSize {
 	return kShapeNodeChunk_nodeID_size + self.nodeAttributes_size + kShapeNodeChunk_numModels_size + self.models_size;
+}
+
+
+#pragma mark debugDescription
+
+- (NSString *)debugDescription
+{
+	NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
+	NSMutableString *outputString = [[NSMutableString alloc] initWithCapacity:400]; // capacity is a rough estimate, based on output from test files
+	
+	[outputString appendFormat:@"%@nodeID: %d\n", indentationString, self.nodeID];
+	
+	NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(self.nodeAttributes);
+	[outputString appendFormat:@"%@nodeAttributes: %@\n", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
+	
+	for (int modelI = 0; modelI < self.numModels; ++modelI) {
+		int32_t modelID = [self modelIDForModel:modelI];
+		[outputString appendFormat:@"%@modelIDs[%d]: %d\n", indentationString, modelI, modelID];
+		
+		NSDictionary<NSString*,NSString*> *modelAttributes = NSDictionaryFromVoxDict([self modelAttributesForModel:modelI]);
+		[outputString appendFormat:@"%@modelAttributes[%d]: %@\n", indentationString, modelI, [modelAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
+	}
+	
+	return [outputString autorelease];
 }
 
 

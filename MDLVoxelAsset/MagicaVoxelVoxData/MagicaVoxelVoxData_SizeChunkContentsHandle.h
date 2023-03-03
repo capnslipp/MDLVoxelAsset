@@ -7,10 +7,12 @@
 
 #pragma mark Constants
 
-typedef uint32_t XYZSizeData[3];
+typedef struct _SizeChunkContentsHandle_Size {
+	uint32_t const x, y, z;
+} SizeChunkContentsHandle_Size;
 
 static const ptrdiff_t kSizeChunk_xyzSize_offset = 0;
-static const size_t kSizeChunk_xyzSize_size = sizeof(XYZSizeData);
+static const size_t kSizeChunk_xyzSize_size = sizeof(SizeChunkContentsHandle_Size);
 
 
 
@@ -26,10 +28,16 @@ static const size_t kSizeChunk_xyzSize_size = sizeof(XYZSizeData);
 // Auto-populated info properties:
 
 @property (nonatomic, assign, readonly) ptrdiff_t xyzSize_offset;
-@property (nonatomic, assign, readonly) XYZSizeData const *xyzSize_ptr;
+@property (nonatomic, assign, readonly) SizeChunkContentsHandle_Size const *xyzSize_ptr;
+@property (nonatomic, assign, readonly) SizeChunkContentsHandle_Size xyzSize;
 
 /// The total size of the contents.
 - (size_t)totalSize;
+
+
+// Description
+
+@property (readonly, copy) NSString *debugDescription;
 
 @end
 

@@ -4,6 +4,8 @@
 
 #import "MagicaVoxelVoxData_PackChunkContentsHandle.h"
 
+#import "MagicaVoxelVoxData_utilities.h"
+
 
 
 @implementation PackChunkContentsHandle {
@@ -50,6 +52,19 @@
 
 - (size_t)totalSize {
 	return kPackChunk_numModels_size;
+}
+
+
+#pragma mark debugDescription
+
+- (NSString *)debugDescription
+{
+	NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
+	NSMutableString *outputString = [[NSMutableString alloc] initWithCapacity:400]; // capacity is a rough estimate, based on output from test files
+	
+	[outputString appendFormat:@"%@numModels: %d\n", indentationString, self.numModels];
+	
+	return [outputString autorelease];
 }
 
 

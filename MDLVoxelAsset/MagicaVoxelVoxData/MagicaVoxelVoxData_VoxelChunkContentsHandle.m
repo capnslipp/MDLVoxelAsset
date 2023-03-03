@@ -4,6 +4,8 @@
 
 #import "MagicaVoxelVoxData_VoxelChunkContentsHandle.h"
 
+#import "MagicaVoxelVoxData_utilities.h"
+
 
 
 @implementation VoxelChunkContentsHandle {
@@ -71,6 +73,25 @@
 
 - (size_t)totalSize {
 	return kVoxelChunk_numVoxels_size + self.voxels_size;
+}
+
+
+#pragma mark debugDescription
+
+- (NSString *)debugDescription
+{
+	NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
+	NSMutableString *outputString = [[NSMutableString alloc] initWithCapacity:400]; // capacity is a rough estimate, based on output from test files
+	
+	[outputString appendFormat:@"%@numVoxels: %d\n", indentationString, self.numVoxels];
+	
+	[outputString appendFormat:@"%@voxels:\n", indentationString];
+	for (int voxelI = 0; voxelI < self.voxels_count; ++voxelI) {
+		VoxelChunkContentsHandle_Voxel voxel = self.voxels[voxelI];
+		[outputString appendFormat:@"%@\tcoord %3d, %3d, %3d:    color #%d\n", indentationString, voxel.xyzCoords[0], voxel.xyzCoords[1], voxel.xyzCoords[2], voxel.colorIndex];
+	}
+	
+	return [outputString autorelease];
 }
 
 @end

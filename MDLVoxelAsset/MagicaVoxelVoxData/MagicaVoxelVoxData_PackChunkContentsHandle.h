@@ -30,6 +30,11 @@ static const size_t kPackChunk_numModels_size = 4;
 /// The total size of the contents.
 - (size_t)totalSize;
 
+
+// Description
+
+@property (readonly, copy) NSString *debugDescription;
+
 @end
 
 

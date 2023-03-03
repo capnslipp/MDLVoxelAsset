@@ -343,55 +343,56 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 
 - (SizeChunkContentsHandle *)parseSizeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
-	return [[[SizeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	SizeChunkContentsHandle *sizeContents = [[[SizeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	#if DEBUG
+		int preexistingParseDepth = sDebugLogParseDepth++;
+		mvvdLog(sizeContents.debugDescription);
+		sDebugLogParseDepth = preexistingParseDepth;
+	#endif
+	return sizeContents;
 }
 
 - (VoxelChunkContentsHandle *)parseVoxelContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
-	return [[[VoxelChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	VoxelChunkContentsHandle *voxelContents = [[[VoxelChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	#if DEBUG
+		int preexistingParseDepth = sDebugLogParseDepth++;
+		mvvdLog(voxelContents.debugDescription);
+		sDebugLogParseDepth = preexistingParseDepth;
+	#endif
+	return voxelContents;
 }
 
 - (PaletteChunkContentsHandle *)parsePaletteContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
-	return [[[PaletteChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	PaletteChunkContentsHandle *paletteContents = [[[PaletteChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	#if DEBUG
+		int preexistingParseDepth = sDebugLogParseDepth++;
+		mvvdLog(paletteContents.debugDescription);
+		sDebugLogParseDepth = preexistingParseDepth;
+	#endif
+	return paletteContents;
 }
 
 - (PackChunkContentsHandle *)parsePackContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
-	return [[[PackChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	PackChunkContentsHandle *packContents = [[[PackChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
+	#if DEBUG
+		int preexistingParseDepth = sDebugLogParseDepth++;
+		mvvdLog(packContents.debugDescription);
+		sDebugLogParseDepth = preexistingParseDepth;
+	#endif
+	return packContents;
 }
 
 - (TransformNodeChunkContentsHandle *)parseTransformNodeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	TransformNodeChunkContentsHandle *transformNodeContents = [[[TransformNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
 	#if DEBUG
-		int preexistingParseDepth = DEBUG_sParseDepth;
-		++DEBUG_sParseDepth;
-		NSString *indentationString = indentationStringOfLength(DEBUG_sParseDepth);
-		
-		mvvdLog(@"%@nodeID: %d", indentationString, transformNodeContents.nodeID);
-		
-		NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(transformNodeContents.nodeAttributes);
-		mvvdLog(@"%@nodeAttributes: %@", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
-		mvvdLog(@"%@nodeAttributesName: %@", indentationString, NSStringFromVoxString(transformNodeContents.nodeAttributeName));
-		mvvdLog(@"%@nodeAttributesHidden: %@", indentationString, @(transformNodeContents.nodeAttributeHidden));
-		
-		for (int frameI = 0; frameI < transformNodeContents.numFrames; ++frameI) {
-			NSDictionary<NSString*,NSString*> *frameAttributes = NSDictionaryFromVoxDict([transformNodeContents frameAttributesForFrame:frameI]);
-			mvvdLog(@"%@frameAttributes[%d]: %@", indentationString, frameI, [frameAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
-			simd_int3 translation = [transformNodeContents frameAttributeSIMDTranslationForFrame:frameI];
-			mvvdLog(@"%@frameAttributes[%d] SIMDTranslation: (x: %d, y: %d, z: %d)", indentationString, frameI, translation.x, translation.y, translation.z);
-			simd_float3x3 rotation = [transformNodeContents frameAttributeSIMDRotationForFrame:frameI];
-			mvvdLog(@"%@frameAttributes[%d] SIMDRotation: (00: %f, 01: %f, 02: %f, 10: %f, 11: %f, 12: %f, 20: %f, 21: %f, 22: %f)", indentationString, frameI,
-				rotation.columns[0][0], rotation.columns[0][1], rotation.columns[0][2],
-				rotation.columns[1][0], rotation.columns[1][1], rotation.columns[1][2],
-				rotation.columns[2][0], rotation.columns[2][1], rotation.columns[2][2]
-			);
-		}
-		
-		DEBUG_sParseDepth = preexistingParseDepth;
+		int preexistingParseDepth = sDebugLogParseDepth++;
+		mvvdLog(transformNodeContents.debugDescription);
+		sDebugLogParseDepth = preexistingParseDepth;
 	#endif
-	
 	return transformNodeContents;
 }
 
@@ -399,18 +400,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	GroupNodeChunkContentsHandle *groupNodeContents = [[[GroupNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
 	#if DEBUG
-		int preexistingParseDepth = sDebugLogParseDepth;
-		++sDebugLogParseDepth;
-		NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
-		
-		mvvdLog(@"%@nodeID: %d", indentationString, groupNodeContents.nodeID);
-		
-		NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(groupNodeContents.nodeAttributes);
-		mvvdLog(@"%@nodeAttributes: %@", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
-		
+		int preexistingParseDepth = sDebugLogParseDepth++;
+		mvvdLog(groupNodeContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;
 	#endif
-	
 	return groupNodeContents;
 }
 
@@ -418,26 +411,10 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	ShapeNodeChunkContentsHandle *shapeNodeContents = [[[ShapeNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
 	#if DEBUG
-		int preexistingParseDepth = sDebugLogParseDepth;
-		++sDebugLogParseDepth;
-		NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
-		
-		mvvdLog(@"%@nodeID: %d", indentationString, shapeNodeContents.nodeID);
-		
-		NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(shapeNodeContents.nodeAttributes);
-		mvvdLog(@"%@nodeAttributes: %@", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
-		
-		for (int modelI = 0; modelI < shapeNodeContents.numModels; ++modelI) {
-			int32_t modelID = [shapeNodeContents modelIDForModel:modelI];
-			mvvdLog(@"%@modelIDs[%d]: %d", indentationString, modelI, modelID);
-			
-			NSDictionary<NSString*,NSString*> *modelAttributes = NSDictionaryFromVoxDict([shapeNodeContents modelAttributesForModel:modelI]);
-			mvvdLog(@"%@modelAttributes[%d]: %@", indentationString, modelI, [modelAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]);
-		}
-		
+		int preexistingParseDepth = sDebugLogParseDepth++;
+		mvvdLog(shapeNodeContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;
 	#endif
-	
 	return shapeNodeContents;
 }
 
@@ -484,7 +461,8 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	if (!chunkContents)
 		return (MagicaVoxelVoxData_XYZDimensions){ 0, 0, 0 };
 	
-	return *(MagicaVoxelVoxData_XYZDimensions *)*chunkContents.xyzSize_ptr;
+	SizeChunkContentsHandle_Size xyzSize = chunkContents.xyzSize;
+	return *(MagicaVoxelVoxData_XYZDimensions *)&xyzSize;
 }
 
 - (MagicaVoxelVoxData_VoxelArray)voxelsForModelID:(uint32_t)modelID

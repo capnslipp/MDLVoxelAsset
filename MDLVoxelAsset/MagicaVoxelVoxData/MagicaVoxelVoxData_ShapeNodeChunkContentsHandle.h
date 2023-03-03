@@ -56,6 +56,11 @@ static const ptrdiff_t kShapeNodeChunk_models_afterNodeAttributesOffset = (kShap
 /// The total size of the contents.
 - (size_t)totalSize;
 
+
+// Description
+
+@property (readonly, copy) NSString *debugDescription;
+
 @end
 
 

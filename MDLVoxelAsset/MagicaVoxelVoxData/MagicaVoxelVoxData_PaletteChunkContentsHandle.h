@@ -29,12 +29,21 @@ static const size_t kPaletteChunk_colors_size = sizeof(RGBAValuesData) * kPalett
 
 // Auto-populated info properties:
 
+@property (nonatomic, assign, readonly) uint32_t numColors;
+
 @property (nonatomic, assign, readonly) ptrdiff_t colors_offset;
 @property (nonatomic, assign, readonly) uint32_t colors_count;
 @property (nonatomic, assign, readonly) PaletteChunkContentsHandle_Color *colors;
 
+- (PaletteChunkContentsHandle_Color)colorForPaletteIndex:(uint8_t)paletteIndex;
+
 /// The total size of the contents.
 - (size_t)totalSize;
+
+
+// Description
+
+@property (readonly, copy) NSString *debugDescription;
 
 @end
 

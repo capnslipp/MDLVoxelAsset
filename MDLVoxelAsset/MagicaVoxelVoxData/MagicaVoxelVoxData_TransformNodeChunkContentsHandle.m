@@ -5,6 +5,7 @@
 #import "MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h"
 
 #import "MagicaVoxelVoxData_types.h"
+#import "MagicaVoxelVoxData_utilities.h"
 
 
 
@@ -295,6 +296,37 @@
 
 - (size_t)totalSize {
 	return kTransformNodeChunk_nodeID_size + self.nodeAttributes_size + kTransformNodeChunk_childNodeID_size + kTransformNodeChunk_reservedID_size + kTransformNodeChunk_layerID_size + kTransformNodeChunk_numFrames_size + self.frames_size;
+}
+
+
+#pragma mark debugDescription
+
+- (NSString *)debugDescription
+{
+	NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
+	NSMutableString *outputString = [[NSMutableString alloc] initWithCapacity:400]; // capacity is a rough estimate, based on output from test files
+	
+	[outputString appendFormat:@"%@nodeID: %d\n", indentationString, self.nodeID];
+	
+	NSDictionary<NSString*,NSString*> *nodeAttributes = NSDictionaryFromVoxDict(self.nodeAttributes);
+	[outputString appendFormat:@"%@nodeAttributes: %@\n", indentationString, [nodeAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
+	[outputString appendFormat:@"%@nodeAttributesName: %@\n", indentationString, NSStringFromVoxString(self.nodeAttributeName)];
+	[outputString appendFormat:@"%@nodeAttributesHidden: %@\n", indentationString, @(self.nodeAttributeHidden)];
+	
+	for (int frameI = 0; frameI < self.numFrames; ++frameI) {
+		NSDictionary<NSString*,NSString*> *frameAttributes = NSDictionaryFromVoxDict([self frameAttributesForFrame:frameI]);
+		[outputString appendFormat:@"%@frameAttributes[%d]: %@\n", indentationString, frameI, [frameAttributes.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
+		simd_int3 translation = [self frameAttributeSIMDTranslationForFrame:frameI];
+		[outputString appendFormat:@"%@frameAttributes[%d] SIMDTranslation: (x: %d, y: %d, z: %d)\n", indentationString, frameI, translation.x, translation.y, translation.z];
+		simd_float3x3 rotation = [self frameAttributeSIMDRotationForFrame:frameI];
+		[outputString appendFormat:@"%@frameAttributes[%d] SIMDRotation: (00: %f, 01: %f, 02: %f, 10: %f, 11: %f, 12: %f, 20: %f, 21: %f, 22: %f)\n", indentationString, frameI,
+			rotation.columns[0][0], rotation.columns[0][1], rotation.columns[0][2],
+			rotation.columns[1][0], rotation.columns[1][1], rotation.columns[1][2],
+			rotation.columns[2][0], rotation.columns[2][1], rotation.columns[2][2]
+		];
+	}
+	
+	return [outputString autorelease];
 }
 
 
