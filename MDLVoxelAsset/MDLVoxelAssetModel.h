@@ -9,16 +9,8 @@
 
 
 #import <ModelIO/ModelIO.h>
-#import <MDLVoxelAsset/MDLVoxelAsset.h>
+#import <MDLVoxelAsset/MDLVoxelAsset_DataTypes.h>
 #import <MDLVoxelAsset/MagicaVoxelVoxData.h>
-
-#if TARGET_OS_IPHONE
-	@class UIColor;
-	typedef UIColor Color;
-#else
-	@class NSColor;
-	typedef NSColor Color;
-#endif
 
 
 
