@@ -92,8 +92,6 @@
 		FAC050681D06669600D18B8B /* ship_1_design.obj in Resources */ = {isa = PBXBuildFile; fileRef = FAC050641D0664D400D18B8B /* ship_1_design.obj */; };
 		FAC050691D06669700D18B8B /* ship_1_design.mtl in Resources */ = {isa = PBXBuildFile; fileRef = FAC050631D0664D400D18B8B /* ship_1_design.mtl */; };
 		FAC0506A1D06669700D18B8B /* ship_1_design.obj in Resources */ = {isa = PBXBuildFile; fileRef = FAC050641D0664D400D18B8B /* ship_1_design.obj */; };
-		FAC5F7AC1CF186DD00B30B58 /* MDLVoxelAsset.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; };
-		FAC5F7AF1CF186F100B30B58 /* MDLVoxelAsset.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; };
 		FAC5F7B01CF1889600B30B58 /* monu7.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFE1CF04CE70054DCAA /* monu7.vox */; };
 		FAC5F7B11CF1889600B30B58 /* monu7.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFE1CF04CE70054DCAA /* monu7.vox */; };
 		FAC5F7B21CF1889900B30B58 /* rgbk_cmyw.vox in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEFB1CF032590054DCAA /* rgbk_cmyw.vox */; };
@@ -174,26 +172,6 @@
 				FA9CACE01CF17E0200B1ABA4 /* MDLVoxelAsset.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FAC5F7AA1CF186C400B30B58 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-				FAC5F7AC1CF186DD00B30B58 /* MDLVoxelAsset.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FAC5F7AD1CF186E500B30B58 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-				FAC5F7AF1CF186F100B30B58 /* MDLVoxelAsset.h in CopyFiles */,
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		FAE7C4B01CF13DD20075ED7D /* Embed Frameworks */ = {
@@ -557,7 +535,6 @@
 				FA26857F1CEA9A71003B86C8 /* Headers */,
 				FA26857D1CEA9A71003B86C8 /* Sources */,
 				FA26857E1CEA9A71003B86C8 /* Frameworks */,
-				FAC5F7AA1CF186C400B30B58 /* CopyFiles */,
 				FA2685801CEA9A71003B86C8 /* Resources */,
 			);
 			buildRules = (
@@ -613,7 +590,6 @@
 				FA9CACC71CF17E0200B1ABA4 /* Headers */,
 				FA9CACC51CF17E0200B1ABA4 /* Sources */,
 				FA9CACC61CF17E0200B1ABA4 /* Frameworks */,
-				FAC5F7AD1CF186E500B30B58 /* CopyFiles */,
 				FA9CACC81CF17E0200B1ABA4 /* Resources */,
 			);
 			buildRules = (
