@@ -16,6 +16,7 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 
 #import <ModelIO/ModelIO.h>
 #import <MDLVoxelAsset/MDLVoxelAsset_DataTypes.h>
+#import <MDLVoxelAsset/MDLVoxelAssetModel.h>
 #import <MDLVoxelAsset/MagicaVoxelVoxData.h>
 
 

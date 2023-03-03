@@ -102,8 +102,8 @@
 		FADD3DDE247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DDB247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.h */; };
 		FADD3DDF247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DDC247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m */; };
 		FADD3DE0247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DDC247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m */; };
-		FADD3DE9247CEE0E00369F84 /* MDLVoxelAssetModel.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DE7247CEE0E00369F84 /* MDLVoxelAssetModel.h */; };
-		FADD3DEA247CEE0E00369F84 /* MDLVoxelAssetModel.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DE7247CEE0E00369F84 /* MDLVoxelAssetModel.h */; };
+		FADD3DE9247CEE0E00369F84 /* MDLVoxelAssetModel.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DE7247CEE0E00369F84 /* MDLVoxelAssetModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FADD3DEA247CEE0E00369F84 /* MDLVoxelAssetModel.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DE7247CEE0E00369F84 /* MDLVoxelAssetModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FADD3DEB247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DE8247CEE0E00369F84 /* MDLVoxelAssetModel.m */; };
 		FADD3DEC247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DE8247CEE0E00369F84 /* MDLVoxelAssetModel.m */; };
 		FAE7C4AC1CF13DD20075ED7D /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2685821CEA9A71003B86C8 /* MDLVoxelAsset.framework */; };
