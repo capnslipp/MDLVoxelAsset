@@ -43,8 +43,6 @@ FOUNDATION_EXPORT const unsigned char MDLVoxelAssetVersionString[];
 @property (nonatomic, assign, readonly) uint32_t voxelCount;
 @property (nonatomic, assign, readonly) MDLVoxelAsset_VoxelDimensions voxelDimensions;
 
-@property (nonatomic, retain, readonly) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
-
 @property (nonatomic, retain, readonly) NSArray<Color*> *paletteColors;
 
 - (void)calculateShellLevels;

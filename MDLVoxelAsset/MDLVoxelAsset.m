@@ -111,7 +111,6 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	NSData *_voxelsData;
 	
 	MDLVoxelArray *_voxelArray;
-	NSArray<NSArray<NSArray<NSNumber*>*>*> *_voxelPaletteIndices;
 	NSArray<Color*> *_paletteColors;
 	MDLVoxelAsset_VoxelDimensions _voxelDimensions;
 	
@@ -120,7 +119,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	NSMutableArray<MDLVoxelAssetModel*> *_models;
 }
 
-@synthesize voxelArray=_voxelArray, voxelPaletteIndices=_voxelPaletteIndices, paletteColors=_paletteColors;
+@synthesize voxelArray=_voxelArray, paletteColors=_paletteColors;
 
 - (uint32_t)voxelCount {
 	return [_mvvoxData voxelsForModelID:0].count;
@@ -384,8 +383,6 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	
 	[_paletteColors release];
 	_paletteColors = nil;
-	[_voxelPaletteIndices release];
-	_voxelPaletteIndices = nil;
 	[_voxelArray release];
 	_voxelArray = nil;
 	
