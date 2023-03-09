@@ -107,34 +107,15 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	
 	MagicaVoxelVoxData *_mvvoxData;
 	
-	MDLVoxelIndex *_voxelsRawData;
-	NSData *_voxelsData;
-	
-	MDLVoxelArray *_voxelArray;
 	NSArray<Color*> *_paletteColors;
-	MDLVoxelAsset_VoxelDimensions _voxelDimensions;
+	MDLAxisAlignedBoundingBox _boundingBox;
 	
 	MagicaVoxelVoxData_TransformNode *_nodeSceneGraph;
 	
 	NSMutableArray<MDLVoxelAssetModel*> *_models;
 }
 
-@synthesize voxelArray=_voxelArray, paletteColors=_paletteColors;
-
-- (uint32_t)voxelCount {
-	return [_mvvoxData voxelsForModelID:0].count;
-}
-
-- (MDLVoxelAsset_VoxelDimensions)voxelDimensions {
-	return _voxelDimensions;
-}
-
-- (MDLAxisAlignedBoundingBox)boundingBox {
-	return (MDLAxisAlignedBoundingBox){
-		.minBounds = { 0, 0, 0 },
-		.maxBounds = { _voxelDimensions.x, _voxelDimensions.z, _voxelDimensions.y },
-	};
-}
+@synthesize paletteColors=_paletteColors, boundingBox=_boundingBox;
 
 
 - (instancetype)initWithURL:(NSURL *)URL options:(NSDictionary<NSString*,id> *)options_dict
@@ -150,6 +131,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	_mvvoxData = [[MagicaVoxelVoxData alloc] initWithContentsOfURL:URL];
 	
 	_models = [NSMutableArray<MDLVoxelAssetModel*> new];
+	
+	_boundingBox = (MDLAxisAlignedBoundingBox){ .minBounds = { 0, 0, 0 }, .maxBounds = { 0, 0, 0 } };
 	
 	_nodeSceneGraph = [_mvvoxData.sceneGraphRootNode retain];
 	if (_nodeSceneGraph)
@@ -168,9 +151,11 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 			MDLVoxelAssetModel *model = [self loadModelWithModelID:modelI];
 			
 			MDLVoxelAsset_VoxelDimensions modelVoxelDimensions = model.voxelDimensions;
-			_voxelDimensions.x = MAX(_voxelDimensions.x, modelVoxelDimensions.x);
-			_voxelDimensions.y = MAX(_voxelDimensions.y, modelVoxelDimensions.y);
-			_voxelDimensions.z = MAX(_voxelDimensions.z, modelVoxelDimensions.z);
+			_boundingBox.maxBounds = simd_make_float3(
+				MAX(_boundingBox.maxBounds.x, modelVoxelDimensions.x),
+				MAX(_boundingBox.maxBounds.y, modelVoxelDimensions.y),
+				MAX(_boundingBox.maxBounds.z, modelVoxelDimensions.z)
+			);
 			
 			for (MDLMesh *modelMesh in model.meshes)
 				[super addObject:modelMesh];
@@ -376,15 +361,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	[_nodeSceneGraph release];
 	_nodeSceneGraph = nil;
 	
-	free(_voxelsRawData);
-	_voxelsRawData = NULL;
-	[_voxelsData release];
-	_voxelsData = nil;
-	
 	[_paletteColors release];
 	_paletteColors = nil;
-	[_voxelArray release];
-	_voxelArray = nil;
 	
 	[_mvvoxData release];
 	_mvvoxData = nil;
