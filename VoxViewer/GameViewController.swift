@@ -31,13 +31,14 @@ class GameViewController : ViewController
 	
 	var _voxelFilenames:Array<String>?
 	var _meshFilenames:Array<String>?
+	let assetFilesSubdirectory = "3DAssets"
 	private func loadFilenames()
 	{
-		let voxelFilepaths:Array<URL> = Bundle.main.urls(forResourcesWithExtension: "vox", subdirectory: nil) ?? []
+		let voxelFilepaths:Array<URL> = Bundle.main.urls(forResourcesWithExtension: "vox", subdirectory: self.assetFilesSubdirectory) ?? []
 		_voxelFilenames = voxelFilepaths.map { $0.lastPathComponent }
 		
 		let fetchResourceURLsWithExtension = {(ext:String) -> [URL] in
-			Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: nil) ?? []
+			Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: self.assetFilesSubdirectory) ?? []
 		}
 		var meshFilepaths:Array<URL> = fetchResourceURLsWithExtension("abc")
 		meshFilepaths += fetchResourceURLsWithExtension("dae")
@@ -323,12 +324,12 @@ class GameViewController : ViewController
 		
 		guard let (path, filenameWithSuffix) = {() -> (URL, String)? in
 			var p:URL?
-			p = Bundle.main.url(forResource: filename, withExtension: "")
+			p = Bundle.main.url(forResource: filename, withExtension: "", subdirectory: self.assetFilesSubdirectory)
 			
 			if p == nil {
 				for fileExtension in ["abc", "dae", "fbx", "obj", "ply", "stl"] {
 					if MDLAsset.canImportFileExtension(fileExtension) {
-						p = Bundle.main.url(forResource: filename, withExtension: fileExtension)
+						p = Bundle.main.url(forResource: filename, withExtension: fileExtension, subdirectory: self.assetFilesSubdirectory)
 					}
 					if p != nil { break }
 				}
@@ -451,9 +452,9 @@ class GameViewController : ViewController
 	func fetchVoxelAsset(named name:String) throws -> MDLVoxelAsset
 	{
 		guard let path:String = {
-			var p = Bundle.main.path(forResource: name, ofType: "")
+			var p = Bundle.main.path(forResource: name, ofType: "", inDirectory: self.assetFilesSubdirectory)
 			if p == nil {
-				p = Bundle.main.path(forResource: name, ofType: "vox")
+				p = Bundle.main.path(forResource: name, ofType: "vox", inDirectory: self.assetFilesSubdirectory)
 			}
 			return p
 		}() else {
