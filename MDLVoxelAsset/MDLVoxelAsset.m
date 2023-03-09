@@ -142,6 +142,7 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 		//	simd_float4x4 matrix = objectHierarchy.transform.matrix;
 		//	objectHierarchy.transform.matrix = simd_matrix(matrix.columns[0], matrix.columns[2], matrix.columns[1], matrix.columns[3]); // swap Y & Z columns
 		//}
+		_boundingBox = [objectHierarchy boundingBoxAtTime:0];
 		[super addObject:objectHierarchy];
 	}
 	else // !_nodeSceneGraph
