@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FA2685811CEA9A71003B86C8"
+               BlueprintIdentifier = "FA9CACC91CF17E0200B1ABA4"
                BuildableName = "MDLVoxelAsset.framework"
-               BlueprintName = "MDLVoxelAsset (iOS)"
+               BlueprintName = "MDLVoxelAsset"
                ReferencedContainer = "container:MDLVoxelAsset.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,16 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FA26858B1CEA9A71003B86C8"
-               BuildableName = "MDLVoxelAssetTests.xctest"
-               BlueprintName = "MDLVoxelAssetTests (iOS)"
-               ReferencedContainer = "container:MDLVoxelAsset.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -60,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "FA2685811CEA9A71003B86C8"
+            BlueprintIdentifier = "FA9CACC91CF17E0200B1ABA4"
             BuildableName = "MDLVoxelAsset.framework"
-            BlueprintName = "MDLVoxelAsset (iOS)"
+            BlueprintName = "MDLVoxelAsset"
             ReferencedContainer = "container:MDLVoxelAsset.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
