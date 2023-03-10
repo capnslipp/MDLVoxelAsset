@@ -1,0 +1,16 @@
+//
+//  framework-macOS-Debug.xcconfig
+//  MDLVoxelAsset (OS X)
+//
+//  Created by Cap'n Slipp on 3/9/23.
+//  Copyright © 2023 Cap'n Slipp. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "project-Debug.xcconfig"
+
+
+
+GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 DEBUG_VERBOSE=1 $(inherited)

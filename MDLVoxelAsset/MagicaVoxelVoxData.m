@@ -211,7 +211,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 	{
 		ChunkContentsParserB contentsParser = ^id (ChunkIdent ident, ptrdiff_t contentsStartOffset, uint32_t size)
 		{
-			#if DEBUG
+			#if DEBUG_VERBOSE
 				NSData *contentsData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[contentsStartOffset] length:size freeWhenDone:NO];
 				NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
 				mvvdLog(@"%@Parsing chunk ID %@'s contents (of size %d):\n" @"%@\tData: %@",
@@ -256,7 +256,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		};
 		ChunkChildParserB childParser = ^(ChunkIdent parentIdent, ptrdiff_t childStartOffset, size_t remainingSizeAllowance, ptrdiff_t *out_endOffset)
 		{
-			#if DEBUG
+			#if DEBUG_VERBOSE
 				NSData *childData = [NSData dataWithBytesNoCopy:(void *)&_data.bytes[childStartOffset] length:remainingSizeAllowance freeWhenDone:NO];
 				NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
 				mvvdLog(@"%@Parsing child of chunk ID %@:\n" @"%@\tData: %@",
@@ -270,7 +270,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 			
 			ChunkHandle *childChunk = chunkParser(childStartOffset);
 			
-			#if DEBUG
+			#if DEBUG_VERBOSE
 				sDebugLogParseDepth = preexistingParseDepth;
 			#endif
 			
@@ -282,7 +282,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		return [self parseChunkDataAtOffset:startOffset withContentsParser:contentsParser childParser:childParser];
 	};
 	
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		sDebugLogParseDepth = 0;
 	#endif
 	_rootChunk = [chunkParser(kRootChunk_offset) retain];
@@ -299,7 +299,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 {
 	ChunkHandle *chunk = [[ChunkHandle alloc] initWithData:_data offset:baseOffset];
 	
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		NSString *indentationString = indentationStringOfLength(sDebugLogParseDepth);
 		mvvdLog(@"%@Parsing chunk ID %@ (with contents sized %d; children sized %d).",
 			indentationString, NSStringFromChunkIdent(chunk.ident), chunk.contentsSize, chunk.childrenTotalSize
@@ -334,7 +334,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 		} while (true);
 	}
 	
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		sDebugLogParseDepth = preexistingParseDepth;
 	#endif
 	
@@ -344,7 +344,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (SizeChunkContentsHandle *)parseSizeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	SizeChunkContentsHandle *sizeContents = [[[SizeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		int preexistingParseDepth = sDebugLogParseDepth++;
 		mvvdLog(sizeContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;
@@ -355,7 +355,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (VoxelChunkContentsHandle *)parseVoxelContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	VoxelChunkContentsHandle *voxelContents = [[[VoxelChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		int preexistingParseDepth = sDebugLogParseDepth++;
 		mvvdLog(voxelContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;
@@ -366,7 +366,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (PaletteChunkContentsHandle *)parsePaletteContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	PaletteChunkContentsHandle *paletteContents = [[[PaletteChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		int preexistingParseDepth = sDebugLogParseDepth++;
 		mvvdLog(paletteContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;
@@ -377,7 +377,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (PackChunkContentsHandle *)parsePackContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	PackChunkContentsHandle *packContents = [[[PackChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		int preexistingParseDepth = sDebugLogParseDepth++;
 		mvvdLog(packContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;
@@ -388,7 +388,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (TransformNodeChunkContentsHandle *)parseTransformNodeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	TransformNodeChunkContentsHandle *transformNodeContents = [[[TransformNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		int preexistingParseDepth = sDebugLogParseDepth++;
 		mvvdLog(transformNodeContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;
@@ -399,7 +399,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (GroupNodeChunkContentsHandle *)parseGroupNodeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	GroupNodeChunkContentsHandle *groupNodeContents = [[[GroupNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		int preexistingParseDepth = sDebugLogParseDepth++;
 		mvvdLog(groupNodeContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;
@@ -410,7 +410,7 @@ typedef ChunkHandle * (^ChunkChildParserB)(ChunkIdent parentIdent, ptrdiff_t sta
 - (ShapeNodeChunkContentsHandle *)parseShapeNodeContentsDataAtOffset:(ptrdiff_t)offset withDataSize:(uint32_t)size
 {
 	ShapeNodeChunkContentsHandle *shapeNodeContents = [[[ShapeNodeChunkContentsHandle alloc] initWithData:_data offset:offset] autorelease];
-	#if DEBUG
+	#if DEBUG_VERBOSE
 		int preexistingParseDepth = sDebugLogParseDepth++;
 		mvvdLog(shapeNodeContents.debugDescription);
 		sDebugLogParseDepth = preexistingParseDepth;

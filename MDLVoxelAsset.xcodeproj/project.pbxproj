@@ -172,6 +172,8 @@
 		FAE1FDA929BAE8E200D66C35 /* project-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-Debug.xcconfig"; sourceTree = "<group>"; };
 		FAE1FDAC29BAF04000D66C35 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		FAE1FDAD29BAF30400D66C35 /* framework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = framework.xcconfig; sourceTree = "<group>"; };
+		FAE1FDB529BB10BA00D66C35 /* framework-DebugVerbose.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "framework-DebugVerbose.xcconfig"; sourceTree = "<group>"; };
+		FAE1FDB629BB10BA00D66C35 /* project-DebugVerbose.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-DebugVerbose.xcconfig"; sourceTree = "<group>"; };
 		FAF7D4601E73E1B7007CFA66 /* convertToJSON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = convertToJSON; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAF7D4621E73E1B8007CFA66 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_types.h; sourceTree = "<group>"; };
@@ -347,9 +349,11 @@
 			children = (
 				FAE1FDAC29BAF04000D66C35 /* project.xcconfig */,
 				FAE1FDA929BAE8E200D66C35 /* project-Debug.xcconfig */,
+				FAE1FDB629BB10BA00D66C35 /* project-DebugVerbose.xcconfig */,
 				FAE1FDA629BAE8E200D66C35 /* project-Release.xcconfig */,
 				FAE1FDAD29BAF30400D66C35 /* framework.xcconfig */,
 				FAE1FDA729BAE8E200D66C35 /* framework-Debug.xcconfig */,
+				FAE1FDB529BB10BA00D66C35 /* framework-DebugVerbose.xcconfig */,
 				FAE1FDA829BAE8E200D66C35 /* framework-Release.xcconfig */,
 			);
 			path = Configurations;
@@ -868,6 +872,99 @@
 			};
 			name = Release;
 		};
+		FAE1FDAE29BB10A300D66C35 /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FAE1FDB629BB10BA00D66C35 /* project-DebugVerbose.xcconfig */;
+			buildSettings = {
+			};
+			name = DebugVerbose;
+		};
+		FAE1FDAF29BB10A300D66C35 /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FAE1FDB529BB10BA00D66C35 /* framework-DebugVerbose.xcconfig */;
+			buildSettings = {
+			};
+			name = DebugVerbose;
+		};
+		FAE1FDB029BB10A300D66C35 /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				INFOPLIST_FILE = MDLVoxelAssetTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAssetTests;
+				PRODUCT_NAME = MDLVoxelAssetTests;
+				SWIFT_VERSION = 2.3;
+			};
+			name = DebugVerbose;
+		};
+		FAE1FDB129BB10A300D66C35 /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MDLVoxelAssetTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.MDLVoxelAssetTests;
+				PRODUCT_NAME = MDLVoxelAssetTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VoxViewer.app/Contents/MacOS/VoxViewer";
+			};
+			name = DebugVerbose;
+		};
+		FAE1FDB229BB10A300D66C35 /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = UQQE2H6P34;
+				INFOPLIST_FILE = VoxViewer/iOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
+				PRODUCT_NAME = VoxViewer;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+			};
+			name = DebugVerbose;
+		};
+		FAE1FDB329BB10A300D66C35 /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = "VoxViewer/OS X/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
+				PRODUCT_NAME = VoxViewer;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+			};
+			name = DebugVerbose;
+		};
+		FAE1FDB429BB10A300D66C35 /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = DebugVerbose;
+		};
 		FAF7D4641E73E1B8007CFA66 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -906,6 +1003,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA0ADEF41CF00A280054DCAA /* Debug */,
+				FAE1FDB229BB10A300D66C35 /* DebugVerbose */,
 				FA0ADEF51CF00A280054DCAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -915,6 +1013,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA2685941CEA9A72003B86C8 /* Debug */,
+				FAE1FDAE29BB10A300D66C35 /* DebugVerbose */,
 				FA2685951CEA9A72003B86C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -924,6 +1023,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA26859A1CEA9A72003B86C8 /* Debug */,
+				FAE1FDB029BB10A300D66C35 /* DebugVerbose */,
 				FA26859B1CEA9A72003B86C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -933,6 +1033,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA9695111CF1725000DC632A /* Debug */,
+				FAE1FDB329BB10A300D66C35 /* DebugVerbose */,
 				FA9695121CF1725000DC632A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -942,6 +1043,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA9CACE21CF17E0200B1ABA4 /* Debug */,
+				FAE1FDAF29BB10A300D66C35 /* DebugVerbose */,
 				FA9CACE31CF17E0200B1ABA4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -951,6 +1053,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA9CACE51CF17E0200B1ABA4 /* Debug */,
+				FAE1FDB129BB10A300D66C35 /* DebugVerbose */,
 				FA9CACE61CF17E0200B1ABA4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -960,6 +1063,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FAF7D4641E73E1B8007CFA66 /* Debug */,
+				FAE1FDB429BB10A300D66C35 /* DebugVerbose */,
 				FAF7D4651E73E1B8007CFA66 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
