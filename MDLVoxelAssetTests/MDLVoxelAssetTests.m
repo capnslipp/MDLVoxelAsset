@@ -4,7 +4,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import "../MDLVoxelAsset.h"
+#import <MDLVoxelAsset/MDLVoxelAsset.h>
 
 
 
@@ -45,29 +45,29 @@
 /// Use XCTAssert and related functions to verify your tests produce the correct results.
 - (void)testVoxLoad
 {
-	NSString *testVoxFilePath = [self.testBundle pathForResource:@"chr_sword" ofType:@"vox"];
+	NSString *testVoxFilePath = [self.testBundle pathForResource:@"chr_sword" ofType:@"vox" inDirectory:@"3DAssets"];
 	
 	MagicaVoxelVoxData *data = [MagicaVoxelVoxData dataWithContentsOfFile:testVoxFilePath];
 	XCTAssertTrue(data.valid);
 	
 	XCTAssertEqual(data.versionNumber, 150);
 	
-	MagicaVoxelVoxData_XYZDimensions dimensions = data.dimensions;
+	MagicaVoxelVoxData_XYZDimensions dimensions = [data dimensionsForModelID:0];
 	XCTAssertEqual(dimensions.x, 20);
 	XCTAssertEqual(dimensions.y, 21);
 	XCTAssertEqual(dimensions.z, 20);
 	
-	XCTAssertEqual(data.paletteColors_count, 255);
+	XCTAssertEqual(data.paletteColors.count, 255);
 	MagicaVoxelVoxData_PaletteColor paletteColors_array[255];
-	memcpy(paletteColors_array, data.paletteColors_array, sizeof(MagicaVoxelVoxData_PaletteColor) * 255);
+	memcpy(paletteColors_array, data.paletteColors.array, sizeof(MagicaVoxelVoxData_PaletteColor) * 255);
 	XCTAssertEqual(paletteColors_array[0].r, (uint8_t)'\xFC');
 	XCTAssertEqual(paletteColors_array[0].g, (uint8_t)'\xFC');
 	XCTAssertEqual(paletteColors_array[0].b, (uint8_t)'\xFC');
 	XCTAssertEqual(paletteColors_array[0].a, (uint8_t)'\xFF');
 	
-	XCTAssertEqual(data.voxels_count, 334);
+	XCTAssertEqual([data voxelsForModelID:0].count, 334);
 	MagicaVoxelVoxData_Voxel voxels_array[334];
-	memcpy(voxels_array, data.voxels_array, sizeof(MagicaVoxelVoxData_Voxel) * 334);
+	memcpy(voxels_array, [data voxelsForModelID:0].array, sizeof(MagicaVoxelVoxData_Voxel) * 334);
 	XCTAssertEqual(voxels_array[0].x, 1);
 	XCTAssertEqual(voxels_array[0].y, 10);
 	XCTAssertEqual(voxels_array[0].z, 2);
@@ -78,9 +78,9 @@
 
 - (void)testMDLVoxelAsset
 {
-	NSString *testVoxFilePath = [self.testBundle pathForResource:@"chr_sword" ofType:@"vox"];
+	NSString *testVoxFilePath = [self.testBundle pathForResource:@"chr_sword" ofType:@"vox" inDirectory:@"3DAssets"];
 	
-	MDLVoxelAsset *asset = [[MDLVoxelAsset alloc] initWithURL:[NSURL fileURLWithPath:testVoxFilePath]];
+	MDLVoxelAsset *asset = [[MDLVoxelAsset alloc] initWithURL:[NSURL fileURLWithPath:testVoxFilePath] options:nil];
 	
 	NSLog(@"asset: %@", asset.description);
 }
