@@ -33,7 +33,8 @@ FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionCalculateShellLevels;
 ///		Value: Boolean NSNumber
 ///		Default Value: `false`
 ///		Requires: `kMDLVoxelAssetOptionCalculateShellLevels` to be true
-FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionSkipNonZeroShellMesh;
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionSkipNonZeroShell;
+FOUNDATION_EXPORT NSString *const kMDLVoxelAssetOptionSkipNonZeroShellMesh DEPRECATED_MSG_ATTRIBUTE("Renamed to kMDLVoxelAssetOptionSkipNonZeroShell.");
 
 /// Determines the method used to generate the MDLMesh.
 ///		Value: `MDLVoxelAssetMeshGenerationMode` enum NSNumber

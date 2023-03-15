@@ -28,7 +28,8 @@
 
 
 NSString *const kMDLVoxelAssetOptionCalculateShellLevels = @"MDLVoxelAssetOptionCalculateShellLevels";
-NSString *const kMDLVoxelAssetOptionSkipNonZeroShellMesh = @"MDLVoxelAssetOptionSkipNonZeroShellMesh";
+NSString *const kMDLVoxelAssetOptionSkipNonZeroShell = @"MDLVoxelAssetOptionSkipNonZeroShell";
+NSString *const kMDLVoxelAssetOptionSkipNonZeroShellMesh = kMDLVoxelAssetOptionSkipNonZeroShell;
 NSString *const kMDLVoxelAssetOptionMeshGenerationMode = @"MDLVoxelAssetOptionMeshGenerationMode";
 NSString *const kMDLVoxelAssetOptionMeshGenerationFlattening = @"MDLVoxelAssetOptionMeshGenerationFlattening";
 NSString *const kMDLVoxelAssetOptionVoxelMesh = @"MDLVoxelAssetOptionVoxelMesh";

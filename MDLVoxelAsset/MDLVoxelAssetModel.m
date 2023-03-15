@@ -105,12 +105,14 @@ uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_sh
 	
 	MagicaVoxelVoxData *_mvvoxData;
 	
+	MagicaVoxelVoxData_Voxel *_mvvoxVoxelsArray;
 	MDLVoxelIndex *_voxelsRawData;
 	NSData *_voxelsData;
 	
 	MDLVoxelArray *_voxelArray;
 	uint8_t *_voxelPaletteIndices3DRawData;
 	NSArray<Color*> *_paletteColors;
+	uint32_t _voxelCount;
 	MDLVoxelAsset_VoxelDimensions _voxelDimensions;
 	
 	NSMutableArray<MDLMesh*> *_meshes;
@@ -139,7 +141,7 @@ uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_sh
 }
 
 - (uint32_t)voxelCount {
-	return [_mvvoxData voxelsForModelID:_modelID].count;
+	return _voxelCount;
 }
 
 - (MDLVoxelAsset_VoxelDimensions)voxelDimensions {
@@ -181,29 +183,61 @@ uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_sh
 	
 	_voxelsRawData = calloc(mvvoxVoxels.count, sizeof(MDLVoxelIndex));
 	for (int32_t vI = mvvoxVoxels.count - 1; vI >= 0; --vI) {
-		const MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels.array[vI];
+		const MagicaVoxelVoxData_Voxel *mvvoxVoxel = &mvvoxVoxels.array[vI];
 		
 		if (_options.convertZUpToYUp)
-			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->z, (mvvoxDimensions.y - 1 + -voxVoxel->y), 0 };
+			_voxelsRawData[vI] = (MDLVoxelIndex){ mvvoxVoxel->x, mvvoxVoxel->z, (mvvoxDimensions.y - 1 + -mvvoxVoxel->y), 0 };
 		else
-			_voxelsRawData[vI] = (MDLVoxelIndex){ voxVoxel->x, voxVoxel->y, voxVoxel->z, 0 };
+			_voxelsRawData[vI] = (MDLVoxelIndex){ mvvoxVoxel->x, mvvoxVoxel->y, mvvoxVoxel->z, 0 };
 	}
 	_voxelsData = [[NSData alloc] initWithBytesNoCopy:_voxelsRawData length:(mvvoxVoxels.count * sizeof(MDLVoxelIndex)) freeWhenDone:NO];
 	
+	_mvvoxVoxelsArray = calloc(mvvoxVoxels.count, sizeof(MagicaVoxelVoxData_Voxel));
+	memcpy(_mvvoxVoxelsArray, [_mvvoxData voxelsForModelID:_modelID].array, mvvoxVoxels.count * sizeof(MagicaVoxelVoxData_Voxel));
+	_voxelCount = mvvoxVoxels.count;
+	
+	_innermostShellLevel = 0;
+	_outermostShellLevel = 0;
+	if (_options.calculateShellLevels) {
+		[self calculateShellLevels];
+		
+		if (_options.skipNonZeroShellMesh) {
+			// Loop through all original voxels in `_voxelsRawData`, copying them to the same or earlier array positions and recucing the `_voxelCount`.
+			uint32_t originalVoxI = 0;
+			uint32_t updatedVoxI = 0;
+			for (uint32_t originalVoxI = 0; originalVoxI < _voxelCount; ++originalVoxI) {
+				MDLVoxelIndex voxelIndex = _voxelsRawData[originalVoxI];
+				
+				// Basically, while hitting non-shell-zero, searches through the `originalVoxI` indexes (without changing `updatedVoxI`) until we hit a zero-shell voxel.
+				if (voxelIndex.w != 0)
+					continue;
+				
+				_voxelsRawData[updatedVoxI] = voxelIndex;
+				memcpy(&_mvvoxVoxelsArray[updatedVoxI], &_mvvoxVoxelsArray[originalVoxI], sizeof(MagicaVoxelVoxData_Voxel));
+				
+				++updatedVoxI;
+			}
+			_voxelCount = updatedVoxI;
+		}
+		
+		[_voxelsData release];
+		_voxelsData = [[NSData alloc] initWithBytesNoCopy:_voxelsRawData length:(_voxelCount * sizeof(MDLVoxelIndex)) freeWhenDone:NO];
+	}
 	
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
 	
 	_voxelPaletteIndices3DRawData = calloc(voxelDimensions.x * voxelDimensions.y * voxelDimensions.z, sizeof(uint8_t));
-	for (int32_t vI = 0; vI < mvvoxVoxels.count; ++vI) {
-		const MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels.array[vI];
+	for (int32_t vI = 0; vI < _voxelCount; ++vI) {
+		const MagicaVoxelVoxData_Voxel *mvvoxVoxel = &_mvvoxVoxelsArray[vI];
 		
-		uint8_t colorIndex = voxVoxel->colorIndex;
+		uint8_t colorIndex = mvvoxVoxel->colorIndex;
 		if (_options.paletteIndexReplacements != nil) {
 			NSNumber *replacementValue = _options.paletteIndexReplacements[@(colorIndex)];
 			if (replacementValue != nil)
 				colorIndex = replacementValue.unsignedCharValue;
 		}
-		_voxelPaletteIndices3DRawData[arrayIndexFrom3DCoords(voxVoxel->x, voxVoxel->y, voxVoxel->z, dimensions)] = colorIndex;
+		
+		_voxelPaletteIndices3DRawData[arrayIndexFrom3DCoords(mvvoxVoxel->x, mvvoxVoxel->y, mvvoxVoxel->z, dimensions)] = colorIndex;
 	}
 	
 	
@@ -223,11 +257,6 @@ uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_sh
 	_paletteColors = paletteColors;
 	
 	[self generateMesh];
-	
-	_innermostShellLevel = 0;
-	_outermostShellLevel = 0;
-	if (_options.calculateShellLevels)
-		[self calculateShellLevels];
 	
 	return self;
 }
@@ -306,12 +335,10 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 
 - (void)generateSceneKitMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
 {
-	MagicaVoxelVoxData_VoxelArray mvvoxVoxels = [_mvvoxData voxelsForModelID:_modelID];
-	
 	static uint32_t const kFacesPerVoxel = 6;
 	
 	static uint32_t const kVerticesPerVoxel = 4 * kFacesPerVoxel;
-	uint32_t vertexCount = mvvoxVoxels.count * kVerticesPerVoxel;
+	uint32_t vertexCount = _voxelCount * kVerticesPerVoxel;
 	NSAssert(sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData) == kVerticesPerVoxel,
 		@"`sizeof(kVoxelCubeVertexData) / sizeof(PerVertexMeshData)` must equal %lu.", (unsigned long)kVerticesPerVoxel
 	);
@@ -321,7 +348,7 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 	#endif
 	
 	static uint32_t const kVertexIndicesPerVoxel = 6 * kFacesPerVoxel;
-	uint32_t vertexIndexCount = mvvoxVoxels.count * kVertexIndicesPerVoxel;
+	uint32_t vertexIndexCount = _voxelCount * kVertexIndicesPerVoxel;
 	NSAssert(sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t) == kVertexIndicesPerVoxel,
 		@"`sizeof(kVoxelCubeVertexIndexData) / sizeof(uint16_t)` must equal %lu.", (unsigned long)kVertexIndicesPerVoxel
 	);
@@ -330,66 +357,40 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 		memset(_vertexIndicesRawData, '\xFF', vertexIndexCount * sizeof(uint16_t));
 	#endif
 	
-	uint32_t voxelCount = mvvoxVoxels.count;
-	
+	for (uint32_t voxI = 0; voxI < _voxelCount; ++voxI)
 	{
-		uint32_t voxI = 0;
-		while (voxI < voxelCount)
-		{
-			MDLVoxelIndex voxelIndex = _voxelsRawData[voxI];
-			
-			if (_options.skipNonZeroShellMesh) {
-				if (voxelIndex.w != 0) {
-					voxelCount -= 1;
-					vertexCount -= kVerticesPerVoxel;
-					vertexIndexCount -= kVertexIndicesPerVoxel;
-					continue;
-				}
-			}
-			
-			uint32_t baseVertI = voxI * kVerticesPerVoxel;
-			memcpy(&_verticesRawData[baseVertI], kVoxelCubeVertexData, sizeof(kVoxelCubeVertexData));
-			for (uint32_t vertI = 0; vertI < kVerticesPerVoxel; ++vertI)
-				_verticesRawData[baseVertI + vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
-			
-			uint8_t colorIndex = mvvoxVoxels.array[voxI].colorIndex;
-			if (_options.paletteIndexReplacements != nil) {
-				NSNumber *replacementValue = _options.paletteIndexReplacements[@(colorIndex)];
-				if (replacementValue != nil)
-					colorIndex = replacementValue.unsignedCharValue;
-			}
-			Color *color = _paletteColors[colorIndex];
-			CGFloat color_cgArray[4];
-			[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:&color_cgArray[3]];
-			for (uint32_t vertI = 0; vertI < kVerticesPerVoxel; ++vertI)
-				_verticesRawData[baseVertI + vertI].color = (vector_float3){ color_cgArray[0], color_cgArray[1], color_cgArray[2] };
-			
-			++voxI;
+		MDLVoxelIndex voxelIndex = _voxelsRawData[voxI];
+		
+		uint32_t baseVertI = voxI * kVerticesPerVoxel;
+		memcpy(&_verticesRawData[baseVertI], kVoxelCubeVertexData, sizeof(kVoxelCubeVertexData));
+		for (uint32_t vertI = 0; vertI < kVerticesPerVoxel; ++vertI)
+			_verticesRawData[baseVertI + vertI].position += (vector_float3){ voxelIndex.x, voxelIndex.y, voxelIndex.z };
+		
+		uint8_t colorIndex = _mvvoxVoxelsArray[voxI].colorIndex;
+		if (_options.paletteIndexReplacements != nil) {
+			NSNumber *replacementValue = _options.paletteIndexReplacements[@(colorIndex)];
+			if (replacementValue != nil)
+				colorIndex = replacementValue.unsignedCharValue;
 		}
+		Color *color = _paletteColors[colorIndex];
+		CGFloat color_cgArray[4];
+		[color getRed:&color_cgArray[0] green:&color_cgArray[1] blue:&color_cgArray[2] alpha:&color_cgArray[3]];
+		for (uint32_t vertI = 0; vertI < kVerticesPerVoxel; ++vertI)
+			_verticesRawData[baseVertI + vertI].color = (vector_float3){ color_cgArray[0], color_cgArray[1], color_cgArray[2] };
+		
+		++voxI;
 	}
 	
 	static const uint32_t kPerMeshVertexCountLimit = 65536;
 	const uint32_t perMeshVoxelCountLimit = kPerMeshVertexCountLimit / kVerticesPerVoxel;
 	
-	uint32_t voxI = 0;
-	while (voxI < voxelCount)
+	for (uint32_t voxI = 0; voxI < _voxelCount; ++voxI)
 	{
 		uint32_t startVoxI = voxI;
-		uint32_t voxILimit = MIN(voxI + perMeshVoxelCountLimit, voxelCount);
+		uint32_t voxILimit = MIN(voxI + perMeshVoxelCountLimit, _voxelCount);
 		
 		while (voxI < voxILimit)
 		{
-			MDLVoxelIndex voxelIndex = _voxelsRawData[voxI];
-			
-			if (_options.skipNonZeroShellMesh) {
-				if (voxelIndex.w != 0) {
-					voxelCount -= 1;
-					vertexCount -= kVerticesPerVoxel;
-					vertexIndexCount -= kVertexIndicesPerVoxel;
-					continue;
-				}
-			}
-			
 			uint32_t baseVertI = (voxI - startVoxI) * kVerticesPerVoxel;
 			
 			uint32_t baseVertIndexI = voxI * kVertexIndicesPerVoxel;
@@ -769,6 +770,9 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 	free(_vertexIndicesRawData);
 	_vertexIndicesRawData = NULL;
 	
+	free(_mvvoxVoxelsArray);
+	_mvvoxVoxelsArray = NULL;
+	
 	free(_voxelsRawData);
 	_voxelsRawData = NULL;
 	[_voxelsData release];
@@ -831,7 +835,7 @@ MDLVoxelIndexPtr calculateShellLevels_safeGetVoxelIndexPtr(vector_short3 coord, 
 
 - (void)calculateShellLevels
 {
-	MDLVoxelIndex *voxelIndices = (MDLVoxelIndex *)_voxelsData.bytes;
+	MDLVoxelIndex *voxelIndices = _voxelsRawData;
 	uint32_t voxelCount = self.voxelCount;
 	vector_short3 dimensions = { _voxelDimensions.x, _voxelDimensions.y, _voxelDimensions.z };
 	
