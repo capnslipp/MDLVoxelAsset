@@ -26,6 +26,8 @@
 
 
 
+typedef MDLVoxelIndex* MDLVoxelIndexPtr;
+
 typedef struct _PerVertexMeshData {
 	vector_float3 __attribute__((aligned(4))) position;
 	vector_float3 __attribute__((aligned(4))) normal;
@@ -81,6 +83,8 @@ static const uint16_t kVoxelCubeVertexIndexData[] = {
 	(5*4 + 0), (5*4 + 1), (5*4 + 2), (5*4 + 2), (5*4 + 1), (5*4 + 3),
 };
 
+static const uint8_t kZeroPaletteIndex = 0;
+
 
 
 uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_short3 dimensions) {
@@ -112,9 +116,27 @@ uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_sh
 	NSMutableArray<MDLMesh*> *_meshes;
 	PerVertexMeshData *_verticesRawData;
 	uint16_t *_vertexIndicesRawData;
+	
+	int32_t _innermostShellLevel;
+	int32_t _outermostShellLevel;
 }
 
-@synthesize modelID=_modelID, voxelArray=_voxelArray, paletteColors=_paletteColors, meshes=_meshes;
+@synthesize modelID=_modelID, voxelArray=_voxelArray, paletteColors=_paletteColors, meshes=_meshes, innermostShellLevel=_innermostShellLevel, outermostShellLevel=_outermostShellLevel;
+
+- (uint8_t)safeGetVoxelPaletteIndexAtX:(int16_t)x Y:(int16_t)y Z:(int16_t)z {
+	vector_short3 dimensions = { _voxelDimensions.x, _voxelDimensions.y, _voxelDimensions.z };
+	
+	if (x < 0 || y < 0 || z < 0)
+		return kZeroPaletteIndex;
+	if (x >= dimensions.x || y >= dimensions.y || z >= dimensions.z)
+		return kZeroPaletteIndex;
+	
+	return _voxelPaletteIndices3DRawData[arrayIndexFrom3DCoords(x, y, z, dimensions)];
+}
+
+- (uint8_t)safeGetVoxelPaletteIndexAt:(vector_short3)vector {
+	return [self safeGetVoxelPaletteIndexAtX:vector.x Y:vector.y Z:vector.z];
+}
 
 - (uint32_t)voxelCount {
 	return [_mvvoxData voxelsForModelID:_modelID].count;
@@ -171,14 +193,7 @@ uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_sh
 	
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];
 	
-	uint8_t zeroPaletteIndex = 0;
 	_voxelPaletteIndices3DRawData = calloc(voxelDimensions.x * voxelDimensions.y * voxelDimensions.z, sizeof(uint8_t));
-	for (uint32_t xI = 0; xI < _voxelDimensions.x; ++xI) {
-		for (uint32_t yI = 0; yI < _voxelDimensions.y; ++yI) {
-			for (uint32_t zI = 0; zI < _voxelDimensions.z; ++zI)
-				_voxelPaletteIndices3DRawData[arrayIndexFrom3DCoords(xI, yI, zI, dimensions)] = zeroPaletteIndex;
-		}
-	}
 	for (int32_t vI = 0; vI < mvvoxVoxels.count; ++vI) {
 		const MagicaVoxelVoxData_Voxel *voxVoxel = &mvvoxVoxels.array[vI];
 		
@@ -208,6 +223,11 @@ uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_sh
 	_paletteColors = paletteColors;
 	
 	[self generateMesh];
+	
+	_innermostShellLevel = 0;
+	_outermostShellLevel = 0;
+	if (_options.calculateShellLevels)
+		[self calculateShellLevels];
 	
 	return self;
 }
@@ -286,9 +306,6 @@ typedef void(^GenerateMesh_AddMeshDataCallback)(NSData *verticesData, uint32_t v
 
 - (void)generateSceneKitMesh:(GenerateMesh_AddMeshDataCallback)addMeshDataCallback
 {
-	if (_options.calculateShellLevels)
-		[self calculateShellLevels];
-	
 	MagicaVoxelVoxData_VoxelArray mvvoxVoxels = [_mvvoxData voxelsForModelID:_modelID];
 	
 	static uint32_t const kFacesPerVoxel = 6;
@@ -803,66 +820,81 @@ typedef void(^GenerateGreedyMesh_AddVertexIndicesRawDataCallback)(uint32_t baseV
 }
 
 
+MDLVoxelIndexPtr calculateShellLevels_safeGetVoxelIndexPtr(vector_short3 coord, MDLVoxelIndexPtr *voxelIndexPtrs3D, vector_short3 dimensions) {
+	if (coord.x < 0 || coord.y < 0 || coord.z < 0)
+		return NULL;
+	if (coord.x >= dimensions.x || coord.y >= dimensions.y || coord.z >= dimensions.z)
+		return NULL;
+	
+	return voxelIndexPtrs3D[arrayIndexFrom3DCoords(coord.x, coord.y, coord.z, dimensions)];
+}
+
 - (void)calculateShellLevels
 {
 	MDLVoxelIndex *voxelIndices = (MDLVoxelIndex *)_voxelsData.bytes;
 	uint32_t voxelCount = self.voxelCount;
+	vector_short3 dimensions = { _voxelDimensions.x, _voxelDimensions.y, _voxelDimensions.z };
 	
+	MDLVoxelIndexPtr *voxelIndexPtrs3D = calloc(_voxelDimensions.x * _voxelDimensions.y * _voxelDimensions.z, sizeof(MDLVoxelIndexPtr));
+	for (int64_t vI = voxelCount - 1; vI >= 0; --vI) {
+		MDLVoxelIndexPtr voxelIndexPtr = &voxelIndices[vI];
+		voxelIndexPtrs3D[arrayIndexFrom3DCoords(voxelIndexPtr->x, voxelIndexPtr->y, voxelIndexPtr->z, dimensions)] = voxelIndexPtr;
+	}
+	
+	_outermostShellLevel = 0;
+	
+	// Iteratively loops over all the `voxelIndices` at the `currentShellLevel`, checks if they have neighbors on all sides of the same or lower (inner) shell levels, and if so reduces it's level by -1.
+	// Repeats the whole process with `--currentShellLevel`, continuing until it has made a pass without finding any voxels to reduce the shell level of (`!didAddShell`).
 	BOOL didAddShell;
 	int currentShellLevel = 0;
-	do {
+	 while (true) // do-while-do loop
+	 {
+		// do:
+		
 		didAddShell = NO;
 		
 		for (int32_t vI = voxelCount - 1; vI >= 0; --vI) {
 			MDLVoxelIndex voxel = voxelIndices[vI];
+			if (voxel.w != currentShellLevel)
+				continue;
 			
-			// @fixme: Dangerously expensive!
-			NSData *neighborVoxelsData = [_voxelArray voxelsWithinExtent:(MDLVoxelIndexExtent){
-				.minimumExtent = voxel + (vector_int4){ -1, -1, -1, 0 },
-				.maximumExtent = voxel + (vector_int4){ +1, +1, +1, 0 },
-			}];
+			vector_short3 coord = simd_make_short3(voxel.x, voxel.y, voxel.z);
 			
-			uint32_t neighborVoxelCount = (uint32_t)neighborVoxelsData.length / sizeof(MDLVoxelIndex);
-			MDLVoxelIndex const *neighborIndices = (MDLVoxelIndex const *)neighborVoxelsData.bytes;
+			MDLVoxelIndexPtr neighborXPos = calculateShellLevels_safeGetVoxelIndexPtr(coord + simd_make_short3(+1, 0, 0), voxelIndexPtrs3D, dimensions);
+			MDLVoxelIndexPtr neighborXNeg = calculateShellLevels_safeGetVoxelIndexPtr(coord + simd_make_short3(-1, 0, 0), voxelIndexPtrs3D, dimensions);
+			MDLVoxelIndexPtr neighborYPos = calculateShellLevels_safeGetVoxelIndexPtr(coord + simd_make_short3(0, +1, 0), voxelIndexPtrs3D, dimensions);
+			MDLVoxelIndexPtr neighborYNeg = calculateShellLevels_safeGetVoxelIndexPtr(coord + simd_make_short3(0, -1, 0), voxelIndexPtrs3D, dimensions);
+			MDLVoxelIndexPtr neighborZPos = calculateShellLevels_safeGetVoxelIndexPtr(coord + simd_make_short3(0, 0, +1), voxelIndexPtrs3D, dimensions);
+			MDLVoxelIndexPtr neighborZNeg = calculateShellLevels_safeGetVoxelIndexPtr(coord + simd_make_short3(0, 0, -1), voxelIndexPtrs3D, dimensions);
 			
-			BOOL coveredXPos = NO, coveredXNeg = NO, coveredYPos = NO, coveredYNeg = NO, coveredZPos = NO, coveredZNeg = NO;
-			for (int32_t svI = neighborVoxelCount - 1; svI >= 0; --svI)
-			{
-				MDLVoxelIndex neighbor = neighborIndices[svI];
-				if (neighbor.w != currentShellLevel)
-					continue;
-				
-				if (neighbor.y == voxel.y && neighbor.z == voxel.z) {
-					if (neighbor.x == voxel.x + 1)
-						coveredXPos = YES;
-					else if (neighbor.x == voxel.x - 1)
-						coveredXNeg = YES;
-				}
-				else if (neighbor.x == voxel.x && neighbor.z == voxel.z) {
-					if (neighbor.y == voxel.y + 1)
-						coveredYPos = YES;
-					else if (neighbor.y == voxel.y - 1)
-						coveredYNeg = YES;
-				}
-				else if (neighbor.x == voxel.x && neighbor.y == voxel.y) {
-					if (neighbor.z == voxel.z + 1)
-						coveredZPos = YES;
-					else if (neighbor.z == voxel.z - 1)
-						coveredZNeg = YES;
-				}
-			}
+			// check for presense of neighbors, and if present, that it's the same or lower (inner) shell level.
+			BOOL coveredXPos = (neighborXPos != NULL) && (neighborXPos->w <= currentShellLevel);
+			BOOL coveredXNeg = (neighborXNeg != NULL) && (neighborXNeg->w <= currentShellLevel);
+			BOOL coveredYPos = (neighborYPos != NULL) && (neighborYPos->w <= currentShellLevel);
+			BOOL coveredYNeg = (neighborYNeg != NULL) && (neighborYNeg->w <= currentShellLevel);
+			BOOL coveredZPos = (neighborZPos != NULL) && (neighborZPos->w <= currentShellLevel);
+			BOOL coveredZNeg = (neighborZNeg != NULL) && (neighborZNeg->w <= currentShellLevel);
 			
 			BOOL coveredOnAllSides = coveredXPos && coveredXNeg && coveredYPos && coveredYNeg && coveredZPos && coveredZNeg;
 			if (coveredOnAllSides) {
-				voxel += (vector_int4){ 0, 0, 0, -1 };
+				voxel.w = currentShellLevel - 1;
 				voxelIndices[vI] = voxel;
 				
 				didAddShell = YES;
 			}
 		}
 		
-		++currentShellLevel;
-	} while (didAddShell);
+		// while (didAddShell)
+		if (!didAddShell) { break; }
+		
+		// do:
+		
+		_innermostShellLevel = currentShellLevel;
+		
+		--currentShellLevel;
+	}
+	
+	free(voxelIndexPtrs3D);
 	
 	[_voxelArray release];
 	_voxelArray = [[MDLVoxelArray alloc] initWithData:_voxelsData boundingBox:self.boundingBox voxelExtent:1.0f];

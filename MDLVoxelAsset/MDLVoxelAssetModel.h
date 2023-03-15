@@ -51,6 +51,8 @@ typedef struct _OptionsValues {
 @property (nonatomic, copy, readonly) NSArray<NSArray<NSArray<NSNumber*>*>*> *voxelPaletteIndices;
 
 - (void)calculateShellLevels;
+@property (nonatomic, assign, readonly) int32_t innermostShellLevel;
+@property (nonatomic, assign, readonly) int32_t outermostShellLevel;
 
 @property (nonatomic, retain, readonly) NSArray<MDLMesh*> *meshes;
 
