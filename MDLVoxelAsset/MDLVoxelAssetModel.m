@@ -237,7 +237,10 @@ uint32_t arrayIndexFrom3DCoords(uint8_t x, uint8_t y, uint8_t z, const vector_sh
 				colorIndex = replacementValue.unsignedCharValue;
 		}
 		
-		_voxelPaletteIndices3DRawData[arrayIndexFrom3DCoords(mvvoxVoxel->x, mvvoxVoxel->y, mvvoxVoxel->z, dimensions)] = colorIndex;
+		if (_options.convertZUpToYUp)
+			_voxelPaletteIndices3DRawData[arrayIndexFrom3DCoords(mvvoxVoxel->x, mvvoxVoxel->z, (mvvoxDimensions.y - 1 + -mvvoxVoxel->y), dimensions)] = colorIndex;
+		else
+			_voxelPaletteIndices3DRawData[arrayIndexFrom3DCoords(mvvoxVoxel->x, mvvoxVoxel->y, mvvoxVoxel->z, dimensions)] = colorIndex;
 	}
 	
 	
