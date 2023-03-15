@@ -145,7 +145,15 @@ class GameViewController : ViewController
 		
 		let floorNode = SCNNode(geometry: {
 			let f = SCNFloor()
-			f.reflectivity = 0
+			// Subvert SceneKit bug that causes “Error: Pass FloorPass is not linked to the rendering graph and will be ignored check it's input/output” console spam (and reduced framerates) when `reflectivity` is set to `0.0`.
+			// Instead, let it render barely visible, at very low resolution, with a bitmask that include nothing.
+			// Still will cause a perf hit, but that's just what you get with SceneKit. ¯\_(ツ)_/¯
+			// See: https://developer.apple.com/forums/thread/717367
+			f.reflectivity = 0.000001
+			f.reflectionResolutionScaleFactor = 0.000001
+			if #available(iOS 10.0, tvOS 10.0, macOS 10.12, macCatalyst 13.1, *) {
+				f.reflectionCategoryBitMask = 0x0
+			}
 			return f
 		}())
 		scene.rootNode.addChildNode(floorNode)
