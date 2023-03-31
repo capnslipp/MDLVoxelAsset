@@ -52,6 +52,7 @@ GCC_WARN_UNUSED_VARIABLE = YES
 IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos*] = 9.3
 SDKROOT[sdk=macosx*] = macosx
 SDKROOT[sdk=iphoneos*] = iphoneos
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 SWIFT_VERSION = 5.0
 TARGETED_DEVICE_FAMILY = 1,2
 VERSIONING_SYSTEM = "apple-generic"

@@ -733,6 +733,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
@@ -748,6 +749,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
@@ -804,6 +806,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
@@ -822,6 +825,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
@@ -925,6 +929,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
@@ -944,6 +949,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.capnslipp.VoxViewer;
 				PRODUCT_NAME = VoxViewer;
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
