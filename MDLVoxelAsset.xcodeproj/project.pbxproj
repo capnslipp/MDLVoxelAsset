@@ -12,62 +12,53 @@
 		FA0ADEEC1CF00A280054DCAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEEA1CF00A280054DCAA /* Main.storyboard */; };
 		FA0ADEEE1CF00A280054DCAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEED1CF00A280054DCAA /* Assets.xcassets */; };
 		FA0ADEF11CF00A280054DCAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEEF1CF00A280054DCAA /* LaunchScreen.storyboard */; };
-		FA1DED1C29B1C09A0068C102 /* MDLVoxelAsset_DataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = FA1DED1A29B1C09A0068C102 /* MDLVoxelAsset_DataTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FA2685921CEA9A72003B86C8 /* MDLVoxelAssetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FA2685911CEA9A72003B86C8 /* MDLVoxelAssetTests.m */; };
-		FA50F49E248764EA00887E70 /* MagicaVoxelVoxData_SceneGraphTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = FA50F49B248764EA00887E70 /* MagicaVoxelVoxData_SceneGraphTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FA50F4A0248764EA00887E70 /* MagicaVoxelVoxData_SceneGraphTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = FA50F49C248764EA00887E70 /* MagicaVoxelVoxData_SceneGraphTypes.m */; };
-		FA6C76A9247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6C76A6247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h */; };
-		FA6C76AB247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6C76A7247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m */; };
-		FA7780C329B02C43005092B1 /* MagicaVoxelVoxData_utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = FA7780C129B02C43005092B1 /* MagicaVoxelVoxData_utilities.h */; };
-		FA7780C629B02C95005092B1 /* MagicaVoxelVoxData_utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = FA7780C429B02C95005092B1 /* MagicaVoxelVoxData_utilities.m */; };
-		FA889C802484A145008898A2 /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA889C7B2484A145008898A2 /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.m */; };
-		FA889C862484A145008898A2 /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA889C7E2484A145008898A2 /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h */; };
-		FA889C8A2484AFA0008898A2 /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA889C872484AFA0008898A2 /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.h */; };
-		FA889C8C2484AFA0008898A2 /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA889C882484AFA0008898A2 /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.m */; };
 		FA9695031CF1725000DC632A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9695021CF1725000DC632A /* AppDelegate.swift */; };
 		FA9695051CF1725000DC632A /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9695041CF1725000DC632A /* GameView.swift */; };
 		FA96950E1CF1725000DC632A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA96950C1CF1725000DC632A /* MainMenu.xib */; };
 		FA9CACA71CF17C6B00B1ABA4 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0ADEE81CF00A280054DCAA /* GameViewController.swift */; };
-		FA9CACD41CF17E0200B1ABA4 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */; };
-		FA9CACDF1CF17E0200B1ABA4 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */; };
-		FA9CACE01CF17E0200B1ABA4 /* MDLVoxelAsset.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		FA9CACE81CF1806600B1ABA4 /* MagicaVoxelVoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FA9CACE91CF1806D00B1ABA4 /* MagicaVoxelVoxData.m in Sources */ = {isa = PBXBuildFile; fileRef = FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */; };
-		FA9CACEA1CF1807000B1ABA4 /* MDLVoxelAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0ADEDB1CEFAC660054DCAA /* MDLVoxelAsset.m */; };
-		FA9CACEB1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */; };
-		FA9CACEC1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */; };
-		FA9CACED1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkIdent.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */; };
-		FA9CACEE1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkIdent.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECA81CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.m */; };
-		FA9CACEF1CF1807500B1ABA4 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA91CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h */; };
-		FA9CACF01CF1807500B1ABA4 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAA1CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m */; };
-		FA9CACF11CF1807500B1ABA4 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAB1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h */; };
-		FA9CACF21CF1807500B1ABA4 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAC1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m */; };
-		FA9CACF31CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */; };
-		FA9CACF41CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */; };
-		FA9CACF51CF1840A00B1ABA4 /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0ADEDA1CEFAC660054DCAA /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FAA6CF0B29D690A800EECC6C /* MDLVoxelAsset.h in Headers */ = {isa = PBXBuildFile; fileRef = FAA6CF0A29D690A800EECC6C /* MDLVoxelAsset.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FAA6CF0E29D690A800EECC6C /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAA6CF0829D690A700EECC6C /* MDLVoxelAsset.framework */; };
+		FAA6CF0F29D690A800EECC6C /* MDLVoxelAsset.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FAA6CF0829D690A700EECC6C /* MDLVoxelAsset.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FAA6CF1429D690E800EECC6C /* MagicaVoxelVoxData_ChunkHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECA61CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.m */; };
+		FAA6CF1529D690E800EECC6C /* MagicaVoxelVoxData_utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = FA7780C429B02C95005092B1 /* MagicaVoxelVoxData_utilities.m */; };
+		FAA6CF1629D690E800EECC6C /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAC1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m */; };
+		FAA6CF1729D690E800EECC6C /* MagicaVoxelVoxData_SceneGraphTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = FA50F49C248764EA00887E70 /* MagicaVoxelVoxData_SceneGraphTypes.m */; };
+		FAA6CF1829D690E800EECC6C /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6C76A7247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m */; };
+		FAA6CF1929D690E800EECC6C /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA889C882484AFA0008898A2 /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.m */; };
+		FAA6CF1A29D690E800EECC6C /* MagicaVoxelVoxData_types.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFA382624839E8400053799 /* MagicaVoxelVoxData_types.m */; };
+		FAA6CF1B29D690E800EECC6C /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAE1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m */; };
+		FAA6CF1C29D690E800EECC6C /* MagicaVoxelVoxData.m in Sources */ = {isa = PBXBuildFile; fileRef = FA64893A1CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.m */; };
+		FAA6CF1D29D690E800EECC6C /* MagicaVoxelVoxData_PackChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DDC247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m */; };
+		FAA6CF1E29D690E800EECC6C /* MDLVoxelAssetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DE8247CEE0E00369F84 /* MDLVoxelAssetModel.m */; };
+		FAA6CF1F29D690E800EECC6C /* MDLVoxelAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0ADEDB1CEFAC660054DCAA /* MDLVoxelAsset.m */; };
+		FAA6CF2029D690E800EECC6C /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECAA1CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m */; };
+		FAA6CF2129D690E800EECC6C /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FA889C7B2484A145008898A2 /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.m */; };
+		FAA6CF2229D690E800EECC6C /* MagicaVoxelVoxData_ChunkIdent.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6EECA81CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.m */; };
+		FAA6CF2329D690F100EECC6C /* MDLVoxelAsset_DataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = FA1DED1A29B1C09A0068C102 /* MDLVoxelAsset_DataTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FAA6CF2429D690F100EECC6C /* MagicaVoxelVoxData_SceneGraphTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = FA50F49B248764EA00887E70 /* MagicaVoxelVoxData_SceneGraphTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FAA6CF2529D690F100EECC6C /* MagicaVoxelVoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6489391CEAD8EF00B6AEB1 /* MagicaVoxelVoxData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FAA6CF2629D690F100EECC6C /* MDLVoxelAssetModel.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DE7247CEE0E00369F84 /* MDLVoxelAssetModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FAA6CF2729D6911200EECC6C /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA889C872484AFA0008898A2 /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.h */; };
+		FAA6CF2829D6911200EECC6C /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6C76A6247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h */; };
+		FAA6CF2929D6911200EECC6C /* MagicaVoxelVoxData_ChunkIdent.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA71CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkIdent.h */; };
+		FAA6CF2A29D6911200EECC6C /* MagicaVoxelVoxData_types.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */; };
+		FAA6CF2B29D6911200EECC6C /* MagicaVoxelVoxData_utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = FA7780C129B02C43005092B1 /* MagicaVoxelVoxData_utilities.h */; };
+		FAA6CF2C29D6911200EECC6C /* MagicaVoxelVoxData_PackChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DDB247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.h */; };
+		FAA6CF2D29D6911200EECC6C /* MagicaVoxelVoxData_SizeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAB1CEE5A0C00818C92 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h */; };
+		FAA6CF2E29D6911200EECC6C /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA91CEE5A0C00818C92 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h */; };
+		FAA6CF2F29D6911200EECC6C /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECAD1CEE5A0C00818C92 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h */; };
+		FAA6CF3029D6911200EECC6C /* MagicaVoxelVoxData_ChunkHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA6EECA51CEE5A0C00818C92 /* MagicaVoxelVoxData_ChunkHandle.h */; };
+		FAA6CF3129D6911200EECC6C /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA889C7E2484A145008898A2 /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h */; };
 		FAA719D51E76A48D00B1E2FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0ADEED1CF00A280054DCAA /* Assets.xcassets */; };
 		FACD939429B9DA0E009DD384 /* 3DAssets in Resources */ = {isa = PBXBuildFile; fileRef = FACD939329B9DA0E009DD384 /* 3DAssets */; };
 		FACD939529B9DA0E009DD384 /* 3DAssets in Resources */ = {isa = PBXBuildFile; fileRef = FACD939329B9DA0E009DD384 /* 3DAssets */; };
 		FACD939629B9DA0E009DD384 /* 3DAssets in Resources */ = {isa = PBXBuildFile; fileRef = FACD939329B9DA0E009DD384 /* 3DAssets */; };
 		FACD939729B9DA0E009DD384 /* 3DAssets in Resources */ = {isa = PBXBuildFile; fileRef = FACD939329B9DA0E009DD384 /* 3DAssets */; };
-		FADD3DDE247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DDB247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.h */; };
-		FADD3DE0247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DDC247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m */; };
-		FADD3DEA247CEE0E00369F84 /* MDLVoxelAssetModel.h in Headers */ = {isa = PBXBuildFile; fileRef = FADD3DE7247CEE0E00369F84 /* MDLVoxelAssetModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		FADD3DEC247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FADD3DE8247CEE0E00369F84 /* MDLVoxelAssetModel.m */; };
 		FAF7D4631E73E1B8007CFA66 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF7D4621E73E1B8007CFA66 /* main.swift */; };
-		FAF7D4671E73F966007CFA66 /* MDLVoxelAsset.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */; };
-		FAFA382824839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */ = {isa = PBXBuildFile; fileRef = FAFA382524839E8400053799 /* MagicaVoxelVoxData_types.h */; };
-		FAFA382A24839E8500053799 /* MagicaVoxelVoxData_types.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFA382624839E8400053799 /* MagicaVoxelVoxData_types.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		FA9CACD51CF17E0200B1ABA4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FA9CACC91CF17E0200B1ABA4;
-			remoteInfo = MDLVoxelAsset;
-		};
 		FA9CACD71CF17E0200B1ABA4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
@@ -75,11 +66,11 @@
 			remoteGlobalIDString = FA9694FF1CF1725000DC632A;
 			remoteInfo = "VoxViewer (OS X)";
 		};
-		FA9CACDD1CF17E0200B1ABA4 /* PBXContainerItemProxy */ = {
+		FAA6CF0C29D690A800EECC6C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = FA9CACC91CF17E0200B1ABA4;
+			remoteGlobalIDString = FAA6CF0729D690A700EECC6C;
 			remoteInfo = MDLVoxelAsset;
 		};
 /* End PBXContainerItemProxy section */
@@ -91,7 +82,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				FA9CACE01CF17E0200B1ABA4 /* MDLVoxelAsset.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,6 +92,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				FAA6CF0F29D690A800EECC6C /* MDLVoxelAsset.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -159,8 +150,9 @@
 		FA9695041CF1725000DC632A /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		FA96950D1CF1725000DC632A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		FA96950F1CF1725000DC632A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MDLVoxelAsset.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA9CACD31CF17E0200B1ABA4 /* MDLVoxelAssetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MDLVoxelAssetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAA6CF0829D690A700EECC6C /* MDLVoxelAsset.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MDLVoxelAsset.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAA6CF0A29D690A800EECC6C /* MDLVoxelAsset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDLVoxelAsset.h; sourceTree = "<group>"; };
 		FACD939329B9DA0E009DD384 /* 3DAssets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = 3DAssets; sourceTree = "<group>"; };
 		FADD3DDB247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MagicaVoxelVoxData_PackChunkContentsHandle.h; sourceTree = "<group>"; };
 		FADD3DDC247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MagicaVoxelVoxData_PackChunkContentsHandle.m; sourceTree = "<group>"; };
@@ -185,6 +177,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAA6CF0E29D690A800EECC6C /* MDLVoxelAsset.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,14 +192,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA9CACDF1CF17E0200B1ABA4 /* MDLVoxelAsset.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FA9CACC61CF17E0200B1ABA4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,7 +199,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA9CACD41CF17E0200B1ABA4 /* MDLVoxelAsset.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAA6CF0529D690A700EECC6C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,7 +213,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAF7D4671E73F966007CFA66 /* MDLVoxelAsset.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,7 +238,9 @@
 				FA2685901CEA9A72003B86C8 /* MDLVoxelAssetTests */,
 				FA0ADEE31CF00A280054DCAA /* VoxViewer */,
 				FAF7D4611E73E1B8007CFA66 /* convertToJSON */,
+				FAA6CF0929D690A800EECC6C /* MDLVoxelAsset */,
 				FA2685831CEA9A71003B86C8 /* Products */,
+				FAA6CEFE29D68D8600EECC6C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -258,9 +250,9 @@
 				FA26858C1CEA9A72003B86C8 /* MDLVoxelAssetTests.xctest */,
 				FA0ADEE21CF00A270054DCAA /* VoxViewer.app */,
 				FA9695001CF1725000DC632A /* VoxViewer.app */,
-				FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */,
 				FA9CACD31CF17E0200B1ABA4 /* MDLVoxelAssetTests.xctest */,
 				FAF7D4601E73E1B7007CFA66 /* convertToJSON */,
+				FAA6CF0829D690A700EECC6C /* MDLVoxelAsset.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -344,6 +336,21 @@
 			path = "OS X";
 			sourceTree = "<group>";
 		};
+		FAA6CEFE29D68D8600EECC6C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FAA6CF0929D690A800EECC6C /* MDLVoxelAsset */ = {
+			isa = PBXGroup;
+			children = (
+				FAA6CF0A29D690A800EECC6C /* MDLVoxelAsset.h */,
+			);
+			path = MDLVoxelAsset;
+			sourceTree = "<group>";
+		};
 		FAE1FDA529BAE8E200D66C35 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,26 +377,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		FA9CACC71CF17E0200B1ABA4 /* Headers */ = {
+		FAA6CF0329D690A700EECC6C /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA889C862484A145008898A2 /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h in Headers */,
-				FA9CACF51CF1840A00B1ABA4 /* MDLVoxelAsset.h in Headers */,
-				FA9CACED1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkIdent.h in Headers */,
-				FA7780C329B02C43005092B1 /* MagicaVoxelVoxData_utilities.h in Headers */,
-				FA50F49E248764EA00887E70 /* MagicaVoxelVoxData_SceneGraphTypes.h in Headers */,
-				FADD3DDE247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.h in Headers */,
-				FA9CACF11CF1807500B1ABA4 /* MagicaVoxelVoxData_SizeChunkContentsHandle.h in Headers */,
-				FA889C8A2484AFA0008898A2 /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.h in Headers */,
-				FA1DED1C29B1C09A0068C102 /* MDLVoxelAsset_DataTypes.h in Headers */,
-				FA9CACEB1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkHandle.h in Headers */,
-				FADD3DEA247CEE0E00369F84 /* MDLVoxelAssetModel.h in Headers */,
-				FA9CACF31CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */,
-				FA9CACE81CF1806600B1ABA4 /* MagicaVoxelVoxData.h in Headers */,
-				FAFA382824839E8500053799 /* MagicaVoxelVoxData_types.h in Headers */,
-				FA6C76A9247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h in Headers */,
-				FA9CACEF1CF1807500B1ABA4 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */,
+				FAA6CF2929D6911200EECC6C /* MagicaVoxelVoxData_ChunkIdent.h in Headers */,
+				FAA6CF2829D6911200EECC6C /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.h in Headers */,
+				FAA6CF2D29D6911200EECC6C /* MagicaVoxelVoxData_SizeChunkContentsHandle.h in Headers */,
+				FAA6CF3129D6911200EECC6C /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.h in Headers */,
+				FAA6CF2329D690F100EECC6C /* MDLVoxelAsset_DataTypes.h in Headers */,
+				FAA6CF3029D6911200EECC6C /* MagicaVoxelVoxData_ChunkHandle.h in Headers */,
+				FAA6CF2F29D6911200EECC6C /* MagicaVoxelVoxData_VoxelChunkContentsHandle.h in Headers */,
+				FAA6CF2529D690F100EECC6C /* MagicaVoxelVoxData.h in Headers */,
+				FAA6CF2C29D6911200EECC6C /* MagicaVoxelVoxData_PackChunkContentsHandle.h in Headers */,
+				FAA6CF2629D690F100EECC6C /* MDLVoxelAssetModel.h in Headers */,
+				FAA6CF2729D6911200EECC6C /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.h in Headers */,
+				FAA6CF2E29D6911200EECC6C /* MagicaVoxelVoxData_PaletteChunkContentsHandle.h in Headers */,
+				FAA6CF0B29D690A800EECC6C /* MDLVoxelAsset.h in Headers */,
+				FAA6CF2A29D6911200EECC6C /* MagicaVoxelVoxData_types.h in Headers */,
+				FAA6CF2B29D6911200EECC6C /* MagicaVoxelVoxData_utilities.h in Headers */,
+				FAA6CF2429D690F100EECC6C /* MagicaVoxelVoxData_SceneGraphTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +415,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				FAA6CF0D29D690A800EECC6C /* PBXTargetDependency */,
 			);
 			name = "VoxViewer (iOS)";
 			productName = VoxViewer;
@@ -443,30 +451,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				FA9CACDE1CF17E0200B1ABA4 /* PBXTargetDependency */,
 			);
 			name = "VoxViewer (OS X)";
 			productName = VoxViewer;
 			productReference = FA9695001CF1725000DC632A /* VoxViewer.app */;
 			productType = "com.apple.product-type.application";
-		};
-		FA9CACC91CF17E0200B1ABA4 /* MDLVoxelAsset */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = FA9CACE11CF17E0200B1ABA4 /* Build configuration list for PBXNativeTarget "MDLVoxelAsset" */;
-			buildPhases = (
-				FA9CACC71CF17E0200B1ABA4 /* Headers */,
-				FA9CACC51CF17E0200B1ABA4 /* Sources */,
-				FA9CACC61CF17E0200B1ABA4 /* Frameworks */,
-				FA9CACC81CF17E0200B1ABA4 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = MDLVoxelAsset;
-			productName = MDLVoxelAsset;
-			productReference = FA9CACCA1CF17E0200B1ABA4 /* MDLVoxelAsset.framework */;
-			productType = "com.apple.product-type.framework";
 		};
 		FA9CACD21CF17E0200B1ABA4 /* MDLVoxelAssetTests (OS X) */ = {
 			isa = PBXNativeTarget;
@@ -479,13 +468,30 @@
 			buildRules = (
 			);
 			dependencies = (
-				FA9CACD61CF17E0200B1ABA4 /* PBXTargetDependency */,
 				FA9CACD81CF17E0200B1ABA4 /* PBXTargetDependency */,
 			);
 			name = "MDLVoxelAssetTests (OS X)";
 			productName = MDLVoxelAssetTests;
 			productReference = FA9CACD31CF17E0200B1ABA4 /* MDLVoxelAssetTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		FAA6CF0729D690A700EECC6C /* MDLVoxelAsset */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAA6CF1029D690A800EECC6C /* Build configuration list for PBXNativeTarget "MDLVoxelAsset" */;
+			buildPhases = (
+				FAA6CF0329D690A700EECC6C /* Headers */,
+				FAA6CF0429D690A700EECC6C /* Sources */,
+				FAA6CF0529D690A700EECC6C /* Frameworks */,
+				FAA6CF0629D690A700EECC6C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MDLVoxelAsset;
+			productName = MDLVoxelAsset;
+			productReference = FAA6CF0829D690A700EECC6C /* MDLVoxelAsset.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		FAF7D45F1E73E1B7007CFA66 /* convertToJSON */ = {
 			isa = PBXNativeTarget;
@@ -518,20 +524,25 @@
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = UQQE2H6P34;
 						LastSwiftMigration = 1140;
+						ProvisioningStyle = Automatic;
 					};
 					FA26858B1CEA9A71003B86C8 = {
 						CreatedOnToolsVersion = 7.3.1;
+						ProvisioningStyle = Automatic;
 					};
 					FA9694FF1CF1725000DC632A = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 1140;
-					};
-					FA9CACC91CF17E0200B1ABA4 = {
-						CreatedOnToolsVersion = 7.3.1;
+						ProvisioningStyle = Automatic;
 					};
 					FA9CACD21CF17E0200B1ABA4 = {
 						CreatedOnToolsVersion = 7.3.1;
+						ProvisioningStyle = Automatic;
 						TestTargetID = FA9694FF1CF1725000DC632A;
+					};
+					FAA6CF0729D690A700EECC6C = {
+						CreatedOnToolsVersion = 14.2;
+						ProvisioningStyle = Automatic;
 					};
 					FAF7D45F1E73E1B7007CFA66 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -552,7 +563,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FA9CACC91CF17E0200B1ABA4 /* MDLVoxelAsset */,
+				FAA6CF0729D690A700EECC6C /* MDLVoxelAsset */,
 				FA26858B1CEA9A71003B86C8 /* MDLVoxelAssetTests (iOS) */,
 				FA9CACD21CF17E0200B1ABA4 /* MDLVoxelAssetTests (OS X) */,
 				FA0ADEE11CF00A270054DCAA /* VoxViewer (iOS) */,
@@ -592,18 +603,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FA9CACC81CF17E0200B1ABA4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FA9CACD11CF17E0200B1ABA4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				FACD939529B9DA0E009DD384 /* 3DAssets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAA6CF0629D690A700EECC6C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -637,32 +648,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FA9CACC51CF17E0200B1ABA4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FA9CACE91CF1806D00B1ABA4 /* MagicaVoxelVoxData.m in Sources */,
-				FA889C8C2484AFA0008898A2 /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.m in Sources */,
-				FA9CACEE1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkIdent.m in Sources */,
-				FA9CACEA1CF1807000B1ABA4 /* MDLVoxelAsset.m in Sources */,
-				FAFA382A24839E8500053799 /* MagicaVoxelVoxData_types.m in Sources */,
-				FA889C802484A145008898A2 /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.m in Sources */,
-				FA50F4A0248764EA00887E70 /* MagicaVoxelVoxData_SceneGraphTypes.m in Sources */,
-				FA6C76AB247E45540012AFC8 /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m in Sources */,
-				FADD3DEC247CEE0E00369F84 /* MDLVoxelAssetModel.m in Sources */,
-				FA9CACF21CF1807500B1ABA4 /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */,
-				FA9CACEC1CF1807500B1ABA4 /* MagicaVoxelVoxData_ChunkHandle.m in Sources */,
-				FA9CACF41CF1807500B1ABA4 /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */,
-				FA9CACF01CF1807500B1ABA4 /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m in Sources */,
-				FA7780C629B02C95005092B1 /* MagicaVoxelVoxData_utilities.m in Sources */,
-				FADD3DE0247CE3FC00369F84 /* MagicaVoxelVoxData_PackChunkContentsHandle.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FA9CACCF1CF17E0200B1ABA4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FAA6CF0429D690A700EECC6C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAA6CF1929D690E800EECC6C /* MagicaVoxelVoxData_ShapeNodeChunkContentsHandle.m in Sources */,
+				FAA6CF2029D690E800EECC6C /* MagicaVoxelVoxData_PaletteChunkContentsHandle.m in Sources */,
+				FAA6CF2229D690E800EECC6C /* MagicaVoxelVoxData_ChunkIdent.m in Sources */,
+				FAA6CF1629D690E800EECC6C /* MagicaVoxelVoxData_SizeChunkContentsHandle.m in Sources */,
+				FAA6CF1A29D690E800EECC6C /* MagicaVoxelVoxData_types.m in Sources */,
+				FAA6CF1C29D690E800EECC6C /* MagicaVoxelVoxData.m in Sources */,
+				FAA6CF1429D690E800EECC6C /* MagicaVoxelVoxData_ChunkHandle.m in Sources */,
+				FAA6CF1F29D690E800EECC6C /* MDLVoxelAsset.m in Sources */,
+				FAA6CF1E29D690E800EECC6C /* MDLVoxelAssetModel.m in Sources */,
+				FAA6CF1729D690E800EECC6C /* MagicaVoxelVoxData_SceneGraphTypes.m in Sources */,
+				FAA6CF1829D690E800EECC6C /* MagicaVoxelVoxData_TransformNodeChunkContentsHandle.m in Sources */,
+				FAA6CF1529D690E800EECC6C /* MagicaVoxelVoxData_utilities.m in Sources */,
+				FAA6CF1B29D690E800EECC6C /* MagicaVoxelVoxData_VoxelChunkContentsHandle.m in Sources */,
+				FAA6CF2129D690E800EECC6C /* MagicaVoxelVoxData_GroupNodeChunkContentsHandle.m in Sources */,
+				FAA6CF1D29D690E800EECC6C /* MagicaVoxelVoxData_PackChunkContentsHandle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,20 +688,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		FA9CACD61CF17E0200B1ABA4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = FA9CACC91CF17E0200B1ABA4 /* MDLVoxelAsset */;
-			targetProxy = FA9CACD51CF17E0200B1ABA4 /* PBXContainerItemProxy */;
-		};
 		FA9CACD81CF17E0200B1ABA4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FA9694FF1CF1725000DC632A /* VoxViewer (OS X) */;
 			targetProxy = FA9CACD71CF17E0200B1ABA4 /* PBXContainerItemProxy */;
 		};
-		FA9CACDE1CF17E0200B1ABA4 /* PBXTargetDependency */ = {
+		FAA6CF0D29D690A800EECC6C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FA9CACC91CF17E0200B1ABA4 /* MDLVoxelAsset */;
-			targetProxy = FA9CACDD1CF17E0200B1ABA4 /* PBXContainerItemProxy */;
+			target = FAA6CF0729D690A700EECC6C /* MDLVoxelAsset */;
+			targetProxy = FAA6CF0C29D690A800EECC6C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -728,7 +734,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = UQQE2H6P34;
 				INFOPLIST_FILE = VoxViewer/iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
@@ -744,7 +749,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				DEVELOPMENT_TEAM = UQQE2H6P34;
 				INFOPLIST_FILE = VoxViewer/iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
@@ -830,20 +834,6 @@
 			};
 			name = Release;
 		};
-		FA9CACE21CF17E0200B1ABA4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FAE1FDA729BAE8E200D66C35 /* framework-Debug.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		FA9CACE31CF17E0200B1ABA4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FAE1FDA829BAE8E200D66C35 /* framework-Release.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
 		FA9CACE51CF17E0200B1ABA4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -876,16 +866,228 @@
 			};
 			name = Release;
 		};
-		FAE1FDAE29BB10A300D66C35 /* DebugVerbose */ = {
+		FAA6CF1129D690A800EECC6C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FAE1FDB629BB10BA00D66C35 /* project-DebugVerbose.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Cap'n Slipp. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.slippyd.MDLVoxelAsset;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		FAA6CF1229D690A800EECC6C /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Cap'n Slipp. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.slippyd.MDLVoxelAsset;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = DebugVerbose;
 		};
-		FAE1FDAF29BB10A300D66C35 /* DebugVerbose */ = {
+		FAA6CF1329D690A800EECC6C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FAE1FDB529BB10BA00D66C35 /* framework-DebugVerbose.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Cap'n Slipp. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.slippyd.MDLVoxelAsset;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		FAE1FDAE29BB10A300D66C35 /* DebugVerbose */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FAE1FDB629BB10BA00D66C35 /* project-DebugVerbose.xcconfig */;
 			buildSettings = {
 			};
 			name = DebugVerbose;
@@ -924,7 +1126,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = UQQE2H6P34;
 				INFOPLIST_FILE = VoxViewer/iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.6bitt.VoxViewer;
@@ -1045,22 +1246,22 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FA9CACE11CF17E0200B1ABA4 /* Build configuration list for PBXNativeTarget "MDLVoxelAsset" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FA9CACE21CF17E0200B1ABA4 /* Debug */,
-				FAE1FDAF29BB10A300D66C35 /* DebugVerbose */,
-				FA9CACE31CF17E0200B1ABA4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		FA9CACE41CF17E0200B1ABA4 /* Build configuration list for PBXNativeTarget "MDLVoxelAssetTests (OS X)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FA9CACE51CF17E0200B1ABA4 /* Debug */,
 				FAE1FDB129BB10A300D66C35 /* DebugVerbose */,
 				FA9CACE61CF17E0200B1ABA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAA6CF1029D690A800EECC6C /* Build configuration list for PBXNativeTarget "MDLVoxelAsset" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FAA6CF1129D690A800EECC6C /* Debug */,
+				FAA6CF1229D690A800EECC6C /* DebugVerbose */,
+				FAA6CF1329D690A800EECC6C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
