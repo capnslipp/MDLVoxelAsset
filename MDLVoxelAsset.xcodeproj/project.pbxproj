@@ -59,6 +59,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		FA1BA1062CE93C6400E640BC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FAA6CF0729D690A700EECC6C;
+			remoteInfo = MDLVoxelAsset;
+		};
 		FA9CACD71CF17E0200B1ABA4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FA2685791CEA9A71003B86C8 /* Project object */;
@@ -504,6 +511,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				FA1BA1072CE93C6400E640BC /* PBXTargetDependency */,
 			);
 			name = convertToJSON;
 			productName = convertToJSON;
@@ -688,6 +696,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		FA1BA1072CE93C6400E640BC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FAA6CF0729D690A700EECC6C /* MDLVoxelAsset */;
+			targetProxy = FA1BA1062CE93C6400E640BC /* PBXContainerItemProxy */;
+		};
 		FA9CACD81CF17E0200B1ABA4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FA9694FF1CF1725000DC632A /* VoxViewer (OS X) */;
@@ -1164,10 +1177,12 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = DebugVerbose;
@@ -1180,10 +1195,12 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1196,10 +1213,12 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 			};
 			name = Release;
 		};
